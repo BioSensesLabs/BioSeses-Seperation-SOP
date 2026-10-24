@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AXIOM PBMC SOP Execution & Data Management System</title>
+  <title>AXIOM PBMC Isolation and Cryopreservation - SOP Execution System</title>
   
   <!-- Tailwind CSS -->
+  <script>tailwind = { config: {} }</script>
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -14,7 +15,7 @@
   <!-- html2pdf.js for PDF Export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   
-  <!-- Firebase App & Realtime Database SDKs -->
+  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
@@ -24,7 +25,7 @@
       body { background: white; color: black; font-size: 10pt; }
       .print-container { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
       .border-slate-800, .border-slate-700 { border-color: #cbd5e1 !important; }
-      .bg-slate-900, .bg-slate-950, .bg-slate-900\/80 { background-color: white !important; color: black !important; }
+      .bg-slate-900, .bg-slate-950 { background-color: white !important; color: black !important; }
       input, select, textarea { border: 1px solid #94a3b8 !important; background: transparent !important; color: black !important; }
     }
     input[type="time"]::-webkit-calendar-picker-indicator,
@@ -50,11 +51,11 @@
       <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4 text-xs">
         <div>
           <label class="block text-slate-400 mb-1 font-medium">Username</label>
-          <input type="text" id="login-username" required placeholder="Enter username" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-slate-100 focus:border-teal-500 focus:outline-none text-sm">
+          <input type="text" id="login-username" required placeholder="BioSensesLab" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-slate-100 focus:border-teal-500 focus:outline-none text-sm">
         </div>
         <div>
           <label class="block text-slate-400 mb-1 font-medium">Password</label>
-          <input type="password" id="login-password" required placeholder="Enter password" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-slate-100 focus:border-teal-500 focus:outline-none text-sm">
+          <input type="password" id="login-password" required placeholder="••••••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-slate-100 focus:border-teal-500 focus:outline-none text-sm">
         </div>
         <div id="login-error" class="text-red-400 text-center font-medium hidden">Invalid username or password.</div>
         <button type="submit" class="w-full py-2.5 bg-teal-600 hover:bg-teal-500 text-white font-semibold rounded-lg shadow transition-colors text-sm flex items-center justify-center gap-2">
@@ -77,10 +78,10 @@
         </div>
       </div>
 
-      <!-- Navigation 3 Tabs -->
+      <!-- Navigation Tabs -->
       <div class="flex items-center flex-wrap gap-2">
         <button onclick="switchTab('create')" id="tab-btn-create" class="px-3.5 py-1.5 text-xs font-semibold rounded-md bg-teal-600 text-white flex items-center gap-1.5 shadow-sm hover:bg-teal-500 transition-colors">
-          <i data-lucide="plus-circle" class="w-4 h-4"></i> 1. Create New Record
+          <i data-lucide="plus-circle" class="w-4 h-4"></i> 1. New SOP Record
         </button>
         <button onclick="switchTab('history')" id="tab-btn-history" class="px-3.5 py-1.5 text-xs font-semibold rounded-md bg-slate-800 text-slate-300 hover:text-white flex items-center gap-1.5 hover:bg-slate-700 transition-colors border border-slate-700">
           <i data-lucide="database" class="w-4 h-4"></i> 2. Records & History
@@ -90,10 +91,6 @@
         </button>
 
         <div class="h-5 w-px bg-slate-800 mx-1"></div>
-
-        <button onclick="openPasswordModal()" class="px-2.5 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-md border border-slate-700 flex items-center gap-1.5 transition-colors" title="Change Password">
-          <i data-lucide="key-round" class="w-3.5 h-3.5 text-amber-400"></i> Password
-        </button>
         <div class="flex items-center gap-1.5 px-2 py-1 bg-slate-950 border border-slate-800 rounded-md text-[11px] text-slate-400" title="Firebase Status">
           <span id="firebase-status-dot" class="w-2 h-2 rounded-full bg-red-500"></span>
           <span id="firebase-status-text">Connecting...</span>
@@ -105,13 +102,13 @@
   <!-- Main Container -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 print-container">
 
-    <!-- ==================== TAB 1: CREATE & EDIT NEW RECORD FORM ==================== -->
+    <!-- ==================== TAB 1: CREATE & EDIT NEW RECORD ==================== -->
     <div id="create-view" class="space-y-6">
 
       <!-- Form Control Header -->
       <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 flex flex-wrap justify-between items-center gap-4 no-print shadow-md">
         <div>
-          <span id="active-record-badge" class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/10 text-teal-400 border border-teal-500/20 uppercase tracking-wider">Document Control (New Record)</span>
+          <span id="active-record-badge" class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-500/10 text-teal-400 border border-teal-500/20 uppercase tracking-wider">Document Control (Active Record)</span>
           <h2 class="text-base font-bold text-slate-100 mt-1">PBMC Isolation and Cryopreservation - SOP Checklist</h2>
         </div>
 
@@ -142,47 +139,54 @@
         </div>
       </div>
 
-      <!-- FORM CONTENT WRAPPER (FULL 11 SECTIONS) -->
+      <!-- FORM CONTENT WRAPPER -->
       <div id="sop-form-container" class="space-y-6">
 
-        <!-- 1. CRITICAL RULES MANDATORY BEFORE PROCESSING -->
+        <!-- Place Barcode Box -->
+        <div class="flex justify-end no-print">
+          <div class="border border-dashed border-slate-700 rounded-lg p-3 text-center w-48 bg-slate-900/50 text-slate-400 text-xs font-mono">
+            Place Barcode Here[cite: 2]
+          </div>
+        </div>
+
+        <!-- 1. CRITICAL RULES — MANDATORY BEFORE PROCESSING -->
         <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
           <div class="flex items-center gap-2 mb-3 pb-2 border-b border-slate-800">
             <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400"></i>
-            <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wide">1. Critical Rules — Mandatory Before Processing</h3>
+            <h3 class="text-sm font-bold text-amber-400 uppercase tracking-wide">1. Critical Rules — Mandatory Before Processing[cite: 2]</h3>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-slate-300">
+          <div class="space-y-2 text-xs text-slate-300">
             <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-800/50 cursor-pointer border border-slate-800/50">
               <input type="checkbox" id="rule-1" class="mt-0.5 rounded bg-slate-950 border-slate-700 text-teal-500">
-              <span>All reagents and collected blood must be at room temperature (RT) before PBMC isolation.</span>
+              <span>All reagents and collected blood must be at room temperature (RT) before PBMC isolation.[cite: 2]</span>
             </label>
             <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-800/50 cursor-pointer border border-slate-800/50">
               <input type="checkbox" id="rule-2" class="mt-0.5 rounded bg-slate-950 border-slate-700 text-teal-500">
-              <span>After blood collection, process blood within 1 hour.</span>
+              <span>After blood collection, process blood within 1 hour.[cite: 2]</span>
             </label>
             <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-800/50 cursor-pointer border border-slate-800/50">
               <input type="checkbox" id="rule-3" class="mt-0.5 rounded bg-slate-950 border-slate-700 text-teal-500">
-              <span>If blood was collected a day earlier, place horizontally in refrigerator overnight, warm at bench 1–2 hours before processing so it reaches RT.</span>
+              <span>If blood was collected a day earlier, place it horizontally in the refrigerator overnight, then allow it to warm at the bench for 1–2 hours before processing so it reaches RT.[cite: 2]</span>
             </label>
             <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-800/50 cursor-pointer border border-slate-800/50">
               <input type="checkbox" id="rule-4" class="mt-0.5 rounded bg-slate-950 border-slate-700 text-teal-500">
-              <span>All subsequent procedures must use sterile technique and sterile materials. Except for cell counting and centrifugation, perform the steps inside Biosafety Cabinet.</span>
+              <span>All subsequent procedures must use sterile technique and sterile materials. Except for cell counting and centrifugation, perform the steps inside the Biosafety Cabinet.[cite: 2]</span>
             </label>
             <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-800/50 cursor-pointer border border-slate-800/50">
               <input type="checkbox" id="rule-5" class="mt-0.5 rounded bg-slate-950 border-slate-700 text-teal-500">
-              <span>Label every tube. Cryovial nomenclature: Site Code – Condition – Patient Identifier # – Sample Type. Example: XX-RA-001-PBM or XX-RA-001-Plasma or XX-RA-001-Serum.</span>
+              <span>Label every tube. Cryovial nomenclature: Site Code – Condition – Patient Identifier # – Sample Type. Example: XX-RA-001-PBM or XX- RA- 001- Plasma or XX- RA- 001- Serum.[cite: 2]</span>
             </label>
             <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-800/50 cursor-pointer border border-slate-800/50">
               <input type="checkbox" id="rule-6" class="mt-0.5 rounded bg-slate-950 border-slate-700 text-teal-500">
-              <span>Follow the programmed centrifuge protocol validated for the instrument.</span>
+              <span>Follow the programmed centrifuge protocol validated for the instrument.[cite: 2]</span>
             </label>
             <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-800/50 cursor-pointer border border-slate-800/50">
               <input type="checkbox" id="rule-7" class="mt-0.5 rounded bg-slate-950 border-slate-700 text-teal-500">
-              <span>When layering diluted blood onto Ficoll, do not mix layers. If interface is disrupted, stop and follow recovery instruction in this SOP.</span>
+              <span>When layering diluted blood onto Ficoll, do not mix the layers. If the interface is disrupted, stop and follow the recovery instruction in this SOP.[cite: 2]</span>
             </label>
             <label class="flex items-start gap-2.5 p-2 rounded hover:bg-slate-800/50 cursor-pointer border border-slate-800/50">
               <input type="checkbox" id="rule-8" class="mt-0.5 rounded bg-slate-950 border-slate-700 text-teal-500">
-              <span>From Step 32 onward, keep cells on crushed ice at all times. During cell counting, keep the 10 mL cell suspension on ice until final centrifugation in Step 39, after volume calculations are completed.</span>
+              <span>From Step 32 onward, keep cells on crushed ice at all times. During cell counting, keep the 10 mL cell suspension on ice until the final centrifugation in Step 39, after volume calculations are completed.[cite: 2]</span>
             </label>
           </div>
         </section>
@@ -191,59 +195,61 @@
         <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
           <div class="flex items-center gap-2 pb-2 border-b border-slate-800">
             <i data-lucide="fingerprint" class="w-5 h-5 text-teal-400"></i>
-            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">2. Sample Identification and Chain of Custody</h3>
+            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">2. Sample Identification and Chain of Custody[cite: 2]</h3>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
             <div>
-              <label class="block text-slate-400 mb-1 font-medium">Site Code</label>
-              <input type="text" id="site-code" value="" placeholder="Enter Site Code" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
+              <label class="block text-slate-400 mb-1 font-medium">Site Code[cite: 2]</label>
+              <input type="text" id="site-code" value="" oninput="updateRecordId()" placeholder="e.g. XX" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none font-mono">
             </div>
             <div>
-              <label class="block text-slate-400 mb-1 font-medium">Condition / Disease Code</label>
-              <input type="text" id="disease-code" value="" placeholder="Enter Disease Code (e.g. RA, COVID, Healthy)" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
+              <label class="block text-slate-400 mb-1 font-medium">Condition / Disease Code[cite: 2]</label>
+              <input type="text" id="disease-code" value="" oninput="updateRecordId()" placeholder="e.g. RA" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none font-mono">
             </div>
             <div>
-              <label class="block text-slate-400 mb-1 font-medium">Patient Identifier</label>
-              <input type="text" id="patient-id" value="" placeholder="Enter Patient ID" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none font-mono">
+              <label class="block text-slate-400 mb-1 font-medium">Patient Identifier[cite: 2]</label>
+              <input type="text" id="patient-id" value="" oninput="updateRecordId()" placeholder="e.g. 001" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none font-mono">
             </div>
-
             <div>
-              <label class="block text-slate-400 mb-1 font-medium">Sample Type</label>
-              <select id="sample-type" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
+              <label class="block text-slate-400 mb-1 font-medium">Sample Type[cite: 2]</label>
+              <select id="sample-type" onchange="updateRecordId()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
                 <option value="">-- Select Type --</option>
-                <option value="Whole Blood">Whole Blood</option>
-                <option value="Plasma">Plasma</option>
-                <option value="PBMC">PBMC</option>
-                <option value="Serum">Serum</option>
-                <option value="Other">Other</option>
+                <option value="Whole Blood">Whole Blood[cite: 2]</option>
+                <option value="Plasma">Plasma[cite: 2]</option>
+                <option value="PBMC">PBMC[cite: 2]</option>
+                <option value="Serum">Serum[cite: 2]</option>
+                <option value="Other">Other[cite: 2]</option>
               </select>
             </div>
             <div>
-              <label class="block text-slate-400 mb-1 font-medium">Collection Date</label>
-              <input type="date" id="collection-date" value="" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
+              <label class="block text-slate-400 mb-1 font-medium">Collection Date[cite: 2]</label>
+              <input type="date" id="collection-date" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
             </div>
             <div>
-              <label class="block text-slate-400 mb-1 font-medium">Collection Time</label>
-              <input type="time" id="collection-time" value="" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
-            </div>
-
-            <div>
-              <label class="block text-slate-400 mb-1 font-medium">Processing Start Date</label>
-              <input type="date" id="proc-start-date" value="" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
+              <label class="block text-slate-400 mb-1 font-medium">Collection Time[cite: 2]</label>
+              <input type="time" id="collection-time" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
             </div>
             <div>
-              <label class="block text-slate-400 mb-1 font-medium">Processing Start Time</label>
-              <input type="time" id="proc-start-time" value="" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
+              <label class="block text-slate-400 mb-1 font-medium">Processing Start Date[cite: 2]</label>
+              <input type="date" id="proc-start-date" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
             </div>
             <div>
-              <label class="block text-slate-400 mb-1 font-medium">Operator</label>
-              <input type="text" id="operator-id" value="" placeholder="Operator Name" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
+              <label class="block text-slate-400 mb-1 font-medium">Processing Start Time[cite: 2]</label>
+              <input type="time" id="proc-start-time" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
             </div>
-
-            <div class="md:col-span-3">
-              <label class="block text-slate-400 mb-1 font-medium">Second Checker (if applicable)</label>
-              <input type="text" id="checker-id" value="" placeholder="Second Checker Name" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
+            <div>
+              <label class="block text-slate-400 mb-1 font-medium">Operator[cite: 2]</label>
+              <input type="text" id="operator-id" placeholder="Operator Name" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-slate-400 mb-1 font-medium">Second Checker (if applicable)[cite: 2]</label>
+              <input type="text" id="checker-id" placeholder="Second Checker Name" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:border-teal-500 focus:outline-none">
+            </div>
+            <div class="md:col-span-2 bg-slate-950 p-3 rounded-lg border border-slate-800">
+              <p class="text-xs text-slate-300">
+                Collect 6 tubes per participant — 4 EDTA tubes (4 mL) and 2 plain tubes (8 mL). Immediately label all tubes. Gently invert EDTA tubes after collection to mix with anticoagulants. Handle plain tubes according to the applicable serum-processing procedure. Record collection date and time.[cite: 2]
+              </p>
             </div>
           </div>
         </section>
@@ -252,37 +258,81 @@
         <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
           <div class="flex items-center gap-2 mb-4 pb-2 border-b border-slate-800">
             <i data-lucide="boxes" class="w-5 h-5 text-teal-400"></i>
-            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">3. Required Materials and Equipment</h3>
+            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">3. Required Materials and Equipment[cite: 2]</h3>
           </div>
 
           <div class="overflow-x-auto">
             <table class="w-full text-xs text-left border-collapse">
               <thead>
                 <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
-                  <th class="p-2.5 w-1/3">Item Description</th>
-                  <th class="p-2.5 w-2/3">Pre-use QC / Status</th>
+                  <th class="p-2.5 w-1/3">Item[cite: 2]</th>
+                  <th class="p-2.5 w-2/3">Pre-use QC / Status[cite: 2]</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-800/60">
                 <tr>
-                  <td class="p-2.5 text-slate-200 font-medium">15 mL sterile tubes</td>
-                  <td class="p-2.5 flex items-center gap-4"><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-15ml-avail" class="rounded bg-slate-950 border-slate-700"> Available</label><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-15ml-acc" class="rounded bg-slate-950 border-slate-700"> Acceptable</label></td>
+                  <td class="p-2.5 text-slate-200 font-medium">15 mL sterile tubes[cite: 2]</td>
+                  <td class="p-2.5 flex items-center gap-4"><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-15ml-avail" class="rounded bg-slate-950 border-slate-700"> Available[cite: 2]</label><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-15ml-acc" class="rounded bg-slate-950 border-slate-700"> Acceptable[cite: 2]</label></td>
                 </tr>
                 <tr>
-                  <td class="p-2.5 text-slate-200 font-medium">50 mL sterile tubes</td>
-                  <td class="p-2.5 flex items-center gap-4"><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-50ml-avail" class="rounded bg-slate-950 border-slate-700"> Available</label><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-50ml-acc" class="rounded bg-slate-950 border-slate-700"> Acceptable</label></td>
+                  <td class="p-2.5 text-slate-200 font-medium">50 mL sterile tubes[cite: 2]</td>
+                  <td class="p-2.5 flex items-center gap-4"><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-50ml-avail" class="rounded bg-slate-950 border-slate-700"> Available[cite: 2]</label><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-50ml-acc" class="rounded bg-slate-950 border-slate-700"> Acceptable[cite: 2]</label></td>
                 </tr>
                 <tr>
-                  <td class="p-2.5 text-slate-200 font-medium">Ficoll / Lymphoprep</td>
-                  <td class="p-2.5 flex gap-2"><input type="text" id="mat-ficoll-lot" value="" placeholder="Lot: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"><input type="text" id="mat-ficoll-exp" value="" placeholder="Exp: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5 text-slate-200 font-medium">EDTA tube 4 mL[cite: 2]</td>
+                  <td class="p-2.5 flex items-center gap-4"><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-edta-avail" class="rounded bg-slate-950 border-slate-700"> Available[cite: 2]</label><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-edta-acc" class="rounded bg-slate-950 border-slate-700"> Acceptable[cite: 2]</label></td>
                 </tr>
                 <tr>
-                  <td class="p-2.5 text-slate-200 font-medium">PBS 1X or NaCl 0.9%</td>
-                  <td class="p-2.5 flex gap-2"><input type="text" id="mat-pbs-lot" value="" placeholder="Lot: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"><input type="text" id="mat-pbs-exp" value="" placeholder="Exp: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5 text-slate-200 font-medium">Plain tube 8 mL[cite: 2]</td>
+                  <td class="p-2.5 flex items-center gap-4"><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-plain-avail" class="rounded bg-slate-950 border-slate-700"> Available[cite: 2]</label><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-plain-acc" class="rounded bg-slate-950 border-slate-700"> Acceptable[cite: 2]</label></td>
                 </tr>
                 <tr>
-                  <td class="p-2.5 text-slate-200 font-medium">MACS Freezing Solution</td>
-                  <td class="p-2.5 flex gap-2"><input type="text" id="mat-macs-lot" value="" placeholder="Lot: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"><input type="text" id="mat-macs-exp" value="" placeholder="Exp: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5 text-slate-200 font-medium">10 mL serological pipette[cite: 2]</td>
+                  <td class="p-2.5 flex items-center gap-4"><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-10pip-avail" class="rounded bg-slate-950 border-slate-700"> Available[cite: 2]</label><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-10pip-acc" class="rounded bg-slate-950 border-slate-700"> Acceptable[cite: 2]</label></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">25 mL serological pipette[cite: 2]</td>
+                  <td class="p-2.5 flex items-center gap-4"><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-25pip-avail" class="rounded bg-slate-950 border-slate-700"> Available[cite: 2]</label><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-25pip-acc" class="rounded bg-slate-950 border-slate-700"> Acceptable[cite: 2]</label></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Ficoll / Lymphoprep[cite: 2]</td>
+                  <td class="p-2.5 flex gap-2"><input type="text" id="mat-ficoll-lot" placeholder="Lot: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"><input type="text" id="mat-ficoll-exp" placeholder="Exp: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">PBS 1X or NaCl 0.9%[cite: 2]</td>
+                  <td class="p-2.5 flex gap-2"><input type="text" id="mat-pbs-lot" placeholder="Lot: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"><input type="text" id="mat-pbs-exp" placeholder="Exp: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">MACS Freezing Solution[cite: 2]</td>
+                  <td class="p-2.5 flex gap-2"><input type="text" id="mat-macs-lot" placeholder="Lot: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"><input type="text" id="mat-macs-exp" placeholder="Exp: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Cryovials[cite: 2]</td>
+                  <td class="p-2.5 flex gap-2"><input type="text" id="mat-cryo-lot" placeholder="Lot: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"><input type="text" id="mat-cryo-exp" placeholder="Exp: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Isopropanol freezing container[cite: 2]</td>
+                  <td class="p-2.5 flex items-center gap-4"><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-frosty-avail" class="rounded bg-slate-950 border-slate-700"> Available[cite: 2]</label><label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="mat-frosty-acc" class="rounded bg-slate-950 border-slate-700"> Ready[cite: 2]</label></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Refrigerated centrifuge[cite: 2]</td>
+                  <td class="p-2.5 flex gap-2"><input type="text" id="mat-cent-id" placeholder="ID: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"><input type="text" id="mat-cent-maint" placeholder="Calibration/maintenance: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Freezer −86°C[cite: 2]</td>
+                  <td class="p-2.5 flex gap-2"><input type="text" id="mat-f86-id" placeholder="ID: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"><input type="text" id="mat-f86-status" placeholder="Status: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Liquid nitrogen container[cite: 2]</td>
+                  <td class="p-2.5 flex gap-2"><input type="text" id="mat-ln2-id" placeholder="ID: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"><input type="text" id="mat-ln2-status" placeholder="Status: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Biosafety cabinet[cite: 2]</td>
+                  <td class="p-2.5 flex gap-2"><input type="text" id="mat-bsc-id" placeholder="ID: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"><input type="text" id="mat-bsc-status" placeholder="Status: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Counting and Viability (Trypan blue)[cite: 2]</td>
+                  <td class="p-2.5 flex gap-2"><input type="text" id="mat-count-id" placeholder="ID: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"><input type="text" id="mat-count-status" placeholder="Status: ______" class="w-1/2 bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
                 </tr>
               </tbody>
             </table>
@@ -293,77 +343,663 @@
         <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
           <div class="flex items-center gap-2 mb-4 pb-2 border-b border-slate-800">
             <i data-lucide="check-square" class="w-5 h-5 text-teal-400"></i>
-            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">4. Pre-Processing Readiness Checklist</h3>
+            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">4. Pre-Processing Readiness Checklist[cite: 2]</h3>
           </div>
 
           <div class="overflow-x-auto">
             <table class="w-full text-xs text-left border-collapse">
               <thead>
                 <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
-                  <th class="p-3">Pre-processing timestamp / check</th>
-                  <th class="p-3 w-40">Time / Result</th>
-                  <th class="p-3 w-28">Initials</th>
+                  <th class="p-3">Pre-processing timestamp / check[cite: 2]</th>
+                  <th class="p-3 w-40">Time / Result[cite: 2]</th>
+                  <th class="p-3 w-28">Initials[cite: 2]</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-800/60">
                 <tr>
-                  <td class="p-2.5 text-slate-200 font-medium">Reagent RT confirmed</td>
+                  <td class="p-2.5 text-slate-200 font-medium">Reagent RT confirmed[cite: 2]</td>
                   <td class="p-2.5"><input type="text" id="sec4-rt-res" placeholder="____ : ____" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
                   <td class="p-2.5"><input type="text" id="sec4-rt-init" placeholder="______" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 uppercase"></td>
                 </tr>
                 <tr>
-                  <td class="p-2.5 text-slate-200 font-medium">Blood RT confirmed</td>
+                  <td class="p-2.5 text-slate-200 font-medium">Blood RT confirmed[cite: 2]</td>
                   <td class="p-2.5"><input type="text" id="sec4-blood-res" placeholder="____ : ____" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
                   <td class="p-2.5"><input type="text" id="sec4-blood-init" placeholder="______" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 uppercase"></td>
                 </tr>
                 <tr>
-                  <td class="p-2.5 text-slate-200 font-medium">BSC ready</td>
+                  <td class="p-2.5 text-slate-200 font-medium">BSC ready[cite: 2]</td>
                   <td class="p-2.5"><input type="text" id="sec4-bsc-res" placeholder="____ : ____" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
                   <td class="p-2.5"><input type="text" id="sec4-bsc-init" placeholder="______" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Centrifuge program verified[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" id="sec4-cent-res" placeholder="____ : ____" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="text" id="sec4-cent-init" placeholder="______" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Cryovials labeled[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" id="sec4-cryo-res" placeholder="____ : ____" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="text" id="sec4-cryo-init" placeholder="______" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Freezing container ready[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" id="sec4-frosty-res" placeholder="____ : ____" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="text" id="sec4-frosty-init" placeholder="______" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 uppercase"></td>
                 </tr>
               </tbody>
             </table>
           </div>
         </section>
 
-        <!-- 5. SAMPLE PROCESSING CHECKLIST (CELL COUNTING & METRICS) -->
-        <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
+        <!-- 5. SAMPLE PROCESSING CHECKLIST -->
+        <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm space-y-5">
           <div class="flex items-center gap-2 pb-2 border-b border-slate-800">
-            <i data-lucide="calculator" class="w-5 h-5 text-teal-400"></i>
-            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">5. Cell Counting and Viability Calculator</h3>
+            <i data-lucide="list-checks" class="w-5 h-5 text-teal-400"></i>
+            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">5. Sample Processing Checklist — Complete for Every Sample[cite: 2]</h3>
+          </div>
+          <p class="text-xs text-slate-400">Use one copy of Sections 5–8 for every participant/sample. Do not use a generic batch checklist in place of the individual sample record.[cite: 2]</p>
+
+          <!-- Exact Section 5 Header Table -->
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                  <th class="p-2.5">Sample ID[cite: 2]</th>
+                  <th class="p-2.5">Collection Time[cite: 2]</th>
+                  <th class="p-2.5">Processing Start[cite: 2]</th>
+                  <th class="p-2.5">Processing End[cite: 2]</th>
+                  <th class="p-2.5">Operator[cite: 2]</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="p-2.5"><input type="text" id="proc-sample-id" placeholder="________________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-slate-100 font-mono"></td>
+                  <td class="p-2.5"><input type="text" id="proc-col-time" placeholder="____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-slate-100"></td>
+                  <td class="p-2.5"><input type="text" id="proc-start-time-5" placeholder="____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-slate-100"></td>
+                  <td class="p-2.5"><input type="text" id="proc-end-time-5" placeholder="____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-slate-100"></td>
+                  <td class="p-2.5"><input type="text" id="proc-operator-5" placeholder="________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1.5 text-slate-100"></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-3 text-xs">
-            <div>
-              <label class="block text-slate-400 mb-1">Viable Cells Count</label>
-              <input type="number" id="calc-viable" oninput="calculateCellMetrics()" placeholder="e.g. 150" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-2 font-mono text-slate-100">
-            </div>
-            <div>
-              <label class="block text-slate-400 mb-1">Dead Cells Count</label>
-              <input type="number" id="calc-dead" oninput="calculateCellMetrics()" placeholder="e.g. 10" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-2 font-mono text-slate-100">
-            </div>
-            <div>
-              <label class="block text-slate-400 mb-1">Squares Counted</label>
-              <input type="number" id="calc-squares" oninput="calculateCellMetrics()" placeholder="e.g. 4" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-2 font-mono text-slate-100">
-            </div>
-            <div>
-              <label class="block text-slate-400 mb-1">Dilution Factor</label>
-              <input type="number" id="calc-dilution" oninput="calculateCellMetrics()" placeholder="e.g. 2" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-2 font-mono text-slate-100">
+          <!-- 5.1 Plasma Collection and Blood Dilution -->
+          <div class="space-y-3 pt-2">
+            <h4 class="text-xs font-bold text-teal-400 uppercase tracking-wide">5.1 Plasma Collection and Blood Dilution[cite: 2]</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                    <th class="p-2 w-12">Step[cite: 2]</th>
+                    <th class="p-2">Action[cite: 2]</th>
+                    <th class="p-2 w-48">Record[cite: 2]</th>
+                    <th class="p-2 w-16 text-center">Done[cite: 2]</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">1[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Centrifuge 2 of the 4 EDTA blood tubes at 2000 rpm for 10 minutes.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Start ____:____ End ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">2[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Collect plasma (top layer) into a labeled tube and aliquot into at least 4 labeled cryovials, each containing 1 mL; store cryovials in the freezing container.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Start ____:____ End ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">3[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Replace the same volume removed as plasma with sterile PBS or sterile NaCl 0.9%. Invert to mix.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Volume removed: ____ mL | Replacement: ____ mL | Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">4[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Measure and record total blood volume in all tubes.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Total blood: ______ mL | Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">5[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Add an equal volume of sterile PBS or sterile NaCl 0.9% (1:1).[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="PBS/saline added: ______ mL | Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">6[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Mix gently by inversion. Do not vortex.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">7[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Centrifuge the plain SST blood collection tube at 2000 rpm for 10 min[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">8[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Collect serum from the serum layer. Transfer 1 mL of serum in each cryovial and 1 ml in a test tube for biochemical and immunological test.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">9[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Store cryovial in the freezing container[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-slate-950 rounded-lg border border-slate-800">
-            <div>
-              <span class="text-slate-400 text-xs block">Calculated Cell Viability</span>
-              <span id="res-viability" class="text-base font-bold text-slate-100 font-mono">-- %</span>
+          <!-- 5.2 Ficoll Tube Selection and Layering -->
+          <div class="space-y-3 pt-2">
+            <h4 class="text-xs font-bold text-teal-400 uppercase tracking-wide">5.2 Ficoll Tube Selection and Layering[cite: 2]</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                    <th class="p-2 w-12">Step[cite: 2]</th>
+                    <th class="p-2">Action[cite: 2]</th>
+                    <th class="p-2 w-48">Record[cite: 2]</th>
+                    <th class="p-2 w-16 text-center">Done[cite: 2]</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">10[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Select tube according to diluted blood volume: ≤9 mL diluted blood → 15 mL tube; ≥20 mL diluted blood → 50 mL tube.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Diluted blood: ____ mL | Tube: ☐15 mL ☐50 mL" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">11[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Calculate Ficoll volume as diluted blood volume ÷ 2.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Calculation: ______ ÷ 2 = ______ mL" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">12[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Add the calculated Ficoll volume to an empty centrifuge tube.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Ficoll added: ______ mL | Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">13[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Set pipettor dispensing to gravity or the lowest speed.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Setting verified: ☐ | Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">14[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Use suitable serological pipette: ≤9 mL diluted blood → 10 mL pipette; ≥13 mL → 25 mL pipette. Slowly layer diluted blood over Ficoll.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Pipette: ☐10 mL ☐25 mL | Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">15[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Do not exceed 30 mL diluted blood in a 50 mL tube containing 15 mL Ficoll.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Volume check: ______ mL" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">16[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Add diluted blood slowly down the tube wall; establish an approximately 3 mL layer dropwise, then continue with slow steady flow.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">17[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Confirm two distinct layers: diluted blood on top and Ficoll at the bottom. Do not disturb the interface.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Interface intact: ☐ Yes ☐ No | Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <div>
-              <span class="text-slate-400 text-xs block">Lymphocyte Concentration</span>
-              <span id="res-concentration" class="text-base font-bold text-teal-400 font-mono">-- cells/mL</span>
+            <div class="p-3 bg-slate-950 rounded border border-slate-800 text-xs text-amber-300">
+              <strong>Layering failure control:</strong> If the layers mix, stop. The supplied SOP specifies adding approximately 50% of the total volume of PBS or saline and restarting the separation. Record the deviation/recovery in Section 8.[cite: 2]
             </div>
-            <div>
-              <span class="text-slate-400 text-xs block">MACS Freezing Solution Req.</span>
-              <span id="res-freezing-vol" class="text-base font-bold text-amber-400 font-mono">-- mL</span>
+          </div>
+
+          <!-- 5.3 Ficoll Centrifugation -->
+          <div class="space-y-3 pt-2">
+            <h4 class="text-xs font-bold text-teal-400 uppercase tracking-wide">5.3 Ficoll Centrifugation[cite: 2]</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                    <th class="p-2 w-12">Step[cite: 2]</th>
+                    <th class="p-2">Action[cite: 2]</th>
+                    <th class="p-2 w-48">Record[cite: 2]</th>
+                    <th class="p-2 w-16 text-center">Done[cite: 2]</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">18[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Set centrifuge to LOWEST acceleration and LOWEST brake.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Verified ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">19[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Confirm centrifuge is at least room temperature or warmed to 37°C as specified in the supplied SOP.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Actual temp: ______ °C | Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">20[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Centrifuge at 2500 rpm for 20 minutes.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Start ____:____ | End ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">21[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Use the validated programmed centrifuge method for the instrument and double-check the selected program before START.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Program ID: ______ | Verified by: ______" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 5.4 Separation QC Check -->
+          <div class="space-y-3 pt-2">
+            <h4 class="text-xs font-bold text-teal-400 uppercase tracking-wide">5.4 Separation QC Check[cite: 2]</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                    <th class="p-2">QC Check[cite: 2]</th>
+                    <th class="p-2 w-72">Result / Time / Initials[cite: 2]</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                  <tr>
+                    <td class="p-2 text-slate-200">Plasma top layer visible[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="☐ Yes ☐ No | Time ____:____ | Initials ____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 text-slate-200">PBMC interface visible as a thin cloudy white layer[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="☐ Yes ☐ No | Time ____:____ | Initials ____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 text-slate-200">Ficoll layer visible[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="☐ Yes ☐ No | Time ____:____ | Initials ____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 text-slate-200">RBC/granulocyte layer visible at bottom[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="☐ Yes ☐ No | Time ____:____ | Initials ____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 text-slate-200">PBMC interface suitable for collection[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="☐ Yes ☐ No | Time ____:____ | Initials ____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 text-slate-200">If PBMC layer is not visible: supervisor notified[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="☐ Yes ☐ N/A | Time ____:____ | Initials ____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 5.5 PBMC Collection -->
+          <div class="space-y-3 pt-2">
+            <h4 class="text-xs font-bold text-teal-400 uppercase tracking-wide">5.5 PBMC Collection[cite: 2]</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                    <th class="p-2 w-12">Step[cite: 2]</th>
+                    <th class="p-2">Action[cite: 2]</th>
+                    <th class="p-2 w-48">Record[cite: 2]</th>
+                    <th class="p-2 w-16 text-center">Done[cite: 2]</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">22[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Insert pipette tip carefully through the plasma layer.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">23[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Collect ONLY the cloudy PBMC interface layer.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Collected volume: ______ mL" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">24[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Avoid collecting Ficoll or red cells.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Visual check: ☐" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">25[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Transfer PBMCs to a new labeled 50 mL tube.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Tube ID: ______ | Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 5.6 First Wash -->
+          <div class="space-y-3 pt-2">
+            <h4 class="text-xs font-bold text-teal-400 uppercase tracking-wide">5.6 First Wash[cite: 2]</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                    <th class="p-2 w-12">Step[cite: 2]</th>
+                    <th class="p-2">Action[cite: 2]</th>
+                    <th class="p-2 w-48">Record[cite: 2]</th>
+                    <th class="p-2 w-16 text-center">Done[cite: 2]</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">26[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Fill the tube to 50 mL with PBS.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Final volume: ______ mL | Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">27[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Use HIGHEST acceleration and HIGHEST brake.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Verified ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">28[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Centrifuge at 1700 rpm for 10 minutes at 4°C.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Start ____:____ | End ____:____ | Temp ____°C" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">29[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Discard supernatant carefully without disturbing the pellet.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Time ____:____ | Pellet intact ☐" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">30[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Resuspend pellet in PBS equal to half the tube fill volume (25 mL cold PBS when using a 50 mL tube).[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="PBS: ______ mL | Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 5.7 Second Wash -->
+          <div class="space-y-3 pt-2">
+            <h4 class="text-xs font-bold text-teal-400 uppercase tracking-wide">5.7 Second Wash[cite: 2]</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                    <th class="p-2 w-12">Step[cite: 2]</th>
+                    <th class="p-2">Action[cite: 2]</th>
+                    <th class="p-2 w-48">Record[cite: 2]</th>
+                    <th class="p-2 w-16 text-center">Done[cite: 2]</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">31[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Use MIDDLE acceleration and MIDDLE brake.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Verified ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">32[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Centrifuge at 600 rpm for 10 minutes at 4°C.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Start ____:____ | End ____:____ | Temp ____°C" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">33[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Carefully aspirate supernatant without disturbing the pellet. Double-check the correct program before START.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Time ____:____ | Pellet intact ☐" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 5.8 Final Resuspension -->
+          <div class="space-y-3 pt-2">
+            <h4 class="text-xs font-bold text-teal-400 uppercase tracking-wide">5.8 Final Resuspension[cite: 2]</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                    <th class="p-2 w-12">Step[cite: 2]</th>
+                    <th class="p-2">Action[cite: 2]</th>
+                    <th class="p-2 w-48">Record[cite: 2]</th>
+                    <th class="p-2 w-16 text-center">Done[cite: 2]</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">34[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Resuspend pellet in 10 mL PBS or normal saline.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Final volume: ______ mL | Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">35[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Mix gently.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 5.9 Cell Counting and QC -->
+          <div class="space-y-3 pt-2">
+            <h4 class="text-xs font-bold text-teal-400 uppercase tracking-wide">5.9 Cell Counting and QC[cite: 2]</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                    <th class="p-2 w-12">Step[cite: 2]</th>
+                    <th class="p-2">Action[cite: 2]</th>
+                    <th class="p-2 w-56">Record[cite: 2]</th>
+                    <th class="p-2 w-16 text-center">Done[cite: 2]</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">36[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Label the cell suspension for each subject under study.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">37[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Add 20 uL cell suspension to 20 uL of 0.4% Trypan blue solution (one to one ratio) and gently mix the cells.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">38[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Load 10-20 uL drop of the cell–Trypan blue mixture into the haemocytometer chamber.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Loaded" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">39[cite: 2]</td>
+                    <td class="p-2 text-slate-200">
+                      Count unstained cells as viable cells and stained cells as non-viable/dead cells. Count a total of at least 200 cells. Cells within the diagonal boxes should be included in the count for both viable and non-viable cells, regardless of the number of cells present.[cite: 2]<br>
+                      <span class="text-amber-400 text-[11px]">*If the cell overcrowded perform further dilution and account for the additional dilution factor in calculation[cite: 2]</span>
+                    </td>
+                    <td class="p-2 space-y-1">
+                      <input type="text" id="calc-viable" oninput="calculateCellMetrics()" placeholder="Count of viable cell ————————" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 font-mono text-xs">
+                      <input type="text" id="calc-dead" oninput="calculateCellMetrics()" placeholder="Count of Dead cell ————————" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 font-mono text-xs">
+                    </td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">40[cite: 2]</td>
+                    <td class="p-2 text-slate-200">
+                      Calculate cell viability (%). Cell Viability (%) = (Viable Cells ÷ Total Cells) × 100[cite: 2]
+                    </td>
+                    <td class="p-2 space-y-1">
+                      <div id="res-viability" class="text-teal-400 font-mono font-bold text-xs">Viability of cell ————————</div>
+                      <input type="text" placeholder="Operator: ______ | Checker: ______" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-xs">
+                    </td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">41[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Calculate lymphocyte concentration using: Cells/mL = (Total cells counted ÷ Number of squares counted) × 10⁴ × Dilution factor (2).[cite: 2]</td>
+                    <td class="p-2">
+                      <div id="res-concentration" class="text-teal-400 font-mono font-bold text-xs">Cells/mL: ____</div>
+                    </td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 5.10 Preparation for Freezing -->
+          <div class="space-y-3 pt-2">
+            <h4 class="text-xs font-bold text-teal-400 uppercase tracking-wide">5.10 Preparation for Freezing[cite: 2]</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                    <th class="p-2 w-12">Step[cite: 2]</th>
+                    <th class="p-2">Action[cite: 2]</th>
+                    <th class="p-2 w-56">Record[cite: 2]</th>
+                    <th class="p-2 w-16 text-center">Done[cite: 2]</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">42[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Confirm both cryovials and freezing containers are pre-chilled.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">43[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Centrifuge cells at 1500 rpm for 5 minutes.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Start ____:____ | End ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">44[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Decant the supernatant without inverting the tube. Keep the tube tilted and remove any remaining liquid onto a clean, alcohol-sprayed paper towel. Do not exceed 1–2 minutes.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Time ____:____ | Pellet intact ☐" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">45[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Using the total viable cell count from Step 39, calculate the volume of ready-to-use MACS Freezing Solution required to achieve a final cell concentration of 1 × 10⁷ cells/mL.[cite: 2]</td>
+                    <td class="p-2 space-y-1">
+                      <span class="text-[11px] text-slate-400">Target: 10,000,000 cells/mL[cite: 2]</span>
+                      <input type="text" id="res-freezing-vol" placeholder="Calculation: ______ ÷ 10,000,000 = ______ mL" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 font-mono text-amber-400 text-xs">
+                    </td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">46[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Prepare the calculated final suspension volume using MACS Freezing Solution.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Volume prepared: ______ mL | Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">47[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Determine number of full cryovials and any partial aliquot.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Full vials: ____ | Partial: ____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">48[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Keep cell suspension on ice or at 4°C.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Start ____:____ | End ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 5.11 Cryopreservation and Storage -->
+          <div class="space-y-3 pt-2">
+            <h4 class="text-xs font-bold text-teal-400 uppercase tracking-wide">5.11 Cryopreservation and Storage[cite: 2]</h4>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                    <th class="p-2 w-12">Step[cite: 2]</th>
+                    <th class="p-2">Action[cite: 2]</th>
+                    <th class="p-2 w-48">Record[cite: 2]</th>
+                    <th class="p-2 w-16 text-center">Done[cite: 2]</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/60">
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">49[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Aliquot 1.0 mL of prepared cell suspension directly into each cryovial.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Vials filled: ____ | Start ____:____ End ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">50[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Each cryovial must contain 10 million PBMCs[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Expected cells/vial: 10,000,000" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">51[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Mix gently by inversion. Do not vortex.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">52[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Confirm final vial volume is 1.0 mL.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Check: ☐" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">53[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Place cryovials in an isopropanol freezing container.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Time ____:____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">54[cite: 2]</td>
+                    <td class="p-2 text-slate-200">Store at −80°C for 24 hours.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Placed in −80°C: ____:____ | Date ____/____/____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                  <tr>
+                    <td class="p-2 font-mono text-slate-400">55[cite: 2]</td>
+                    <td class="p-2 text-slate-200">After 24 hours, transfer cryovials to liquid nitrogen.[cite: 2]</td>
+                    <td class="p-2"><input type="text" placeholder="Transfer time ____:____ | LN2 location: __________" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1"></td>
+                    <td class="p-2 text-center"><input type="checkbox" class="rounded bg-slate-950 border-slate-700"></td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </section>
@@ -373,30 +1009,31 @@
           <div class="flex items-center justify-between mb-4 pb-2 border-b border-slate-800">
             <div class="flex items-center gap-2">
               <i data-lucide="qr-code" class="w-5 h-5 text-teal-400"></i>
-              <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">6. Cryovial-Level Traceability Record</h3>
+              <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">6. Cryovial-Level Traceability Record[cite: 2]</h3>
             </div>
             <button onclick="addCryovialRow()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-teal-400 text-xs font-semibold rounded border border-slate-700 flex items-center gap-1 transition-colors">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Cryovial
             </button>
           </div>
+          <p class="text-xs text-slate-400 mb-3">If more than 5 cryovials are generated, continue the same table on an additional page.[cite: 2]</p>
 
           <div class="overflow-x-auto">
             <table class="w-full text-xs text-left border-collapse" id="cryovial-table">
               <thead>
                 <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
-                  <th class="p-2.5 w-12">Vial #</th>
-                  <th class="p-2.5">Cryovial ID</th>
-                  <th class="p-2.5 w-20">Volume (mL)</th>
-                  <th class="p-2.5 w-28">Target cells</th>
-                  <th class="p-2.5 w-28">−80°C time</th>
-                  <th class="p-2.5 w-28">LN2 transfer time</th>
-                  <th class="p-2.5">Storage location</th>
-                  <th class="p-2.5 w-20">Initials</th>
+                  <th class="p-2.5 w-12">Vial #[cite: 2]</th>
+                  <th class="p-2.5">Cryovial ID[cite: 2]</th>
+                  <th class="p-2.5 w-20">Volume (mL)[cite: 2]</th>
+                  <th class="p-2.5 w-28">Target cells[cite: 2]</th>
+                  <th class="p-2.5 w-28">−80°C time[cite: 2]</th>
+                  <th class="p-2.5 w-28">LN2 transfer time[cite: 2]</th>
+                  <th class="p-2.5">Storage location[cite: 2]</th>
+                  <th class="p-2.5 w-20">Initials[cite: 2]</th>
                   <th class="p-2.5 w-10"></th>
                 </tr>
               </thead>
               <tbody id="cryovial-tbody" class="divide-y divide-slate-800/60">
-                <!-- Dynamic Rows inserted here -->
+                <!-- Populated by script -->
               </tbody>
             </table>
           </div>
@@ -404,37 +1041,243 @@
 
         <!-- 7. QUALITY CONTROL AND DEVIATION RECORD -->
         <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
-          <div class="flex items-center justify-between pb-2 border-b border-slate-800">
-            <div class="flex items-center gap-2">
-              <i data-lucide="shield-alert" class="w-5 h-5 text-amber-400"></i>
-              <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">7. Quality Control and Deviation Record</h3>
-            </div>
-            <button onclick="addDeviationLogEntry()" class="px-2.5 py-1 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30 text-xs font-semibold rounded flex items-center gap-1 transition-colors">
-              <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Add Deviation Entry
+          <div class="flex items-center gap-2 pb-2 border-b border-slate-800">
+            <i data-lucide="shield-alert" class="w-5 h-5 text-amber-400"></i>
+            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">7. Quality Control and Deviation Record[cite: 2]</h3>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                  <th class="p-2.5">QC / Control Point[cite: 2]</th>
+                  <th class="p-2.5 w-1/3">Result / Observation[cite: 2]</th>
+                  <th class="p-2.5 w-36">Pass / Hold / Deviation[cite: 2]</th>
+                  <th class="p-2.5 w-20">Initials[cite: 2]</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60">
+                <tr>
+                  <td class="p-2.5 text-slate-200">Sample identity and labels verified[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1" placeholder="Pass/Hold"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200">Collection-to-processing time verified[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1" placeholder="Pass/Hold"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200">Reagent temperature status verified[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1" placeholder="Pass/Hold"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200">Ficoll layering/interface acceptable[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1" placeholder="Pass/Hold"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200">Centrifuge program and parameters verified[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1" placeholder="Pass/Hold"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200">PBMC layer visible[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1" placeholder="Pass/Hold"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200">Pellet recovered without visible loss[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1" placeholder="Pass/Hold"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200">Cell count documented[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1" placeholder="Pass/Hold"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200">Viability documented[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1" placeholder="Pass/Hold"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200">Final concentration calculation checked[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1" placeholder="Pass/Hold"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200">Cryovial volume/identity verified[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1" placeholder="Pass/Hold"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200">−80°C placement documented[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1" placeholder="Pass/Hold"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200">24-hour transfer to LN2 documented[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1" placeholder="Pass/Hold"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 uppercase"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <label class="block text-slate-400 mb-1 text-xs">Deviation / non-conformance description[cite: 2]:</label>
+            <textarea class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-xs text-slate-200 h-16" placeholder="________________________________________________________________________________&#10;________________________________________________________________________________"></textarea>
+          </div>
+
+          <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+            <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wide">Deviation Log Table[cite: 2]</h4>
+            <button onclick="addDeviationRow()" class="px-2.5 py-1 bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30 text-xs font-semibold rounded flex items-center gap-1 transition-colors">
+              <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Add Row
             </button>
           </div>
-          <div>
-            <label class="block text-slate-400 mb-1 text-xs">Deviation / non-conformance description:</label>
-            <textarea id="sec7-dev-desc" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-xs text-slate-200 h-16" placeholder="Describe any deviations..."></textarea>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse" id="deviation-table">
+              <thead>
+                <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                  <th class="p-2.5">Deviation ID[cite: 2]</th>
+                  <th class="p-2.5">Date/Time[cite: 2]</th>
+                  <th class="p-2.5">Description / Action Taken[cite: 2]</th>
+                  <th class="p-2.5">Supervisor Review[cite: 2]</th>
+                  <th class="p-2.5 w-10"></th>
+                </tr>
+              </thead>
+              <tbody id="deviation-tbody" class="divide-y divide-slate-800/60">
+                <!-- Populated by script -->
+              </tbody>
+            </table>
           </div>
-          <div id="deviation-logs-container" class="space-y-3"></div>
         </section>
 
-        <!-- 8. FINAL SAMPLE RELEASE -->
+        <!-- 8. FINAL SAMPLE RELEASE / DOCUMENTATION CHECKLIST -->
         <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm space-y-4">
           <div class="flex items-center gap-2 pb-2 border-b border-slate-800">
             <i data-lucide="file-check" class="w-5 h-5 text-teal-400"></i>
-            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">8. Final Sample Release / Documentation Checklist</h3>
+            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">8. Final Sample Release / Documentation Checklist[cite: 2]</h3>
           </div>
+
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
             <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2.5 rounded border border-slate-800">
-              <input type="checkbox" id="rel-chk-1" class="rounded bg-slate-900 border-slate-700">
-              <span>Sample ID is complete/matches associated tubes & cryovials.</span>
+              <input type="checkbox" class="rounded bg-slate-900 border-slate-700">
+              <span>Sample ID is complete/matches associated tubes & cryovials.[cite: 2]</span>
             </label>
             <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2.5 rounded border border-slate-800">
-              <input type="checkbox" id="rel-chk-2" class="rounded bg-slate-900 border-slate-700">
-              <span>Total viable cell count and final concentration recorded.</span>
+              <input type="checkbox" class="rounded bg-slate-900 border-slate-700">
+              <span>Starting blood volume is recorded.[cite: 2]</span>
             </label>
+            <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2.5 rounded border border-slate-800">
+              <input type="checkbox" class="rounded bg-slate-900 border-slate-700">
+              <span>Collection and processing timestamps are complete.[cite: 2]</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2.5 rounded border border-slate-800">
+              <input type="checkbox" class="rounded bg-slate-900 border-slate-700">
+              <span>Total viable cell count is recorded.[cite: 2]</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2.5 rounded border border-slate-800">
+              <input type="checkbox" class="rounded bg-slate-900 border-slate-700">
+              <span>Cell concentration/freezing calculation is recorded & checked.[cite: 2]</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2.5 rounded border border-slate-800">
+              <input type="checkbox" class="rounded bg-slate-900 border-slate-700">
+              <span>Final cryovial count is recorded.[cite: 2]</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2.5 rounded border border-slate-800">
+              <input type="checkbox" class="rounded bg-slate-900 border-slate-700">
+              <span>Each cryovial is labeled using the required nomenclature.[cite: 2]</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2.5 rounded border border-slate-800">
+              <input type="checkbox" class="rounded bg-slate-900 border-slate-700">
+              <span>Storage location is recorded.[cite: 2]</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2.5 rounded border border-slate-800">
+              <input type="checkbox" class="rounded bg-slate-900 border-slate-700">
+              <span>Any deviation or unusual observation has been documented.[cite: 2]</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2.5 rounded border border-slate-800">
+              <input type="checkbox" class="rounded bg-slate-900 border-slate-700">
+              <span>Operator initials are recorded.[cite: 2]</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer bg-slate-950 p-2.5 rounded border border-slate-800 md:col-span-2">
+              <input type="checkbox" class="rounded bg-slate-900 border-slate-700">
+              <span>Supervisor / reviewer has completed the required review.[cite: 2]</span>
+            </label>
+          </div>
+
+          <div class="overflow-x-auto pt-2">
+            <table class="w-full text-xs text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                  <th class="p-2.5 w-1/3">Final Documentation[cite: 2]</th>
+                  <th class="p-2.5">Value[cite: 2]</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60">
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Sample ID[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" id="doc-sample-id" placeholder="____________________________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 font-mono"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Starting blood volume[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" placeholder="____________ mL" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Total viable cell count[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" placeholder="____________ cells" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Final concentration[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" placeholder="____________ cells/mL" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Number of full cryovials[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" placeholder="____________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Number of partial cryovials[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" placeholder="____________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Storage location[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" placeholder="____________________________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Operator initials[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" placeholder="____________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Reviewer initials[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" placeholder="____________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Processing status[cite: 2]</td>
+                  <td class="p-2.5 flex items-center gap-6">
+                    <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="proc-status" value="Released"> Released[cite: 2]</label>
+                    <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="proc-status" value="Hold"> Hold[cite: 2]</label>
+                    <label class="flex items-center gap-1.5 cursor-pointer"><input type="radio" name="proc-status" value="Deviation pending"> Deviation pending[cite: 2]</label>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </section>
 
@@ -442,43 +1285,156 @@
         <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
           <div class="flex items-center gap-2 mb-4 pb-2 border-b border-slate-800">
             <i data-lucide="help-circle" class="w-5 h-5 text-teal-400"></i>
-            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">9. Troubleshooting</h3>
+            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">9. Troubleshooting[cite: 2]</h3>
           </div>
-          <textarea id="sec9-notes" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-1.5 text-xs text-slate-200 h-14" placeholder="Record troubleshooting notes or corrective actions..."></textarea>
+
+          <div class="overflow-x-auto text-xs">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                  <th class="p-2.5 w-1/4">Issue[cite: 2]</th>
+                  <th class="p-2.5 w-1/2">Check / Action from supplied SOP[cite: 2]</th>
+                  <th class="p-2.5">Record[cite: 2]</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60">
+                <tr>
+                  <td class="p-2.5 font-medium text-slate-200">No PBMC layer visible[cite: 2]</td>
+                  <td class="p-2.5 text-slate-400">Check whether blood/Ficoll mixed, whether brake was used, and whether the spin speed was correct. Notify supervisor.[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" placeholder="________________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-medium text-slate-200">PBMC layer/interface disrupted[cite: 2]</td>
+                  <td class="p-2.5 text-slate-400">Stop. Follow the recovery instruction specified in this SOP and document the deviation.[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" placeholder="________________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-medium text-slate-200">Pellet lost during aspiration[cite: 2]</td>
+                  <td class="p-2.5 text-slate-400">Aspirate slowly from the tube wall; document the event.[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" placeholder="________________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 font-medium text-slate-200">Low viability[cite: 2]</td>
+                  <td class="p-2.5 text-slate-400">Check whether reagents were warmed too long, processing was delayed, or mixing was rough; document findings.[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" placeholder="________________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </section>
 
         <!-- 10. SAMPLE TIMELINE SUMMARY -->
         <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
           <div class="flex items-center gap-2 mb-4 pb-2 border-b border-slate-800">
             <i data-lucide="clock" class="w-5 h-5 text-teal-400"></i>
-            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">10. Sample Timeline Summary</h3>
+            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">10. Sample Timeline Summary[cite: 2]</h3>
           </div>
-          <input type="text" id="tline-summary" class="w-full bg-slate-950 border border-slate-700 rounded px-2.5 py-2 text-xs text-slate-200" placeholder="Record milestone timeline details...">
+
+          <div class="overflow-x-auto text-xs">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                  <th class="p-2.5">Milestone[cite: 2]</th>
+                  <th class="p-2.5 w-28">Date[cite: 2]</th>
+                  <th class="p-2.5 w-24">Start[cite: 2]</th>
+                  <th class="p-2.5 w-24">End[cite: 2]</th>
+                  <th class="p-2.5 w-32">Elapsed / Check[cite: 2]</th>
+                  <th class="p-2.5 w-20">Initials[cite: 2]</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60">
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Blood collection[cite: 2]</td>
+                  <td class="p-2.5"><input type="date" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="time" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="time" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="text" placeholder="________" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="text" placeholder="____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Processing initiated[cite: 2]</td>
+                  <td class="p-2.5"><input type="date" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="time" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="time" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="text" placeholder="________" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="text" placeholder="____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Final count[cite: 2]</td>
+                  <td class="p-2.5"><input type="date" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="time" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="time" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="text" placeholder="________" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="text" placeholder="____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Process completed, vials frozen[cite: 2]</td>
+                  <td class="p-2.5"><input type="date" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="time" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="time" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="text" placeholder="________" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="text" placeholder="____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Cryovials placed at −80°C[cite: 2]</td>
+                  <td class="p-2.5"><input type="date" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="time" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="time" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200" value="24 h hold" readonly></td>
+                  <td class="p-2.5"><input type="text" placeholder="____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200 uppercase"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Cryovials transferred to LN2[cite: 2]</td>
+                  <td class="p-2.5"><input type="date" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="time" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="time" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="text" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200" value="After 24 h" readonly></td>
+                  <td class="p-2.5"><input type="text" placeholder="____" class="w-full bg-slate-950 border border-slate-700 rounded px-1.5 py-1 text-slate-200 uppercase"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </section>
 
         <!-- 11. AUTHORIZATION AND SIGN-OFF -->
         <section class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
           <div class="flex items-center gap-2 mb-4 pb-2 border-b border-slate-800">
             <i data-lucide="check-circle" class="w-5 h-5 text-teal-400"></i>
-            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">11. Authorization and Sign-Off</h3>
+            <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide">11. Authorization and Sign-Off[cite: 2]</h3>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-            <div>
-              <label class="block text-slate-400 mb-1">Operator Name</label>
-              <input type="text" id="auth-op-name" placeholder="Operator Name" class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-slate-200">
-            </div>
-            <div>
-              <label class="block text-slate-400 mb-1">Supervisor / Reviewer Name</label>
-              <input type="text" id="auth-rev-name" placeholder="Supervisor Name" class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-2 text-slate-200">
-            </div>
+
+          <div class="overflow-x-auto text-xs">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
+                  <th class="p-2.5 w-1/4">Role[cite: 2]</th>
+                  <th class="p-2.5">Name[cite: 2]</th>
+                  <th class="p-2.5">Signature[cite: 2]</th>
+                  <th class="p-2.5 w-44">Date / Time[cite: 2]</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60">
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Processing Operator[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" placeholder="________________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="text" placeholder="________________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 font-serif italic"></td>
+                  <td class="p-2.5"><input type="datetime-local" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                </tr>
+                <tr>
+                  <td class="p-2.5 text-slate-200 font-medium">Reviewer / Supervisor[cite: 2]</td>
+                  <td class="p-2.5"><input type="text" placeholder="________________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                  <td class="p-2.5"><input type="text" placeholder="________________" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 font-serif italic"></td>
+                  <td class="p-2.5"><input type="datetime-local" class="w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200"></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </section>
 
       </div>
     </div>
 
-
-    <!-- ==================== TAB 2: SAVED RECORDS & HISTORY ==================== -->
+    <!-- ==================== TAB 2: RECORDS & HISTORY ==================== -->
     <div id="history-view" class="hidden space-y-6">
       <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm flex flex-wrap justify-between items-center gap-4">
         <div>
@@ -486,7 +1442,7 @@
           <p class="text-xs text-slate-400">Search historical runs, edit entries directly back into the form, delete, or export instantly.</p>
         </div>
         <div>
-          <input type="text" id="search-records" onkeyup="renderRecordsTable()" placeholder="Search Patient ID / Disease / Operator..." class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-teal-500 w-72">
+          <input type="text" id="search-records" onkeyup="renderRecordsTable()" placeholder="Search Sample ID / Disease / Operator..." class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-100 focus:outline-none focus:border-teal-500 w-72">
         </div>
       </div>
 
@@ -495,7 +1451,7 @@
           <table class="w-full text-xs text-left border-collapse">
             <thead>
               <tr class="bg-slate-950 text-slate-300 border-b border-slate-800">
-                <th class="p-3">Record ID</th>
+                <th class="p-3">Sample ID</th>
                 <th class="p-3">Patient ID</th>
                 <th class="p-3">Disease / Condition</th>
                 <th class="p-3">Collection Date</th>
@@ -505,13 +1461,12 @@
               </tr>
             </thead>
             <tbody id="history-tbody" class="divide-y divide-slate-800">
-              <!-- Records inserted here -->
+              <!-- Populated by script -->
             </tbody>
           </table>
         </div>
       </div>
     </div>
-
 
     <!-- ==================== TAB 3: ANALYTICS DASHBOARD ==================== -->
     <div id="dashboard-view" class="hidden space-y-6">
@@ -552,7 +1507,6 @@
         </div>
       </div>
 
-      <!-- Disease Breakdown Table & Insights -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 space-y-4">
           <h3 class="text-sm font-bold text-slate-100 uppercase tracking-wide flex items-center gap-2">
@@ -586,10 +1540,6 @@
               <span class="font-bold text-emerald-400">Standard Compliance</span>
               <p class="text-slate-400">Ensure cell viability remains above 85% for clinical release qualification per AXIOM medical standard operating protocols.</p>
             </div>
-            <div class="p-3 bg-slate-950 border border-slate-800 rounded-lg space-y-1">
-              <span class="font-bold text-amber-400">Quick Actions</span>
-              <p class="text-slate-400">Head to Tab 2 to instantly export any historical record into official Word documents, Excel spreadsheets, or PDF reports.</p>
-            </div>
           </div>
         </div>
       </div>
@@ -597,45 +1547,12 @@
 
   </main>
 
-  <!-- PASSWORD CHANGE MODAL -->
-  <div id="password-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-xl max-w-sm w-full p-6 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-slate-100 text-sm flex items-center gap-2">
-          <i data-lucide="key-round" class="w-4 h-4 text-amber-400"></i> Change System Password
-        </h3>
-        <button onclick="closePasswordModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
-      </div>
-      
-      <div class="space-y-3 text-xs">
-        <div>
-          <label class="block text-slate-400 mb-1">Current Password</label>
-          <input type="password" id="pw-current" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-1.5 text-slate-200">
-        </div>
-        <div>
-          <label class="block text-slate-400 mb-1">New Password</label>
-          <input type="password" id="pw-new" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-1.5 text-slate-200">
-        </div>
-        <div>
-          <label class="block text-slate-400 mb-1">Confirm New Password</label>
-          <input type="password" id="pw-confirm" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded px-3 py-1.5 text-slate-200">
-        </div>
-        <div id="pw-error" class="text-red-400 text-xs font-medium hidden"></div>
-      </div>
-
-      <div class="flex justify-end gap-2 pt-2 border-t border-slate-800">
-        <button onclick="closePasswordModal()" class="px-3 py-1.5 bg-slate-800 text-slate-300 text-xs rounded hover:bg-slate-700">Cancel</button>
-        <button onclick="updateSystemPassword()" class="px-3 py-1.5 bg-teal-600 text-white text-xs rounded hover:bg-teal-500">Update Password</button>
-      </div>
-    </div>
-  </div>
-
   <!-- APPLICATION SCRIPT LOGIC -->
   <script>
-    let currentRecordId = null;
     let cloudDb = null;
     let remoteRecords = {};
 
+    // Force-set proper default credentials on initial load
     if (!localStorage.getItem('AXIOM_USER')) {
       localStorage.setItem('AXIOM_USER', 'BioSensesLab');
     }
@@ -663,8 +1580,8 @@
       e.preventDefault();
       const u = document.getElementById('login-username').value.trim();
       const p = document.getElementById('login-password').value;
-      const storedUser = localStorage.getItem('AXIOM_USER');
-      const storedPass = localStorage.getItem('AXIOM_PASS');
+      const storedUser = localStorage.getItem('AXIOM_USER') || 'BioSensesLab';
+      const storedPass = localStorage.getItem('AXIOM_PASS') || 'BioSenses@2026';
 
       if (u === storedUser && p === storedPass) {
         document.getElementById('login-modal').classList.add('hidden');
@@ -672,44 +1589,6 @@
       } else {
         document.getElementById('login-error').classList.remove('hidden');
       }
-    }
-
-    function openPasswordModal() {
-      document.getElementById('pw-current').value = '';
-      document.getElementById('pw-new').value = '';
-      document.getElementById('pw-confirm').value = '';
-      document.getElementById('pw-error').classList.add('hidden');
-      document.getElementById('password-modal').classList.remove('hidden');
-    }
-    function closePasswordModal() {
-      document.getElementById('password-modal').classList.add('hidden');
-    }
-
-    function updateSystemPassword() {
-      const cur = document.getElementById('pw-current').value;
-      const nw = document.getElementById('pw-new').value;
-      const conf = document.getElementById('pw-confirm').value;
-      const err = document.getElementById('pw-error');
-
-      if (cur !== localStorage.getItem('AXIOM_PASS')) {
-        err.innerText = "Current password is incorrect.";
-        err.classList.remove('hidden');
-        return;
-      }
-      if (!nw || nw.length < 6) {
-        err.innerText = "New password must be at least 6 characters long.";
-        err.classList.remove('hidden');
-        return;
-      }
-      if (nw !== conf) {
-        err.innerText = "New passwords do not match.";
-        err.classList.remove('hidden');
-        return;
-      }
-
-      localStorage.setItem('AXIOM_PASS', nw);
-      alert("Password successfully updated!");
-      closePasswordModal();
     }
 
     function initFirebase() {
@@ -753,8 +1632,7 @@
     }
 
     function clearCurrentForm() {
-      currentRecordId = 'SOP-' + Date.now();
-      document.getElementById('active-record-badge').innerText = `Document Control (New: ${currentRecordId})`;
+      document.getElementById('active-record-badge').innerText = `Document Control (New Record)`;
       
       const inputs = document.querySelectorAll('#sop-form-container input, #sop-form-container select, #sop-form-container textarea');
       inputs.forEach(input => {
@@ -762,14 +1640,30 @@
         else input.value = '';
       });
 
-      document.getElementById('res-viability').innerText = '-- %';
-      document.getElementById('res-concentration').innerText = '-- cells/mL';
-      document.getElementById('res-freezing-vol').innerText = '-- mL';
+      document.getElementById('res-viability').innerText = 'Viability of cell ————————';
+      document.getElementById('res-concentration').innerText = 'Cells/mL: ____';
+      document.getElementById('res-freezing-vol').value = '';
 
       const cryoTbody = document.getElementById('cryovial-tbody');
       cryoTbody.innerHTML = '';
-      for (let i = 1; i <= 3; i++) addCryovialRow(i);
-      document.getElementById('deviation-logs-container').innerHTML = '';
+      for (let i = 1; i <= 5; i++) addCryovialRow(i);
+
+      const devTbody = document.getElementById('deviation-tbody');
+      devTbody.innerHTML = '';
+      addDeviationRow();
+    }
+
+    function updateRecordId() {
+      const site = document.getElementById('site-code').value.trim() || 'XX';
+      const disease = document.getElementById('disease-code').value.trim() || 'RA';
+      const patient = document.getElementById('patient-id').value.trim() || '001';
+      const sample = document.getElementById('sample-type').value || 'PBM';
+
+      const sampleIdFull = `${site}-${disease}-${patient}-${sample}`;
+      const sampleIdInput = document.getElementById('proc-sample-id');
+      const docSampleId = document.getElementById('doc-sample-id');
+      if (sampleIdInput) sampleIdInput.value = sampleIdFull;
+      if (docSampleId) docSampleId.value = sampleIdFull;
     }
 
     function addCryovialRow(index) {
@@ -779,65 +1673,70 @@
       tr.className = 'hover:bg-slate-800/40';
       tr.innerHTML = `
         <td class="p-2.5 font-mono text-slate-400">${rowNum}</td>
-        <td class="p-2.5"><input type="text" class="cryo-id w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 font-mono" placeholder="ID"></td>
-        <td class="p-2.5"><input type="text" class="cryo-vol w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200" placeholder="1.0"></td>
-        <td class="p-2.5"><input type="text" class="cryo-target w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200" placeholder="10M"></td>
-        <td class="p-2.5"><input type="text" class="cryo-80-time w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200" placeholder="Time"></td>
-        <td class="p-2.5"><input type="text" class="cryo-ln2-time w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200" placeholder="Time"></td>
-        <td class="p-2.5"><input type="text" class="cryo-loc w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200" placeholder="Location"></td>
-        <td class="p-2.5"><input type="text" class="cryo-init w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 uppercase" placeholder="Init"></td>
+        <td class="p-2.5"><input type="text" class="cryo-id w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 font-mono" placeholder="________________"></td>
+        <td class="p-2.5"><input type="text" class="cryo-vol w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200" value="1.0"></td>
+        <td class="p-2.5"><input type="text" class="cryo-target w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200" value="10,000,000"></td>
+        <td class="p-2.5"><input type="text" class="cryo-80-time w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200" placeholder="________"></td>
+        <td class="p-2.5"><input type="text" class="cryo-ln2-time w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200" placeholder="________"></td>
+        <td class="p-2.5"><input type="text" class="cryo-loc w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200" placeholder="________________"></td>
+        <td class="p-2.5"><input type="text" class="cryo-init w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200 uppercase" placeholder="____"></td>
         <td class="p-2.5 text-center"><button onclick="this.closest('tr').remove()" class="text-slate-500 hover:text-red-400"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></td>
       `;
       tbody.appendChild(tr);
       lucide.createIcons();
     }
 
-    function addDeviationLogEntry() {
-      const container = document.getElementById('deviation-logs-container');
-      const div = document.createElement('div');
-      div.className = 'bg-slate-950 p-3 rounded-lg border border-slate-800 space-y-2 dev-log-item';
-      div.innerHTML = `
-        <div class="flex justify-between items-center"><span class="font-bold text-amber-400 text-xs">Deviation Entry</span><button onclick="this.closest('.dev-log-item').remove()" class="text-red-400 text-xs">Remove</button></div>
-        <textarea class="dev-desc w-full bg-slate-900 border border-slate-700 rounded p-2 text-xs text-slate-200" placeholder="Details..."></textarea>
+    function addDeviationRow() {
+      const tbody = document.getElementById('deviation-tbody');
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-800/40';
+      tr.innerHTML = `
+        <td class="p-2.5"><input type="text" class="dev-id w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200" placeholder="ID"></td>
+        <td class="p-2.5"><input type="text" class="dev-dt w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200" placeholder="Date/Time"></td>
+        <td class="p-2.5"><input type="text" class="dev-desc-row w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200" placeholder="Description / Action"></td>
+        <td class="p-2.5"><input type="text" class="dev-rev w-full bg-slate-950 border border-slate-700 rounded px-2 py-1 text-slate-200" placeholder="Reviewer"></td>
+        <td class="p-2.5 text-center"><button onclick="this.closest('tr').remove()" class="text-slate-500 hover:text-red-400"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button></td>
       `;
-      container.appendChild(div);
+      tbody.appendChild(tr);
+      lucide.createIcons();
     }
 
     function calculateCellMetrics() {
       const viable = parseFloat(document.getElementById('calc-viable').value) || 0;
       const dead = parseFloat(document.getElementById('calc-dead').value) || 0;
-      const squares = parseFloat(document.getElementById('calc-squares').value) || 0;
-      const dilution = parseFloat(document.getElementById('calc-dilution').value) || 0;
       const totalCells = viable + dead;
 
       if (totalCells > 0) {
         const viability = ((viable / totalCells) * 100).toFixed(1);
         const resViab = document.getElementById('res-viability');
-        resViab.innerText = viability + ' %';
-        resViab.className = parseFloat(viability) < 85 ? "text-base font-bold text-red-400 font-mono" : "text-base font-bold text-emerald-400 font-mono";
+        resViab.innerText = `Viability: ${viability} %`;
+        resViab.className = parseFloat(viability) < 85 ? "text-red-400 font-mono font-bold text-xs" : "text-emerald-400 font-mono font-bold text-xs";
       } else {
-        document.getElementById('res-viability').innerText = '-- %';
+        document.getElementById('res-viability').innerText = 'Viability of cell ————————';
       }
 
-      if (squares > 0 && totalCells > 0) {
-        const concentration = (totalCells / squares) * 10000 * dilution;
-        document.getElementById('res-concentration').innerText = concentration.toExponential(2) + ' cells/mL';
-        document.getElementById('res-freezing-vol').innerText = (concentration / 10000000).toFixed(2) + ' mL';
+      if (totalCells > 0) {
+        const concentration = (totalCells / 4) * 10000 * 2;
+        document.getElementById('res-concentration').innerText = `Cells/mL: ${concentration.toExponential(2)}`;
+        document.getElementById('res-freezing-vol').value = `${viable} ÷ 10,000,000 = ${(viable / 10000000).toFixed(2)} mL`;
       } else {
-        document.getElementById('res-concentration').innerText = '-- cells/mL';
-        document.getElementById('res-freezing-vol').innerText = '-- mL';
+        document.getElementById('res-concentration').innerText = 'Cells/mL: ____';
+        document.getElementById('res-freezing-vol').value = '';
       }
     }
 
     function saveRecord(status) {
-      const patientId = document.getElementById('patient-id').value.trim() || 'UNNAMED-PATIENT';
-      const diseaseCode = document.getElementById('disease-code').value.trim() || 'General';
+      const sampleIdInput = document.getElementById('proc-sample-id').value.trim();
+      if (!sampleIdInput) {
+        alert("Please enter a valid Sample ID / Record ID before saving.");
+        return;
+      }
       
       const record = {
-        id: currentRecordId,
-        patientId: patientId,
+        id: sampleIdInput,
+        patientId: document.getElementById('patient-id').value.trim() || 'UNNAMED-PATIENT',
         siteCode: document.getElementById('site-code').value,
-        diseaseCode: diseaseCode,
+        diseaseCode: document.getElementById('disease-code').value.trim() || 'General',
         sampleType: document.getElementById('sample-type').value,
         collectionDate: document.getElementById('collection-date').value,
         collectionTime: document.getElementById('collection-time').value,
@@ -849,7 +1748,7 @@
       };
 
       if (cloudDb) {
-        cloudDb.child(currentRecordId.replace(/[.#$[\]]/g, '_')).set(record)
+        cloudDb.child(sampleIdInput.replace(/[.#$[\]]/g, '_')).set(record)
           .then(() => {
             alert(`Record ${record.id} successfully saved & synced to Firebase!`);
             switchTab('history');
@@ -857,7 +1756,7 @@
           .catch(err => alert("Error saving to Firebase: " + err.message));
       } else {
         let local = JSON.parse(localStorage.getItem('AXIOM_SOP_RECORDS') || '[]');
-        const idx = local.findIndex(r => r.id === currentRecordId);
+        const idx = local.findIndex(r => r.id === sampleIdInput);
         if (idx >= 0) local[idx] = record; else local.unshift(record);
         localStorage.setItem('AXIOM_SOP_RECORDS', JSON.stringify(local));
         alert(`Record ${record.id} saved locally!`);
@@ -901,10 +1800,10 @@
 
       let list = getRecordList();
       const filtered = list.filter(r => 
+        (r.id && r.id.toLowerCase().includes(query)) ||
         (r.patientId && r.patientId.toLowerCase().includes(query)) ||
         (r.diseaseCode && r.diseaseCode.toLowerCase().includes(query)) ||
-        (r.operator && r.operator.toLowerCase().includes(query)) ||
-        (r.id && r.id.toLowerCase().includes(query))
+        (r.operator && r.operator.toLowerCase().includes(query))
       );
 
       if (filtered.length === 0) {
@@ -916,8 +1815,8 @@
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-800/50';
         tr.innerHTML = `
-          <td class="p-3 font-mono text-slate-300">${r.id}</td>
-          <td class="p-3 font-semibold text-teal-400">${r.patientId}</td>
+          <td class="p-3 font-mono font-semibold text-teal-400">${r.id}</td>
+          <td class="p-3 text-slate-300">${r.patientId}</td>
           <td class="p-3 text-slate-300">${r.diseaseCode || '-'}</td>
           <td class="p-3 text-slate-400">${r.collectionDate || '-'}</td>
           <td class="p-3 text-slate-300">${r.operator || '-'}</td>
@@ -928,134 +1827,4 @@
             <button onclick="exportRecordWord('${r.id}')" class="p-1.5 text-blue-400 hover:bg-blue-950/40 rounded transition-colors" title="Export Word"><i data-lucide="file-type-2" class="w-3.5 h-3.5"></i></button>
             <div class="h-4 w-px bg-slate-800 mx-1"></div>
             <button onclick="editRecord('${r.id}')" class="px-2 py-1 bg-teal-500/10 text-teal-400 hover:bg-teal-500/20 rounded font-medium transition-colors flex items-center gap-1" title="Edit Record"><i data-lucide="edit-3" class="w-3 h-3"></i> Edit</button>
-            <button onclick="deleteRecord('${r.id}')" class="p-1.5 text-red-400 hover:bg-red-950/40 rounded transition-colors" title="Delete Record"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-      lucide.createIcons();
-    }
-
-    function getRecordList() {
-      if (cloudDb && Object.keys(remoteRecords).length > 0) {
-        return Object.values(remoteRecords);
-      }
-      return JSON.parse(localStorage.getItem('AXIOM_SOP_RECORDS') || '[]');
-    }
-
-    function editRecord(id) {
-      const list = getRecordList();
-      const record = list.find(r => r.id === id);
-
-      if (record) {
-        currentRecordId = record.id;
-        document.getElementById('active-record-badge').innerText = `Editing Record: ${record.id}`;
-        
-        if (record.formData) {
-          restoreFormValuesSnapshot(record.formData);
-        } else {
-          document.getElementById('patient-id').value = record.patientId || '';
-          document.getElementById('site-code').value = record.siteCode || '';
-          document.getElementById('disease-code').value = record.diseaseCode || '';
-          document.getElementById('sample-type').value = record.sampleType || '';
-          document.getElementById('collection-date').value = record.collectionDate || '';
-          document.getElementById('operator-id').value = record.operator || '';
-        }
-
-        switchTab('create');
-      } else {
-        alert("Record not found.");
-      }
-    }
-
-    function deleteRecord(id) {
-      if (confirm(`Are you sure you want to delete record ${id}?`)) {
-        if (cloudDb) {
-          cloudDb.child(id.replace(/[.#$[\]]/g, '_')).remove();
-        } else {
-          let local = JSON.parse(localStorage.getItem('AXIOM_SOP_RECORDS') || '[]');
-          local = local.filter(r => r.id !== id);
-          localStorage.setItem('AXIOM_SOP_RECORDS', JSON.stringify(local));
-          renderRecordsTable();
-        }
-      }
-    }
-
-    function renderDashboardStats() {
-      const list = getRecordList();
-      const total = list.length;
-      const released = list.filter(r => r.status === 'Released').length;
-      const drafts = list.filter(r => r.status !== 'Released').length;
-
-      let totalViability = 0;
-      let countViability = 0;
-      const diseaseCounts = {};
-
-      list.forEach(r => {
-        if (r.viability && r.viability.includes('%')) {
-          const val = parseFloat(r.viability);
-          if (!isNaN(val)) {
-            totalViability += val;
-            countViability++;
-          }
-        }
-        const disease = r.diseaseCode || 'Unspecified';
-        diseaseCounts[disease] = (diseaseCounts[disease] || 0) + 1;
-      });
-
-      const avgViab = countViability > 0 ? (totalViability / countViability).toFixed(1) + '%' : '0%';
-
-      document.getElementById('stat-total').innerText = total;
-      document.getElementById('stat-released').innerText = released;
-      document.getElementById('stat-drafts').innerText = drafts;
-      document.getElementById('stat-viability').innerText = avgViab;
-
-      const diseaseTbody = document.getElementById('disease-breakdown-tbody');
-      diseaseTbody.innerHTML = '';
-      
-      const entries = Object.entries(diseaseCounts);
-      if (entries.length === 0) {
-        diseaseTbody.innerHTML = `<tr><td colspan="2" class="p-3 text-center text-slate-500">No disease classifications recorded</td></tr>`;
-        return;
-      }
-
-      entries.forEach(([disease, count]) => {
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-800/40';
-        tr.innerHTML = `
-          <td class="p-2.5 font-medium text-slate-200">${disease}</td>
-          <td class="p-2.5 text-right font-mono text-teal-400 font-bold">${count}</td>
-        `;
-        diseaseTbody.appendChild(tr);
-      });
-    }
-
-    function exportPDF() {
-      html2pdf().set({ margin: 0.3, filename: `AXIOM_SOP_${document.getElementById('patient-id').value || 'RECORD'}.pdf`, html2canvas: { scale: 2, backgroundColor: '#0f172a' } }).from(document.getElementById('sop-form-container')).save();
-    }
-    function exportExcel() {
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([["AXIOM MEDICAL ANALYSIS"], ["Patient ID", document.getElementById('patient-id').value]]), "SOP Summary");
-      XLSX.writeFile(wb, `AXIOM_PBMC_${document.getElementById('patient-id').value || 'RECORD'}.xlsx`);
-    }
-    function exportWord() {
-      const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><title>SOP</title></head><body>";
-      const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(header + document.getElementById('sop-form-container').innerHTML + "</body></html>");
-      const a = document.createElement("a"); a.href = source; a.download = 'AXIOM_PBMC_SOP.doc'; a.click();
-    }
-
-    function exportRecordPDF(id) {
-      editRecord(id);
-      setTimeout(() => { exportPDF(); switchTab('history'); }, 400);
-    }
-    function exportRecordExcel(id) {
-      editRecord(id);
-      setTimeout(() => { exportExcel(); switchTab('history'); }, 400);
-    }
-    function exportRecordWord(id) {
-      editRecord(id);
-      setTimeout(() => { exportWord(); switchTab('history'); }, 400);
-    }
-  </script>
-</body>
-</html>
+            <button onclick="deleteRecord('${r.id

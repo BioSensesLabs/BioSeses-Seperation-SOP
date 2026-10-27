@@ -1842,157 +1842,213 @@ let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
             }
         }
 
-        // --- 5. FIREBASE REALTIME DATABASE ACTIONS ---
-       function saveRecordToFirebase() {
-            const sampleID = document.getElementById('final-sample-id').value;
+      function saveRecordToFirebase() {
+            const sampleID = document.getElementById('final-sample-id')?.value || '';
             if (!sampleID || sampleID.includes('XX-RA-001')) {
-                if(!confirm("Sample ID appears to be using placeholder values. Save anyway?")) return;
+                if (!confirm("Sample ID appears to be using placeholder values. Save anyway?")) return;
             }
 
-            // Collect complete form data across all sections
-            const recordData = {
-                sampleID: sampleID,
-                // Section 1: Critical Rules
-                criticalRules: {
-                    rule1: document.getElementById('rule-1')?.checked || false,
-                    rule2: document.getElementById('rule-2')?.checked || false,
-                    rule3: document.getElementById('rule-3')?.checked || false,
-                    rule4: document.getElementById('rule-4')?.checked || false,
-                    rule5: document.getElementById('rule-5')?.checked || false,
-                    rule6: document.getElementById('rule-6')?.checked || false,
-                    rule7: document.getElementById('rule-7')?.checked || false,
-                    rule8: document.getElementById('rule-8')?.checked || false
-                },
-                // Section 2: Chain of Custody
-                custody: {
-                    siteCode: document.getElementById('custody-site-code')?.value || '',
-                    condition: document.getElementById('custody-condition')?.value || '',
-                    patientID: document.getElementById('custody-patient-id')?.value || '',
-                    sampleType: document.getElementById('custody-sample-type')?.value || '',
-                    collectionDate: document.getElementById('custody-collection-date')?.value || '',
-                    collectionTime: document.getElementById('custody-collection-time')?.value || '',
-                    procDate: document.getElementById('custody-proc-date')?.value || '',
-                    procTime: document.getElementById('custody-proc-time')?.value || '',
-                    operator: document.getElementById('custody-operator')?.value || '',
-                    checker: document.getElementById('custody-checker')?.value || ''
-                },
-                // Section 3: Materials & Equipment
-                materials: Array.from(document.querySelectorAll('#materials-tbody tr')).map(tr => {
-                    const itemName = tr.cells[0]?.querySelector('input')?.value || tr.cells[0]?.innerText || '';
-                    const inputs = Array.from(tr.querySelectorAll('input')).map(inp => inp.type === 'checkbox' ? inp.checked : inp.value);
-                    return { itemName, inputs };
-                }),
-                // Processing Header Log Bar
-                procHeader: {
-                    sampleId: document.getElementById('procHeaderSampleId')?.value || '',
-                    collTime: document.querySelector('input[name="procHeaderCollTime"]')?.value || '',
-                    startTime: document.querySelector('input[name="procHeaderStartTime"]')?.value || '',
-                    endTime: document.querySelector('input[name="procHeaderEndTime"]')?.value || '',
-                    operator: document.querySelector('input[name="procHeaderOperator"]')?.value || ''
-                },
-                // Section 5: Processing Steps & Metrics
-                metrics: {
-                    bloodVol: document.getElementById('step-4-blood-vol')?.value || '',
-                    pbsAdded: document.getElementById('step-5-pbs-added')?.value || '',
-                    dilVol: document.getElementById('step-10-dil-vol')?.value || '',
-                    ficollCalc: document.getElementById('step-11-ficoll-calc')?.value || '',
-                    ficollAdded: document.getElementById('step-12-ficoll-added')?.value || '',
-                    box1v: document.getElementById('box1-v')?.value || '',
-                    box1nv: document.getElementById('box1-nv')?.value || '',
-                    box2v: document.getElementById('box2-v')?.value || '',
-                    box2nv: document.getElementById('box2-nv')?.value || '',
-                    box3v: document.getElementById('box3-v')?.value || '',
-                    box3nv: document.getElementById('box3-nv')?.value || '',
-                    dilutionFactor: document.getElementById('dilution-factor')?.value || '',
-                    viabilityPct: document.getElementById('res-viability-pct')?.innerText || '0',
-                    concentration: document.getElementById('res-conc')?.innerText || '0',
-                    totalYield: document.getElementById('res-total-yield')?.innerText || '0',
-                    macsVol: document.getElementById('res-macs-vol')?.innerText || '0'
-                },
-                // Section 6: Cryovial Traceability Records
-                cryovials: Array.from(document.querySelectorAll('#cryovial-tbody tr')).map(tr => ({
-                    vialNum: tr.cells[0]?.innerText || '',
+            // 1. Collect Critical Rules (Section 1)
+            const criticalRules = {};
+            for (let i = 1; i <= 8; i++) {
+                const el = document.getElementById(`rule-${i}`);
+                if (el) criticalRules[`rule${i}`] = el.checked;
+            }
+
+            // 2. Collect Custody Data (Section 2)
+            const custody = {
+                siteCode: document.getElementById('custody-site-code')?.value || '',
+                condition: document.getElementById('custody-condition')?.value || '',
+                patientID: document.getElementById('custody-patient-id')?.value || '',
+                sampleType: document.getElementById('custody-sample-type')?.value || '',
+                collectionDate: document.getElementById('custody-collection-date')?.value || '',
+                collectionTime: document.getElementById('custody-collection-time')?.value || '',
+                procDate: document.getElementById('custody-proc-date')?.value || '',
+                procTime: document.getElementById('custody-proc-time')?.value || '',
+                operator: document.getElementById('custody-operator')?.value || '',
+                checker: document.getElementById('custody-checker')?.value || ''
+            };
+
+            // 3. Collect Equipment & Materials (Section 3)
+            const materials = [];
+            document.querySelectorAll('#materials-tbody tr').forEach(tr => {
+                const itemName = tr.cells[0]?.querySelector('input')?.value || tr.cells[0]?.innerText.trim() || '';
+                const inputs = Array.from(tr.querySelectorAll('input')).map(inp => inp.type === 'checkbox' ? inp.checked : inp.value);
+                materials.push({ itemName, inputs });
+            });
+
+            // 4. Collect Pre-Processing Checklist (Section 4)
+            const preChecklist = [];
+            document.querySelectorAll('#entry-tab .bg-white:nth-of-type(4) tbody tr').forEach(tr => {
+                const checkItem = tr.cells[0]?.innerText.trim() || '';
+                const result = tr.cells[1]?.querySelector('input')?.value || '';
+                const initials = tr.cells[2]?.querySelector('input')?.value || '';
+                preChecklist.push({ checkItem, result, initials });
+            });
+
+            // 5. Collect Processing Header Bar
+            const procHeader = {
+                sampleId: document.getElementById('procHeaderSampleId')?.value || '',
+                collTime: document.querySelector('input[name="procHeaderCollTime"]')?.value || '',
+                startTime: document.querySelector('input[name="procHeaderStartTime"]')?.value || '',
+                endTime: document.querySelector('input[name="procHeaderEndTime"]')?.value || '',
+                operator: document.querySelector('input[name="procHeaderOperator"]')?.value || ''
+            };
+
+            // 6. Collect Step Input Records (Section 5 Steps 1 - 53)
+            const stepRecords = [];
+            document.querySelectorAll('#entry-tab .bg-white:nth-of-type(5) tbody tr').forEach(tr => {
+                const stepNo = tr.cells[0]?.innerText.trim() || '';
+                const done = tr.cells[tr.cells.length - 1]?.querySelector('input[type="checkbox"]')?.checked || false;
+                const recInputs = Array.from(tr.cells[tr.cells.length - 2]?.querySelectorAll('input, select') || []).map(i => {
+                    return i.type === 'checkbox' ? i.checked : (i.type === 'radio' ? (i.checked ? i.value : null) : i.value);
+                }).filter(v => v !== null);
+                stepRecords.push({ stepNo, done, recInputs });
+            });
+
+            // 7. Collect Cell Calculations & Yield Metrics
+            const metrics = {
+                bloodVol: document.getElementById('step-4-blood-vol')?.value || '',
+                pbsAdded: document.getElementById('step-5-pbs-added')?.value || '',
+                dilVol: document.getElementById('step-10-dil-vol')?.value || '',
+                ficollCalc: document.getElementById('step-11-ficoll-calc')?.value || '',
+                ficollAdded: document.getElementById('step-12-ficoll-added')?.value || '',
+                box1v: document.getElementById('box1-v')?.value || '',
+                box1nv: document.getElementById('box1-nv')?.value || '',
+                box2v: document.getElementById('box2-v')?.value || '',
+                box2nv: document.getElementById('box2-nv')?.value || '',
+                box3v: document.getElementById('box3-v')?.value || '',
+                box3nv: document.getElementById('box3-nv')?.value || '',
+                dilutionFactor: document.getElementById('dilution-factor')?.value || '2',
+                viabilityPct: document.getElementById('res-viability-pct')?.innerText || '0',
+                concentration: document.getElementById('res-conc')?.innerText || '0',
+                totalYield: document.getElementById('res-total-yield')?.innerText || '0',
+                macsVol: document.getElementById('res-macs-vol')?.innerText || '0'
+            };
+
+            // 8. Collect Cryovial Traceability Log (Section 6)
+            const cryovials = [];
+            document.querySelectorAll('#cryovial-tbody tr').forEach(tr => {
+                cryovials.push({
+                    vialNum: tr.cells[0]?.innerText.trim() || '',
                     cryoID: tr.querySelector('.cryo-id')?.value || '',
-                    vol: tr.querySelector('.cryo-vol')?.value || '',
-                    targetCells: tr.querySelector('.cryo-target')?.value || '',
+                    vol: tr.querySelector('.cryo-vol')?.value || '1.0',
+                    targetCells: tr.querySelector('.cryo-target')?.value || '10,000,000',
                     time80: tr.querySelector('.cryo-80time')?.value || '',
                     timeLN2: tr.querySelector('.cryo-ln2time')?.value || '',
                     loc: tr.querySelector('.cryo-loc')?.value || '',
                     init: tr.querySelector('.cryo-init')?.value || ''
-                })),
-                // Section 8: Deviations & Non-conformance Log
-                deviations: Array.from(document.querySelectorAll('#deviation-tbody tr')).map(tr => {
-                    const inputs = tr.querySelectorAll('input, textarea');
-                    return {
-                        devID: inputs[0]?.value || '',
-                        dateTime: inputs[1]?.value || '',
-                        description: inputs[2]?.value || '',
-                        supervisor: inputs[3]?.value || ''
-                    };
-                }),
-                // Section 9: Final Sample Release Documentation
-                finalRelease: {
-                    startVol: document.getElementById('final-start-vol')?.value || '',
-                    totalCells: document.getElementById('final-total-cells')?.value || '',
-                    conc: document.getElementById('final-conc')?.value || '',
-                    fullVials: document.getElementById('final-full-vials')?.value || '',
-                    partialVials: document.getElementById('final-partial-vials')?.value || '',
-                    storageLoc: document.getElementById('final-storage-loc')?.value || '',
-                    operator: document.getElementById('final-operator')?.value || '',
-                    reviewer: document.getElementById('final-reviewer')?.value || '',
-                    status: document.querySelector('input[name="proc_status"]:checked')?.value || 'Released'
-                },
-                // Section 10: Authorization & Sign-Offs
-                signOff: {
-                    opName: document.getElementById('sign-op-name')?.value || '',
-                    opSig: document.getElementById('sign-op-sig')?.value || '',
-                    opDate: document.getElementById('sign-op-date')?.value || '',
-                    revName: document.getElementById('sign-rev-name')?.value || '',
-                    revSig: document.getElementById('sign-rev-sig')?.value || '',
-                    revDate: document.getElementById('sign-rev-date')?.value || '',
-                    qaName: document.getElementById('sign-qa-name')?.value || '',
-                    qaSig: document.getElementById('sign-qa-sig')?.value || '',
-                    qaDate: document.getElementById('sign-qa-date')?.value || ''
-                },
-                // Top-Level Metadata for Dashboard KPI & Table Summaries
-                siteCode: document.getElementById('custody-site-code')?.value || 'XX',
-                diseaseCode: document.getElementById('custody-condition')?.value || 'RA',
-                patientID: document.getElementById('custody-patient-id')?.value || '001',
-                operator: document.getElementById('custody-operator')?.value || 'N/A',
-                processingDate: document.getElementById('custody-proc-date')?.value || new Date().toISOString().split('T')[0],
-                viabilityPct: parseFloat(document.getElementById('res-viability-pct')?.innerText) || 0,
-                totalCells: document.getElementById('final-total-cells')?.value || '0',
-                cryovialCount: parseInt(document.getElementById('final-full-vials')?.value) || 0,
-                status: document.querySelector('input[name="proc_status"]:checked')?.value || 'Released',
-                timestamp: Date.now()
+                });
+            });
+
+            // 9. Collect Quality Control Rows (Section 7)
+            const qcList = [];
+            document.querySelectorAll('#entry-tab .bg-white:nth-of-type(7) tbody tr').forEach(tr => {
+                qcList.push({
+                    point: tr.cells[0]?.innerText.trim() || '',
+                    result: tr.cells[1]?.querySelector('input')?.value || '',
+                    status: tr.cells[2]?.querySelector('select')?.value || 'Pass',
+                    initials: tr.cells[3]?.querySelector('input')?.value || ''
+                });
+            });
+
+            // 10. Collect Deviations Log & SOP Matrix (Section 8)
+            const deviations = [];
+            document.querySelectorAll('#deviation-tbody tr').forEach(tr => {
+                const inps = tr.querySelectorAll('input, textarea');
+                if (inps.length > 0) {
+                    deviations.push({
+                        devID: inps[0]?.value || '',
+                        dateTime: inps[1]?.value || '',
+                        description: inps[2]?.value || '',
+                        supervisor: inps[3]?.value || ''
+                    });
+                }
+            });
+
+            // 11. Collect Final Sample Release (Section 9)
+            const finalRelease = {
+                startVol: document.getElementById('final-start-vol')?.value || '',
+                totalCells: document.getElementById('final-total-cells')?.value || '',
+                conc: document.getElementById('final-conc')?.value || '',
+                fullVials: document.getElementById('final-full-vials')?.value || '',
+                partialVials: document.getElementById('final-partial-vials')?.value || '',
+                storageLoc: document.getElementById('final-storage-loc')?.value || '',
+                operator: document.getElementById('final-operator')?.value || '',
+                reviewer: document.getElementById('final-reviewer')?.value || '',
+                status: document.querySelector('input[name="proc_status"]:checked')?.value || 'Released'
             };
 
+            // 12. Collect Authorization & Sign-Offs (Section 10)
+            const signOff = {
+                opName: document.getElementById('sign-op-name')?.value || '',
+                opSig: document.getElementById('sign-op-sig')?.value || '',
+                opDate: document.getElementById('sign-op-date')?.value || '',
+                revName: document.getElementById('sign-rev-name')?.value || '',
+                revSig: document.getElementById('sign-rev-sig')?.value || '',
+                revDate: document.getElementById('sign-rev-date')?.value || '',
+                qaName: document.getElementById('sign-qa-name')?.value || '',
+                qaSig: document.getElementById('sign-qa-sig')?.value || '',
+                qaDate: document.getElementById('sign-qa-date')?.value || ''
+            };
+
+            // Assemble Full Record Object
+            const recordData = {
+                sampleID: sampleID,
+                siteCode: custody.siteCode || 'XX',
+                diseaseCode: custody.condition || 'RA',
+                patientID: custody.patientID || '001',
+                sampleType: custody.sampleType || 'Whole Blood',
+                operator: custody.operator || 'N/A',
+                processingDate: custody.procDate || new Date().toISOString().split('T')[0],
+                viabilityPct: parseFloat(metrics.viabilityPct) || 0,
+                totalCells: metrics.totalYield || '0',
+                cryovialCount: parseInt(finalRelease.fullVials) || 0,
+                status: finalRelease.status,
+                timestamp: Date.now(),
+                // Embedded Detailed Objects
+                criticalRules,
+                custody,
+                materials,
+                preChecklist,
+                procHeader,
+                stepRecords,
+                metrics,
+                cryovials,
+                qcList,
+                deviations,
+                finalRelease,
+                signOff
+            };
+
+            // Execute Firebase Database Operation
             if (db) {
-        let dbRef;
-        let actionMessage = "";
+                let dbRef;
+                let isUpdate = false;
 
-        // CHECK IF WE ARE EDITING AN EXISTING RECORD OR CREATING A NEW ONE
-        if (currentEditingRecordId) {
-            dbRef = db.ref('records/' + currentEditingRecordId); // Target existing record path
-            actionMessage = "Record successfully updated in Firebase Database!";
-        } else {
-            dbRef = db.ref('records').push(); // Create a brand new record path
-            actionMessage = "Complete record successfully saved to Firebase Database!";
-        }
+                // OVERWRITE existing record if currentEditingRecordId is present; otherwise CREATE new record
+                if (typeof currentEditingRecordId !== 'undefined' && currentEditingRecordId) {
+                    dbRef = db.ref('records/' + currentEditingRecordId);
+                    isUpdate = true;
+                } else {
+                    dbRef = db.ref('records').push();
+                }
 
-        dbRef.set(recordData, (error) => {
-            if (error) {
-                showToast("Failed to save to database: " + error.message, "rose");
+                dbRef.set(recordData, (error) => {
+                    if (error) {
+                        showToast("Failed to save to database: " + error.message, "rose");
+                    } else {
+                        if (isUpdate) {
+                            showToast(`Record ${sampleID} updated successfully!`, "emerald");
+                        } else {
+                            showToast(`New Record ${sampleID} saved successfully!`, "emerald");
+                        }
+                    }
+                });
             } else {
-                showToast(actionMessage, "emerald");
-                // Optional: Keep currentEditingRecordId active so further consecutive saves update the same record, 
-                // or clear it if you want the next save to be a new record. Leaving it set allows continued editing seamlessly.
+                showToast("Firebase DB unavailable. Check connection or initialization.", "amber");
             }
-        });
-    } else {
-        showToast("Firebase DB unavailable. Local simulation active.", "amber");
-    }
-}
+        }
 
         function fetchRecordsFromFirebase() {
             if (!db) return;

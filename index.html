@@ -545,7 +545,7 @@
                                     <td class="p-2 text-center font-bold">10</td>
                                     <td class="p-2">Select tube according to diluted blood volume: &lt;9 mL diluted blood → 15 mL tube; ≥20 mL diluted blood → 50 mL tube.</td>
                                     <td class="p-2 space-y-1">
-                                        <input type="text" id="step-10-dil-vol" class="table-input" placeholder="Diluted blood (mL)" readonly>
+                                        <input type="text" id="step-10-dil-vol" class="table-input" placeholder="Diluted blood (mL)">
                                         <div class="flex gap-4 text-xs mt-1">
                                             <label><input type="radio" name="tube_size" value="15mL"> 15 mL</label>
                                             <label><input type="radio" name="tube_size" value="50mL"> 50 mL</label>
@@ -1757,7 +1757,7 @@
         function calculateFicoll() {
             const bVol = parseFloat(document.getElementById('step-4-blood-vol').value) || 0;
             const pbsVol = parseFloat(document.getElementById('step-5-pbs-added').value) || 0;
-            const totalDil = bVol + pbsVol;
+            const totalDil = bVol;
 
             document.getElementById('step-10-dil-vol').value = totalDil > 0 ? totalDil + " mL" : "";
             const ficollVal = totalDil > 0 ? (totalDil / 2).toFixed(1) : "";

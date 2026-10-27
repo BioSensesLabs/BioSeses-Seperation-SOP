@@ -1650,8 +1650,7 @@ try {
     console.error("Firebase initialized error:", e);
 }
 
-let allRecords = [];
-let chartInstances = {};
+
 let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
         function initCryovialRows() {
             const tbody = document.getElementById('cryovial-tbody');
@@ -1679,7 +1678,8 @@ let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
         } catch (e) {
             console.error("Firebase initialized error:", e);
         }
-
+        let allRecords = [];
+        let chartInstances = {};
       
        
 

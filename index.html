@@ -1643,6 +1643,25 @@
 
     <!-- Application Script Logic -->
     <script>
+        let db = null;
+try {
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.database();
+} catch (e) {
+    console.error("Firebase initialized error:", e);
+}
+
+let allRecords = [];
+let chartInstances = {};
+let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
+        function initCryovialRows() {
+            const tbody = document.getElementById('cryovial-tbody');
+            tbody.innerHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                addCryovialRow(i);
+            }
+        }
+        
         // --- 1. FIREBASE INITIALIZATION ---
         const firebaseConfig = {
           apiKey: "AIzaSyBQMLfFjIF_WOjxkT8E01ObPeHxRjPvv5U",
@@ -1672,13 +1691,6 @@
             fetchRecordsFromFirebase();
         };
 
-        function initCryovialRows() {
-            const tbody = document.getElementById('cryovial-tbody');
-            tbody.innerHTML = '';
-            for (let i = 1; i <= 5; i++) {
-                addCryovialRow(i);
-            }
-        }
 
         function addCryovialRow(idx = null) {
             const tbody = document.getElementById('cryovial-tbody');
@@ -1956,18 +1968,31 @@
             };
 
             if (db) {
-                const newRef = db.ref('records').push();
-                newRef.set(recordData, (error) => {
-                    if (error) {
-                        showToast("Failed to save to database: " + error.message, "rose");
-                    } else {
-                        showToast("Complete record successfully saved to Firebase Database!", "emerald");
-                    }
-                });
-            } else {
-                showToast("Firebase DB unavailable. Local simulation active.", "amber");
-            }
+        let dbRef;
+        let actionMessage = "";
+
+        // CHECK IF WE ARE EDITING AN EXISTING RECORD OR CREATING A NEW ONE
+        if (currentEditingRecordId) {
+            dbRef = db.ref('records/' + currentEditingRecordId); // Target existing record path
+            actionMessage = "Record successfully updated in Firebase Database!";
+        } else {
+            dbRef = db.ref('records').push(); // Create a brand new record path
+            actionMessage = "Complete record successfully saved to Firebase Database!";
         }
+
+        dbRef.set(recordData, (error) => {
+            if (error) {
+                showToast("Failed to save to database: " + error.message, "rose");
+            } else {
+                showToast(actionMessage, "emerald");
+                // Optional: Keep currentEditingRecordId active so further consecutive saves update the same record, 
+                // or clear it if you want the next save to be a new record. Leaving it set allows continued editing seamlessly.
+            }
+        });
+    } else {
+        showToast("Firebase DB unavailable. Local simulation active.", "amber");
+    }
+}
 
         function fetchRecordsFromFirebase() {
             if (!db) return;
@@ -2035,13 +2060,14 @@
         function viewRecord(id) {
             const rec = allRecords.find(r => r.id === id);
             if (!rec) return;
+            currentEditingRecordId = id;
             document.getElementById('custody-site-code').value = rec.siteCode || '';
             document.getElementById('custody-condition').value = rec.diseaseCode || '';
             document.getElementById('custody-patient-id').value = rec.patientID || '';
             document.getElementById('custody-operator').value = rec.operator || '';
             document.getElementById('custody-proc-date').value = rec.processingDate || '';
             switchTab('entry');
-            showToast(`Loaded Sample Log: ${rec.sampleID}`, "blue");
+            showToast(`Successfully loaded complete record for: ${rec.sampleID}`, "blue");
         }
 
         function exportToExcel() {
@@ -2061,6 +2087,7 @@
                 document.querySelectorAll('#entry-tab input[type="checkbox"]').forEach(i => i.checked = false);
                 initCryovialRows();
                 setupCustodyAutoPopulate();
+                currentEditingRecordId = null;
                 showToast("Form cleared.", "blue");
             }
         }

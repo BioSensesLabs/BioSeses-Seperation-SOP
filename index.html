@@ -1782,7 +1782,7 @@
             const df = parseFloat(document.getElementById('dilution-factor').value) || 2;
 
             const avgViable = (b1v + b2v + b3v) / 3;
-            const avgNonViable = b1v + b2v + b3v+ b1nv + b2nv + b3nv;
+            const avgNonViable = (b1nv + b2nv + b3nv)/3;
             const totalAvg = avgViable + avgNonViable;
 
             let viabilityPct = 0;

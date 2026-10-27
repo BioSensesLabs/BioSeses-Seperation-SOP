@@ -419,7 +419,7 @@
               <div>
                 <span class="block text-xs font-semibold text-slate-600">Sample ID</span>
                 <!-- <input type="text" id="procHeaderSampleId" readonly class="w-full bg-slate-100 border text-slate-700 font-mono font-bold px-2 py-1 text-sm rounded"> -->
-                <input type="text" id="procHeaderSampleId" class="table-input" readonly >
+                <input type="text" id="procHeaderSampleId" class="table-input" readonly class="w-full bg-slate-100 border text-slate-700 font-mono font-bold px-2 py-1 text-sm rounded">
               </div>
               <div>
                 <span class="block text-xs font-semibold text-slate-600">Collection Time</span>
@@ -1739,10 +1739,11 @@
             const site = document.getElementById('custody-site-code');
             const cond = document.getElementById('custody-condition');
             const pid = document.getElementById('custody-patient-id');
+            const samid = document.getElementById('custody-sample-type');
             const op = document.getElementById('custody-operator');
 
             function updateSampleID() {
-                const sampleID = `${site.value || 'XX'}-${cond.value || 'RA'}-${pid.value || '001'}-PBMC`;
+                const sampleID = `${site.value || 'XX'}-${cond.value || 'RA'}-${pid.value || '001'}-${cond.value || 'PBMC'};
                 document.getElementById('final-sample-id').value = sampleID;
             }
 

@@ -1743,7 +1743,7 @@
             const op = document.getElementById('custody-operator');
 
             function updateSampleID() {
-                const sampleID = `${site.value || 'XX'}-${cond.value || 'RA'}-${pid.value || '001'}-${cond.value || 'PBMC'};
+                const sampleID = `${site.value || 'XX'}-${cond.value || 'RA'}-${pid.value || '001'}-${samid.value || 'PBMC'}`;
                 document.getElementById('final-sample-id').value = sampleID;
             }
 

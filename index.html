@@ -414,6 +414,29 @@
                     </h3>
                     <p class="text-xs text-slate-500 mt-1">Complete for Every Sample. Use one copy of Sections 5–8 for every participant/sample.</p>
                 </div>
+ <!-- Header Processing Log Bar -->
+            <div class="bg-slate-50 p-4 border border-slate-200 rounded-lg grid grid-cols-1 md:grid-cols-5 gap-3">
+              <div>
+                <span class="block text-xs font-semibold text-slate-600">Sample ID</span>
+                <input type="text" id="procHeaderSampleId" readonly class="w-full bg-slate-100 border text-slate-700 font-mono font-bold px-2 py-1 text-sm rounded">
+              </div>
+              <div>
+                <span class="block text-xs font-semibold text-slate-600">Collection Time</span>
+                <input type="time" name="procHeaderCollTime" class="w-full border px-2 py-1 text-sm rounded">
+              </div>
+              <div>
+                <span class="block text-xs font-semibold text-slate-600">Processing Start</span>
+                <input type="time" name="procHeaderStartTime" class="w-full border px-2 py-1 text-sm rounded">
+              </div>
+              <div>
+                <span class="block text-xs font-semibold text-slate-600">Processing End</span>
+                <input type="time" name="procHeaderEndTime" class="w-full border px-2 py-1 text-sm rounded">
+              </div>
+              <div>
+                <span class="block text-xs font-semibold text-slate-600">Operator</span>
+                <input type="text" name="procHeaderOperator" class="w-full border px-2 py-1 text-sm rounded">
+              </div>
+            </div>
 
                 <!-- 5.1 Plasma Collection and Blood Dilution -->
                 <div class="space-y-3">

@@ -1831,7 +1831,7 @@
         }
 
         // --- 5. FIREBASE REALTIME DATABASE ACTIONS ---
-        function saveRecordToFirebase() {
+       function saveRecordToFirebase() {
             const sampleID = document.getElementById('final-sample-id').value;
             if (!sampleID || sampleID.includes('XX-RA-001')) {
                 if(!confirm("Sample ID appears to be using placeholder values. Save anyway?")) return;
@@ -1969,162 +1969,6 @@
             }
         }
 
-        function viewRecord(id) {
-            const rec = allRecords.find(r => r.id === id);
-            if (!rec) return;
-
-            // Restore Section 1: Critical Rules
-            if (rec.criticalRules) {
-                if (document.getElementById('rule-1')) document.getElementById('rule-1').checked = rec.criticalRules.rule1;
-                if (document.getElementById('rule-2')) document.getElementById('rule-2').checked = rec.criticalRules.rule2;
-                if (document.getElementById('rule-3')) document.getElementById('rule-3').checked = rec.criticalRules.rule3;
-                if (document.getElementById('rule-4')) document.getElementById('rule-4').checked = rec.criticalRules.rule4;
-                if (document.getElementById('rule-5')) document.getElementById('rule-5').checked = rec.criticalRules.rule5;
-                if (document.getElementById('rule-6')) document.getElementById('rule-6').checked = rec.criticalRules.rule6;
-                if (document.getElementById('rule-7')) document.getElementById('rule-7').checked = rec.criticalRules.rule7;
-                if (document.getElementById('rule-8')) document.getElementById('rule-8').checked = rec.criticalRules.rule8;
-            }
-
-            // Restore Section 2: Chain of Custody
-            if (rec.custody) {
-                if (document.getElementById('custody-site-code')) document.getElementById('custody-site-code').value = rec.custody.siteCode || '';
-                if (document.getElementById('custody-condition')) document.getElementById('custody-condition').value = rec.custody.condition || '';
-                if (document.getElementById('custody-patient-id')) document.getElementById('custody-patient-id').value = rec.custody.patientID || '';
-                if (document.getElementById('custody-sample-type')) document.getElementById('custody-sample-type').value = rec.custody.sampleType || 'Whole Blood';
-                if (document.getElementById('custody-collection-date')) document.getElementById('custody-collection-date').value = rec.custody.collectionDate || '';
-                if (document.getElementById('custody-collection-time')) document.getElementById('custody-collection-time').value = rec.custody.collectionTime || '';
-                if (document.getElementById('custody-proc-date')) document.getElementById('custody-proc-date').value = rec.custody.procDate || '';
-                if (document.getElementById('custody-proc-time')) document.getElementById('custody-proc-time').value = rec.custody.procTime || '';
-                if (document.getElementById('custody-operator')) document.getElementById('custody-operator').value = rec.custody.operator || '';
-                if (document.getElementById('custody-checker')) document.getElementById('custody-checker').value = rec.custody.checker || '';
-            }
-
-            // Restore Processing Header Log Bar
-            if (rec.procHeader) {
-                if (document.getElementById('procHeaderSampleId')) document.getElementById('procHeaderSampleId').value = rec.procHeader.sampleId || '';
-                const collTimeInput = document.querySelector('input[name="procHeaderCollTime"]');
-                if (collTimeInput) collTimeInput.value = rec.procHeader.collTime || '';
-                const startTimeInput = document.querySelector('input[name="procHeaderStartTime"]');
-                if (startTimeInput) startTimeInput.value = rec.procHeader.startTime || '';
-                const endTimeInput = document.querySelector('input[name="procHeaderEndTime"]');
-                if (endTimeInput) endTimeInput.value = rec.procHeader.endTime || '';
-                const opInput = document.querySelector('input[name="procHeaderOperator"]');
-                if (opInput) opInput.value = rec.procHeader.operator || '';
-            }
-
-            // Restore Metrics / Cell Counts & Calculations
-            if (rec.metrics) {
-                if (document.getElementById('step-4-blood-vol')) document.getElementById('step-4-blood-vol').value = rec.metrics.bloodVol || '';
-                if (document.getElementById('step-5-pbs-added')) document.getElementById('step-5-pbs-added').value = rec.metrics.pbsAdded || '';
-                if (document.getElementById('step-10-dil-vol')) document.getElementById('step-10-dil-vol').value = rec.metrics.dilVol || '';
-                if (document.getElementById('step-11-ficoll-calc')) document.getElementById('step-11-ficoll-calc').value = rec.metrics.ficollCalc || '';
-                if (document.getElementById('step-12-ficoll-added')) document.getElementById('step-12-ficoll-added').value = rec.metrics.ficollAdded || '';
-                if (document.getElementById('box1-v')) document.getElementById('box1-v').value = rec.metrics.box1v || '';
-                if (document.getElementById('box1-nv')) document.getElementById('box1-nv').value = rec.metrics.box1nv || '';
-                if (document.getElementById('box2-v')) document.getElementById('box2-v').value = rec.metrics.box2v || '';
-                if (document.getElementById('box2-nv')) document.getElementById('box2-nv').value = rec.metrics.box2nv || '';
-                if (document.getElementById('box3-v')) document.getElementById('box3-v').value = rec.metrics.box3v || '';
-                if (document.getElementById('box3-nv')) document.getElementById('box3-nv').value = rec.metrics.box3nv || '';
-                if (document.getElementById('dilution-factor')) document.getElementById('dilution-factor').value = rec.metrics.dilutionFactor || '2';
-                if (document.getElementById('res-viability-pct')) document.getElementById('res-viability-pct').innerText = rec.metrics.viabilityPct || '--';
-                if (document.getElementById('res-conc')) document.getElementById('res-conc').innerText = rec.metrics.concentration || '--';
-                if (document.getElementById('res-total-yield')) document.getElementById('res-total-yield').innerText = rec.metrics.totalYield || '--';
-                if (document.getElementById('res-macs-vol')) document.getElementById('res-macs-vol').innerText = rec.metrics.macsVol || '--';
-            }
-
-            // Restore Cryovials Table Rows
-            if (rec.cryovials && rec.cryovials.length > 0) {
-                const tbody = document.getElementById('cryovial-tbody');
-                tbody.innerHTML = '';
-                rec.cryovials.forEach((c, index) => {
-                    const vialNum = c.vialNum || (index + 1);
-                    const tr = document.createElement('tr');
-                    tr.className = "cryo-row";
-                    tr.innerHTML = `
-                        <td class="p-2 text-center font-bold text-slate-600">${vialNum}</td>
-                        <td class="p-2"><input type="text" class="table-input cryo-id" value="${c.cryoID || ''}" placeholder="Cryovial ID"></td>
-                        <td class="p-2"><input type="text" class="table-input cryo-vol" value="${c.vol || '1.0'}"></td>
-                        <td class="p-2"><input type="text" class="table-input cryo-target" value="${c.targetCells || '10,000,000'}"></td>
-                        <td class="p-2"><input type="time" class="table-input cryo-80time" value="${c.time80 || ''}"></td>
-                        <td class="p-2"><input type="time" class="table-input cryo-ln2time" value="${c.timeLN2 || ''}"></td>
-                        <td class="p-2"><input type="text" class="table-input cryo-loc" value="${c.loc || ''}" placeholder="Tank/Rack/Box/Slot"></td>
-                        <td class="p-2"><input type="text" class="table-input cryo-init" value="${c.init || ''}" placeholder="Init"></td>
-                        <td class="p-2 text-center no-print">
-                            <button onclick="this.closest('tr').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            }
-
-            // Restore Deviation Records Table
-            if (rec.deviations && rec.deviations.length > 0) {
-                const devTbody = document.getElementById('deviation-tbody');
-                devTbody.innerHTML = '';
-                rec.deviations.forEach(d => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td class="p-2"><input type="text" class="table-input" value="${d.devID || ''}"></td>
-                        <td class="p-2"><input type="datetime-local" class="table-input" value="${d.dateTime || ''}"></td>
-                        <td class="p-2"><textarea class="table-input" rows="1">${d.description || ''}</textarea></td>
-                        <td class="p-2"><input type="text" class="table-input" value="${d.supervisor || ''}" placeholder="Supervisor sign"></td>
-                        <td class="p-2 text-center no-print">
-                            <button onclick="this.closest('tr').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    `;
-                    devTbody.appendChild(tr);
-                });
-            }
-
-            // Restore Final Sample Release Summary
-            if (rec.finalRelease) {
-                if (document.getElementById('final-start-vol')) document.getElementById('final-start-vol').value = rec.finalRelease.startVol || '';
-                if (document.getElementById('final-total-cells')) document.getElementById('final-total-cells').value = rec.finalRelease.totalCells || '';
-                if (document.getElementById('final-conc')) document.getElementById('final-conc').value = rec.finalRelease.conc || '';
-                if (document.getElementById('final-full-vials')) document.getElementById('final-full-vials').value = rec.finalRelease.fullVials || '';
-                if (document.getElementById('final-partial-vials')) document.getElementById('final-partial-vials').value = rec.finalRelease.partialVials || '';
-                if (document.getElementById('final-storage-loc')) document.getElementById('final-storage-loc').value = rec.finalRelease.storageLoc || '';
-                if (document.getElementById('final-operator')) document.getElementById('final-operator').value = rec.finalRelease.operator || '';
-                if (document.getElementById('final-reviewer')) document.getElementById('final-reviewer').value = rec.finalRelease.reviewer || '';
-                
-                if (rec.finalRelease.status) {
-                    const statusRadio = document.querySelector(`input[name="proc_status"][value="${rec.finalRelease.status}"]`);
-                    if (statusRadio) statusRadio.checked = true;
-                }
-            }
-
-            // Restore Authorization & Sign-Offs
-            if (rec.signOff) {
-                if (document.getElementById('sign-op-name')) document.getElementById('sign-op-name').value = rec.signOff.opName || '';
-                if (document.getElementById('sign-op-sig')) document.getElementById('sign-op-sig').value = rec.signOff.opSig || '';
-                if (document.getElementById('sign-op-date')) document.getElementById('sign-op-date').value = rec.signOff.opDate || '';
-                if (document.getElementById('sign-rev-name')) document.getElementById('sign-rev-name').value = rec.signOff.revName || '';
-                if (document.getElementById('sign-rev-sig')) document.getElementById('sign-rev-sig').value = rec.signOff.revSig || '';
-                if (document.getElementById('sign-rev-date')) document.getElementById('sign-rev-date').value = rec.signOff.revDate || '';
-                if (document.getElementById('sign-qa-name')) document.getElementById('sign-qa-name').value = rec.signOff.qaName || '';
-                if (document.getElementById('sign-qa-sig')) document.getElementById('sign-qa-sig').value = rec.signOff.qaSig || '';
-                if (document.getElementById('sign-qa-date')) document.getElementById('sign-qa-date').value = rec.signOff.qaDate || '';
-            }
-
-            // Switch to the SOP entry form tab and show success notification
-            switchTab('entry');
-            showToast(`Successfully loaded complete record for: ${rec.sampleID}`, "blue");
-        }
-
-            if (db) {
-                const newRef = db.ref('records').push();
-                newRef.set(recordData, (error) => {
-                    if (error) {
-                        showToast("Failed to save to database: " + error.message, "rose");
-                    } else {
-                        showToast("Record successfully saved to Firebase Database!", "emerald");
-                    }
-                });
-            } else {
-                showToast("Firebase DB unavailable. Local simulation active.", "amber");
-            }
-        }
-
         function fetchRecordsFromFirebase() {
             if (!db) return;
             db.ref('records').on('value', (snapshot) => {
@@ -2188,8 +2032,17 @@
             renderLogsTable(filtered);
         }
 
-      
-        
+        function viewRecord(id) {
+            const rec = allRecords.find(r => r.id === id);
+            if (!rec) return;
+            document.getElementById('custody-site-code').value = rec.siteCode || '';
+            document.getElementById('custody-condition').value = rec.diseaseCode || '';
+            document.getElementById('custody-patient-id').value = rec.patientID || '';
+            document.getElementById('custody-operator').value = rec.operator || '';
+            document.getElementById('custody-proc-date').value = rec.processingDate || '';
+            switchTab('entry');
+            showToast(`Loaded Sample Log: ${rec.sampleID}`, "blue");
+        }
 
         function exportToExcel() {
             if (allRecords.length === 0) {

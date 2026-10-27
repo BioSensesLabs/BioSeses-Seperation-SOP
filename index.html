@@ -1643,13 +1643,32 @@
 
     <!-- Application Script Logic -->
     <script>
-try {
-    firebase.initializeApp(firebaseConfig);
-    db = firebase.database();
-} catch (e) {
-    console.error("Firebase initialized error:", e);
-}
 
+         const firebaseConfig = {
+          apiKey: "AIzaSyBQMLfFjIF_WOjxkT8E01ObPeHxRjPvv5U",
+          authDomain: "biosesnesseperationsop.firebaseapp.com",
+          databaseURL: "https://biosesnesseperationsop-default-rtdb.firebaseio.com",
+          projectId: "biosesnesseperationsop",
+          storageBucket: "biosesnesseperationsop.firebasestorage.app",
+          messagingSenderId: "284846672947",
+          appId: "1:284846672947:web:bfdd495cec9b9ce0a9a746"
+        };
+        
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+        } catch (e) {
+            console.error("Firebase initialized error:", e);
+        }
+ let db = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+        } catch (e) {
+            console.error("Firebase initialized error:", e);
+        }
+        let allRecords = [];
+        let chartInstances = {};
 
 let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
         function initCryovialRows() {
@@ -1661,25 +1680,9 @@ let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
         }
         
         // --- 1. FIREBASE INITIALIZATION ---
-        const firebaseConfig = {
-          apiKey: "AIzaSyBQMLfFjIF_WOjxkT8E01ObPeHxRjPvv5U",
-          authDomain: "biosesnesseperationsop.firebaseapp.com",
-          databaseURL: "https://biosesnesseperationsop-default-rtdb.firebaseio.com",
-          projectId: "biosesnesseperationsop",
-          storageBucket: "biosesnesseperationsop.firebasestorage.app",
-          messagingSenderId: "284846672947",
-          appId: "1:284846672947:web:bfdd495cec9b9ce0a9a746"
-        };
+       
 
-        let db = null;
-        try {
-            firebase.initializeApp(firebaseConfig);
-            db = firebase.database();
-        } catch (e) {
-            console.error("Firebase initialized error:", e);
-        }
-        let allRecords = [];
-        let chartInstances = {};
+       
       
        
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AXIOM-PBMC-SOP-001 | PBMC Isolation & Cryopreservation</title>
+    <title>BioSenses| AXIOM-PBMC-SOP | PBMC Isolation & Cryopreservation</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -42,7 +42,7 @@
                     <i class="fa-solid fa-vial-circle-check text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg leading-tight">AXIOM-PBMC-SOP-001</h1>
+                    <h1 class="font-bold text-lg leading-tight">BioSenses| AXIOM-PBMC-SOP</h1>
                     <p class="text-xs text-slate-400">PBMC Isolation & Cryopreservation SOP System</p>
                 </div>
             </div>
@@ -50,10 +50,10 @@
             <!-- Navigation Tabs -->
             <nav class="flex space-x-2">
                 <button onclick="switchTab('entry')" id="nav-entry" class="px-4 py-2 rounded-md font-medium text-sm transition-all bg-blue-600 text-white">
-                    <i class="fa-solid fa-clipboard-list mr-2"></i> SOP Entry Form
+                    <i class="fa-solid fa-clipboard-list mr-2"></i> Sample Entry Form
                 </button>
                 <button onclick="switchTab('historical')" id="nav-historical" class="px-4 py-2 rounded-md font-medium text-sm transition-all text-slate-300 hover:text-white hover:bg-slate-800">
-                    <i class="fa-solid fa-database mr-2"></i> Historical Logs
+                    <i class="fa-solid fa-database mr-2"></i> Historical Data
                 </button>
                 <button onclick="switchTab('analytics')" id="nav-analytics" class="px-4 py-2 rounded-md font-medium text-sm transition-all text-slate-300 hover:text-white hover:bg-slate-800">
                     <i class="fa-solid fa-chart-line mr-2"></i> Analytics & Dashboard
@@ -83,7 +83,6 @@
                         <span class="text-xs text-slate-400 font-medium">Doc ID: AXIOM-PBMC-SOP-001</span>
                     </div>
                     <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">PBMC Isolation and Cryopreservation</h2>
-                    <p class="text-xs text-slate-500 font-medium">Revision: Biosenses_3 &bull; Quality Controlled Workstation</p>
                 </div>
 
                 <!-- Professional Barcode & Action Icon Toolbar Cluster -->
@@ -1793,7 +1792,7 @@
             const op = document.getElementById('custody-operator');
 
             function updateSampleID() {
-                const sampleID = `${site.value || 'XX'}-${cond.value || 'RA'}-${pid.value || '001'}-${samid.value || 'PBMC'}`;
+                const sampleID = `${site.value || 'JO'}-${cond.value || 'RA'}-${pid.value || '001'}-${samid.value || 'PBMC'}`;
                 document.getElementById('final-sample-id').value = sampleID;
                 document.getElementById('procHeaderSampleId').value = sampleID;
                 

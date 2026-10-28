@@ -2194,34 +2194,31 @@
                 document.getElementById('custody-checker').value = rec.custody.checker || '';
             }
 
-            // 3. Populate Section 3: Required Materials and Equipment
+           // 3. Populate Section 3: Required Materials and Equipment
             if (rec.materials && Array.isArray(rec.materials)) {
                 const matTbody = document.getElementById('materials-tbody');
-                matTbody.innerHTML = '';
-                rec.materials.forEach(item => {
-                    const tr = document.createElement('tr');
-                    let detailsHtml = '';
-                    if (item.inputs) {
-                        if (typeof item.inputs[0] === 'boolean') {
-                            detailsHtml = `
-                                <label class="inline-flex items-center mr-4"><input type="checkbox" class="mr-1" ${item.inputs[0] ? 'checked' : ''}> Available</label>
-                                <label class="inline-flex items-center"><input type="checkbox" class="mr-1" ${item.inputs[1] ? 'checked' : ''}> Acceptable</label>
-                            `;
-                        } else {
-                            detailsHtml = `
-                                <input type="text" class="table-input mr-2" value="${item.inputs[0] || ''}" placeholder="Lot:">
-                                <input type="text" class="table-input" value="${item.inputs[1] || ''}" placeholder="Exp:">
-                            `;
+                const rows = matTbody.querySelectorAll('tr');
+                
+                rec.materials.forEach((item, idx) => {
+                    if (rows[idx]) {
+                        const checkboxes = rows[idx].querySelectorAll('input[type="checkbox"]');
+                        const textInputs = rows[idx].querySelectorAll('input[type="text"]');
+                        
+                        if (checkboxes.length > 0 && item.inputs) {
+                            // Standard equipment rows with checkboxes
+                            checkboxes[idx] // (unused, just scoping)
+                            checkboxes.forEach((chk, cIdx) => {
+                                const val = item.inputs[cIdx];
+                                // Handle boolean, string "on", or truthy values
+                                chk.checked = val === true || val === "on";
+                            });
+                        } else if (textInputs.length > 0 && item.inputs) {
+                            // Reagent/Lot/Exp rows with text inputs
+                            textInputs.forEach((txt, tIdx) => {
+                                txt.value = item.inputs[tIdx] || '';
+                            });
                         }
                     }
-                    tr.innerHTML = `
-                        <td class="p-2 font-medium"><input type="text" class="table-input" value="${item.itemName || ''}"></td>
-                        <td class="p-2 flex gap-4">${detailsHtml}</td>
-                        <td class="p-2 text-center no-print">
-                            <button onclick="this.closest('tr').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    `;
-                    matTbody.appendChild(tr);
                 });
             }
 

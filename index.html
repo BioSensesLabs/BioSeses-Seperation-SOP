@@ -2194,24 +2194,40 @@ function editRecord(id) {
                 document.getElementById('custody-checker').value = rec.custody.checker || '';
             }
 
-            // 3. Populate Section 3: Required Materials and Equipment (Dynamic Rebuild)
+         // 3. Populate Section 3: Required Materials and Equipment (Bulletproof Dynamic Rebuild)
             if (rec.materials && Array.isArray(rec.materials)) {
                 const matTbody = document.getElementById('materials-tbody');
                 matTbody.innerHTML = '';
                 rec.materials.forEach(item => {
                     const tr = document.createElement('tr');
                     let detailsHtml = '';
-                    if (item.inputs && typeof item.inputs[0] === 'boolean' || item.inputs[0] === "on" || item.inputs[0] === false) {
+                    
+                    // Determine if this item uses checkboxes (Available/Acceptable) or text inputs (Lot/Exp)
+                    // Standard rows with checkboxes typically have boolean/string "on" values or are known standard items
+                    const isCheckboxRow = item.inputs && (
+                        typeof item.inputs[0] === 'boolean' || 
+                        item.inputs[0] === "on" || 
+                        item.inputs[0] === false ||
+                        item.inputs[1] === "on" ||
+                        item.inputs[1] === false
+                    );
+
+                    if (isCheckboxRow) {
+                        const chk1 = item.inputs[0] === true || item.inputs[0] === "on";
+                        const chk2 = item.inputs[1] === true || item.inputs[1] === "on";
                         detailsHtml = `
-                            <label class="inline-flex items-center mr-4"><input type="checkbox" class="mr-1" ${item.inputs[0] === true || item.inputs[0] === "on" ? 'checked' : ''}> Available</label>
-                            <label class="inline-flex items-center"><input type="checkbox" class="mr-1" ${item.inputs[1] === true || item.inputs[1] === "on" ? 'checked' : ''}> Acceptable</label>
+                            <label class="inline-flex items-center mr-4"><input type="checkbox" class="mr-1" ${chk1 ? 'checked' : ''}> Available</label>
+                            <label class="inline-flex items-center"><input type="checkbox" class="mr-1" ${chk2 ? 'checked' : ''}> Acceptable</label>
                         `;
                     } else {
+                        const val1 = (item.inputs && item.inputs[0]) ? item.inputs[0] : '';
+                        const val2 = (item.inputs && item.inputs[1]) ? item.inputs[1] : '';
                         detailsHtml = `
-                            <input type="text" class="table-input mr-2" value="${item.inputs[0] || ''}" placeholder="Lot:">
-                            <input type="text" class="table-input" value="${item.inputs[1] || ''}" placeholder="Exp:">
+                            <input type="text" class="table-input mr-2" value="${val1}" placeholder="Lot:">
+                            <input type="text" class="table-input" value="${val2}" placeholder="Exp:">
                         `;
                     }
+
                     tr.innerHTML = `
                         <td class="p-2 font-medium"><input type="text" class="table-input" value="${item.itemName || ''}"></td>
                         <td class="p-2 flex gap-4">${detailsHtml}</td>

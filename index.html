@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BioSenses| AXIOM-PBMC-SOP | PBMC Isolation & Cryopreservation</title>
+    <title>BioSenses | AXIOM-PBMC-SOP | PBMC Isolation & Cryopreservation</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -42,7 +42,7 @@
                     <i class="fa-solid fa-vial-circle-check text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg leading-tight">BioSenses| AXIOM-PBMC-SOP</h1>
+                    <h1 class="font-bold text-lg leading-tight">BioSenses | AXIOM-PBMC-SOP</h1>
                     <p class="text-xs text-slate-400">PBMC Isolation & Cryopreservation SOP System</p>
                 </div>
             </div>
@@ -217,9 +217,6 @@
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Second Checker (if applicable)</label>
                         <input type="text" id="custody-checker" class="table-input" placeholder="Checker Initials/Name">
                     </div>
-                </div>
-                <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-600">
-                    <strong>Note:</strong> Collect 5 tubes per participant: 4 K2 EDTA tubes (10 mL) and 1 plain SST (10 mL) unless indicated otherwise in Disease's CRF/Survey sheet. Immediately label all tubes. Gently invert EDTA tubes after collection to mix with anticoagulants. Handle plain SST tubes according to the applicable serum-processing procedure. Record collection date and time.
                 </div>
             </div>
 
@@ -442,29 +439,29 @@
                     </h3>
                     <p class="text-xs text-slate-500 mt-1">Complete for Every Sample. Use one copy of Sections 5–8 for every participant/sample.</p>
                 </div>
- <!-- Header Processing Log Bar -->
-            <div class="bg-slate-50 p-4 border border-slate-200 rounded-lg grid grid-cols-1 md:grid-cols-5 gap-3">
-              <div>
-                <span class="block text-xs font-semibold text-slate-600">Sample ID</span>
-                <input type="text" id="procHeaderSampleId" class="table-input" readonly>
-              </div>
-              <div>
-                <span class="block text-xs font-semibold text-slate-600">Collection Time</span>
-                <input type="time" name="procHeaderCollTime" class="w-full border px-2 py-1 text-sm rounded">
-              </div>
-              <div>
-                <span class="block text-xs font-semibold text-slate-600">Processing Start</span>
-                <input type="time" name="procHeaderStartTime" class="w-full border px-2 py-1 text-sm rounded">
-              </div>
-              <div>
-                <span class="block text-xs font-semibold text-slate-600">Processing End</span>
-                <input type="time" name="procHeaderEndTime" class="w-full border px-2 py-1 text-sm rounded">
-              </div>
-              <div>
-                <span class="block text-xs font-semibold text-slate-600">Operator</span>
-                <input type="text" name="procHeaderOperator" class="w-full border px-2 py-1 text-sm rounded">
-              </div>
-            </div>
+                <!-- Header Processing Log Bar -->
+                <div class="bg-slate-50 p-4 border border-slate-200 rounded-lg grid grid-cols-1 md:grid-cols-5 gap-3">
+                  <div>
+                    <span class="block text-xs font-semibold text-slate-600">Sample ID</span>
+                    <input type="text" id="procHeaderSampleId" class="table-input" readonly>
+                  </div>
+                  <div>
+                    <span class="block text-xs font-semibold text-slate-600">Collection Time</span>
+                    <input type="time" name="procHeaderCollTime" class="w-full border px-2 py-1 text-sm rounded">
+                  </div>
+                  <div>
+                    <span class="block text-xs font-semibold text-slate-600">Processing Start</span>
+                    <input type="time" name="procHeaderStartTime" class="w-full border px-2 py-1 text-sm rounded">
+                  </div>
+                  <div>
+                    <span class="block text-xs font-semibold text-slate-600">Processing End</span>
+                    <input type="time" name="procHeaderEndTime" class="w-full border px-2 py-1 text-sm rounded">
+                  </div>
+                  <div>
+                    <span class="block text-xs font-semibold text-slate-600">Operator</span>
+                    <input type="text" name="procHeaderOperator" class="w-full border px-2 py-1 text-sm rounded">
+                  </div>
+                </div>
 
                 <!-- 5.1 Plasma Collection and Blood Dilution -->
                 <div class="space-y-3">
@@ -482,7 +479,7 @@
                             <tbody class="divide-y">
                                 <tr>
                                     <td class="p-2 text-center font-bold">1</td>
-                                    <td class="p-2">Centrifuge 2 of the 4 EDTA blood tubes at 2000 rpm for 10 minutes. Unless indicated in the Disease's CRF/Survey sheet to collect plasma from all tubes.</td>
+                                    <td class="p-2">Centrifuge 2 of the 4 EDTA blood tubes at 2000 rpm for 10 minutes.</td>
                                     <td class="p-2 flex gap-2">
                                         <input type="time" class="table-input" title="Start">
                                         <input type="time" class="table-input" title="End">
@@ -491,7 +488,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">2</td>
-                                    <td class="p-2">Collect plasma (top layer) into a labeled tube and aliquot into 2–4 labeled cryovials, each containing 1 mL; store cryovials in the freezing container.</td>
+                                    <td class="p-2">Collect plasma (top layer) into a labeled tube and aliquot into 2–4 labeled cryovials.</td>
                                     <td class="p-2 flex gap-2">
                                         <input type="time" class="table-input" title="Start">
                                         <input type="time" class="table-input" title="End">
@@ -500,7 +497,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">3</td>
-                                    <td class="p-2">Replace the same volume removed as plasma with sterile PBS or sterile NaCl 0.9%. Invert to mix.</td>
+                                    <td class="p-2">Replace the same volume removed as plasma with sterile PBS or sterile NaCl 0.9%.</td>
                                     <td class="p-2 space-y-1">
                                         <input type="text" class="table-input" placeholder="Vol removed (mL)">
                                         <input type="text" class="table-input" placeholder="Replacement (mL)">
@@ -540,7 +537,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">8</td>
-                                    <td class="p-2">Collect serum from the serum layer. Transfer 1 mL of serum into each cryovial. ≥ 2 vials of 1 mL aliquots, Unless indicated in the Disease's CRF/Survey sheet to collect serum from several SST tubes.</td>
+                                    <td class="p-2">Collect serum from the serum layer. Transfer 1 mL of serum into each cryovial.</td>
                                     <td class="p-2"><input type="time" class="table-input"></td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
@@ -571,7 +568,7 @@
                             <tbody class="divide-y">
                                 <tr>
                                     <td class="p-2 text-center font-bold">10</td>
-                                    <td class="p-2">Select tube according to diluted blood volume: &lt;9 mL diluted blood → 15 mL tube; ≥20 mL diluted blood → 50 mL tube.</td>
+                                    <td class="p-2">Select tube according to diluted blood volume.</td>
                                     <td class="p-2 space-y-1">
                                         <input type="text" id="step-10-dil-vol" class="table-input" placeholder="Diluted blood (mL)" readonly>
                                         <div class="flex gap-4 text-xs mt-1">
@@ -591,7 +588,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">12</td>
-                                    <td class="p-2">Add the calculated Ficoll volume to the appropriate empty centrifuge tube. Label the tube for the designated sample to be used</td>
+                                    <td class="p-2">Add the calculated Ficoll volume to the appropriate empty centrifuge tube.</td>
                                     <td class="p-2 space-y-1">
                                         <input type="text" id="step-12-ficoll-added" class="table-input" placeholder="Ficoll added (mL)">
                                         <input type="time" class="table-input">
@@ -610,7 +607,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">14</td>
-                                    <td class="p-2">Use suitable serological pipette: ≤9 mL diluted blood → 10 mL pipette; ≥13 mL → 25 mL pipette. Slowly layer diluted blood over Ficoll.</td>
+                                    <td class="p-2">Use suitable serological pipette. Slowly layer diluted blood over Ficoll.</td>
                                     <td class="p-2 space-y-1">
                                         <div class="flex gap-4 text-xs">
                                             <label><input type="radio" name="pipette_size" value="10mL"> 10 mL</label>
@@ -622,19 +619,19 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">15</td>
-                                    <td class="p-2">Do not exceed 30 mL diluted blood in a 50 mL tube containing 15 mL Ficoll.</td>
+                                    <td class="p-2">Do not exceed 30 mL diluted blood in a 50 mL tube.</td>
                                     <td class="p-2"><input type="text" class="table-input" placeholder="Volume check (mL)"></td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">16</td>
-                                    <td class="p-2">Add diluted blood slowly down the tube wall; establish an approximately 3 mL layer dropwise, then continue with slow steady flow.</td>
+                                    <td class="p-2">Add diluted blood slowly down the tube wall.</td>
                                     <td class="p-2"><input type="time" class="table-input"></td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">17</td>
-                                    <td class="p-2">Confirm two distinct layers: • Diluted blood on top • Ficoll at the bottom. Make sure to not disturb the interface.</td>
+                                    <td class="p-2">Confirm two distinct layers: Diluted blood on top, Ficoll at bottom.</td>
                                     <td class="p-2 space-y-1">
                                         <div class="flex gap-4 text-xs">
                                             <label><input type="radio" name="interface_intact" value="Yes"> Interface Intact: Yes</label>
@@ -646,9 +643,6 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-                    <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
-                        <strong>Layering failure control:</strong> If the layers mix, stop. The supplied SOP specifies adding approximately 50% of the total volume of PBS or saline and restarting the separation. Record the deviation/recovery in Section 8.
                     </div>
                 </div>
 
@@ -674,7 +668,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">19</td>
-                                    <td class="p-2">Confirm centrifuge is at least room temperature or warmed to 37°C as specified in the supplied SOP.</td>
+                                    <td class="p-2">Confirm centrifuge temperature.</td>
                                     <td class="p-2 space-y-1">
                                         <input type="text" class="table-input" placeholder="Actual temp (°C)">
                                         <input type="time" class="table-input">
@@ -683,7 +677,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">20</td>
-                                    <td class="p-2">Use the validated programmed centrifuge method for the instrument and double-check the selected program before START.</td>
+                                    <td class="p-2">Use the validated programmed centrifuge method.</td>
                                     <td class="p-2 space-y-1">
                                         <input type="text" class="table-input" placeholder="Program ID">
                                         <input type="text" class="table-input" placeholder="Verified by">
@@ -733,7 +727,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2 font-medium">PBMC interface visible as a thin cloudy white layer</td>
+                                    <td class="p-2 font-medium">PBMC interface visible</td>
                                     <td class="p-2 space-y-1">
                                         <div class="flex gap-4 text-xs">
                                             <label><input type="radio" name="qc_pbmc" value="Yes"> Yes</label>
@@ -759,7 +753,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2 font-medium">RBC/granulocyte layer visible at bottom</td>
+                                    <td class="p-2 font-medium">RBC layer visible at bottom</td>
                                     <td class="p-2 space-y-1">
                                         <div class="flex gap-4 text-xs">
                                             <label><input type="radio" name="qc_rbc" value="Yes"> Yes</label>
@@ -785,7 +779,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="p-2 font-medium">If PBMC layer is not visible: supervisor notified</td>
+                                    <td class="p-2 font-medium">If PBMC layer not visible: supervisor notified</td>
                                     <td class="p-2 space-y-1">
                                         <div class="flex gap-4 text-xs">
                                             <label><input type="radio" name="qc_notified" value="Yes"> Yes</label>
@@ -818,7 +812,7 @@
                             <tbody class="divide-y">
                                 <tr>
                                     <td class="p-2 text-center font-bold">22</td>
-                                    <td class="p-2">Insert pipette tip carefully through the plasma layer.</td>
+                                    <td class="p-2">Insert pipette tip carefully through plasma layer.</td>
                                     <td class="p-2"><input type="time" class="table-input"></td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
@@ -891,7 +885,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">29</td>
-                                    <td class="p-2">Discard supernatant carefully without disturbing the pellet.</td>
+                                    <td class="p-2">Discard supernatant carefully without disturbing pellet.</td>
                                     <td class="p-2 space-y-1">
                                         <input type="time" class="table-input">
                                         <label class="text-xs flex items-center"><input type="checkbox" class="mr-1"> Pellet intact</label>
@@ -900,7 +894,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">30</td>
-                                    <td class="p-2">Resuspend pellet in PBS equal to half the tube fill volume (25 mL cold PBS when using a 50 mL tube).</td>
+                                    <td class="p-2">Resuspend pellet in cold PBS.</td>
                                     <td class="p-2 space-y-1">
                                         <input type="text" class="table-input" placeholder="PBS (mL)">
                                         <input type="time" class="table-input">
@@ -946,7 +940,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">33</td>
-                                    <td class="p-2">Carefully aspirate supernatant without disturbing the pellet.</td>
+                                    <td class="p-2">Carefully aspirate supernatant without disturbing pellet.</td>
                                     <td class="p-2 space-y-1">
                                         <input type="time" class="table-input">
                                         <label class="text-xs flex items-center"><input type="checkbox" class="mr-1"> Pellet intact</label>
@@ -1008,43 +1002,43 @@
                             <tbody class="divide-y">
                                 <tr>
                                     <td class="p-2 text-center font-bold">36</td>
-                                    <td class="p-2">Keep cell suspension on ice or at 4°C throughout counting process</td>
+                                    <td class="p-2">Keep cell suspension on ice or at 4°C.</td>
                                     <td class="p-2"><label class="text-xs flex items-center"><input type="checkbox" class="mr-1"> Kept on ice/4°C</label></td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">37</td>
-                                    <td class="p-2">Into a separate labeled Eppendorf tube: Add 20 µL of the cell suspension</td>
+                                    <td class="p-2">Add 20 µL of cell suspension to Eppendorf.</td>
                                     <td class="p-2"><input type="time" class="table-input"></td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">38</td>
-                                    <td class="p-2">Into the labeled Eppendorf tube, add 20 µL of 0.4% Trypan blue solution (one to one ratio) and gently mix the cells</td>
+                                    <td class="p-2">Add 20 µL of 0.4% Trypan blue solution (1:1 ratio).</td>
                                     <td class="p-2"><input type="time" class="table-input"></td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">39</td>
-                                    <td class="p-2">Load 10 µL of the cell suspension-Trypan blue mixture into the hemocytometer chamber. If overcrowded, perform 1:10, 1:20, or 1:100 dilution as needed.</td>
+                                    <td class="p-2">Load 10 µL into hemocytometer chamber.</td>
                                     <td class="p-2 space-y-1">
                                         <div class="flex gap-4 text-xs">
                                             <label><input type="radio" name="cell_dist" value="Well distributed"> Well distributed</label>
                                             <label><input type="radio" name="cell_dist" value="Overcrowded"> Overcrowded</label>
                                         </div>
-                                        <input type="number" id="dilution-factor" oninput="calculateCellMetrics()" class="table-input" placeholder="Dilution factor (default 2)" value="2">
+                                        <input type="number" id="dilution-factor" oninput="calculateCellMetrics()" class="table-input" placeholder="Dilution factor" value="2">
                                     </td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">40</td>
-                                    <td class="p-2">Count unstained cells as viable cells and blue stained as non-viable/dead cells.</td>
+                                    <td class="p-2">Count unstained as viable, blue as non-viable.</td>
                                     <td class="p-2 text-xs text-slate-500">Viable = Unstained | Non-viable = Blue</td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">41</td>
-                                    <td class="p-2">Count 3 large diagonal boxes (Each containing 9 small boxes)</td>
+                                    <td class="p-2">Count 3 large diagonal boxes.</td>
                                     <td class="p-2 space-y-2">
                                         <div class="grid grid-cols-2 gap-1 text-xs">
                                             <span>Box 1 Viable:</span><input type="number" id="box1-v" oninput="calculateCellMetrics()" class="table-input py-0.5">
@@ -1059,10 +1053,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">42</td>
-                                    <td class="p-2">
-                                        Average the viable cell count &amp; non-viable count across 3 counted boxes.<br>
-                                        <span class="text-xs text-blue-700">Cell Viability (%) = (Avg Viable / Total Cells) × 100</span>
-                                    </td>
+                                    <td class="p-2">Average counts &amp; calculate viability.</td>
                                     <td class="p-2 space-y-1">
                                         <div class="font-bold text-xs text-emerald-700">Viability: <span id="res-viability-pct">--</span> %</div>
                                         <input type="text" class="table-input" placeholder="Operator initials">
@@ -1072,11 +1063,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">43</td>
-                                    <td class="p-2">
-                                        Calculate lymphocyte concentration (cells/mL):<br>
-                                        <span class="text-xs text-blue-700">Cells/mL = Avg viable × 10⁴ × Dilution factor</span><br>
-                                        <span class="text-xs text-blue-700">Total cell count = concentration × 10 mL</span>
-                                    </td>
+                                    <td class="p-2">Calculate lymphocyte concentration &amp; total yield.</td>
                                     <td class="p-2 space-y-1">
                                         <div class="text-xs font-semibold">Conc: <span id="res-conc" class="text-blue-800">--</span> cells/mL</div>
                                         <div class="text-xs font-semibold">Total Yield: <span id="res-total-yield" class="text-indigo-800">--</span> cells</div>
@@ -1104,7 +1091,7 @@
                             <tbody class="divide-y">
                                 <tr>
                                     <td class="p-2 text-center font-bold">44</td>
-                                    <td class="p-2">Centrifuge the 10 mL cell suspension at 1500 rpm at 4°C for 5 minutes.</td>
+                                    <td class="p-2">Centrifuge cell suspension at 1500 rpm at 4°C for 5 minutes.</td>
                                     <td class="p-2 flex gap-2">
                                         <input type="time" class="table-input" title="Start">
                                         <input type="time" class="table-input" title="End">
@@ -1113,7 +1100,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">45</td>
-                                    <td class="p-2">Decant supernatant without reverting the tube. Keep tilted and flip tube onto a clean alcohol-sprayed paper towel to remove any remaining liquid.</td>
+                                    <td class="p-2">Decant supernatant &amp; remove remaining liquid.</td>
                                     <td class="p-2 space-y-1">
                                         <input type="time" class="table-input">
                                         <label class="text-xs flex items-center"><input type="checkbox" class="mr-1"> Pellet intact</label>
@@ -1122,7 +1109,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">46</td>
-                                    <td class="p-2">Calculate volume needed to resuspend cells at a concentration of 10 million cells/mL (1×10⁷ cells/mL).<br><em class="text-xs text-slate-500">Total cell count / 10,000,000 = vol of MACS freezing media needed (mL)</em></td>
+                                    <td class="p-2">Calculate volume needed for 10M cells/mL.</td>
                                     <td class="p-2">
                                         <div class="text-xs font-bold text-purple-800 bg-purple-50 p-2 rounded border border-purple-200">
                                             MACS Media Vol: <span id="res-macs-vol">--</span> mL
@@ -1138,7 +1125,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">48</td>
-                                    <td class="p-2">Confirm MACS Freezing Solution is cold and ready to use</td>
+                                    <td class="p-2">Confirm MACS Freezing Solution is cold and ready.</td>
                                     <td class="p-2 space-y-1">
                                         <input type="text" class="table-input" placeholder="Lot">
                                         <input type="text" class="table-input" placeholder="Exp">
@@ -1167,7 +1154,7 @@
                             <tbody class="divide-y">
                                 <tr>
                                     <td class="p-2 text-center font-bold">49</td>
-                                    <td class="p-2">Resuspend cell pellet with calculated volume using MACS Freezing Solution. Mix well by gently pipetting up and down.</td>
+                                    <td class="p-2">Resuspend pellet with MACS Freezing Solution.</td>
                                     <td class="p-2 space-y-1">
                                         <input type="text" id="step-49-vol-used" class="table-input" placeholder="Volume used (mL)">
                                         <input type="time" class="table-input">
@@ -1176,7 +1163,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">50</td>
-                                    <td class="p-2">Aliquot cell suspension into cryovials each containing 1 mL. Determine number of full cryovials and any partial aliquot.</td>
+                                    <td class="p-2">Aliquot cell suspension into cryovials (1 mL each).</td>
                                     <td class="p-2 space-y-1">
                                         <input type="number" id="step-50-full-vials" class="table-input" placeholder="Full vials count">
                                         <input type="number" id="step-50-partial-vials" class="table-input" placeholder="Partial vials count">
@@ -1200,7 +1187,7 @@
                                 </tr>
                                 <tr>
                                     <td class="p-2 text-center font-bold">53</td>
-                                    <td class="p-2">After 24 hours, transfer cryovials to liquid nitrogen.</td>
+                                    <td class="p-2">Transfer cryovials to liquid nitrogen.</td>
                                     <td class="p-2 space-y-1">
                                         <input type="time" class="table-input" placeholder="Transfer time">
                                         <input type="text" class="table-input" placeholder="LN2 location">
@@ -1239,9 +1226,7 @@
                                 <th class="p-2 w-12 text-center no-print"></th>
                             </tr>
                         </thead>
-                        <tbody id="cryovial-tbody" class="divide-y divide-slate-200">
-                            <!-- 5 Default Rows -->
-                        </tbody>
+                        <tbody id="cryovial-tbody" class="divide-y divide-slate-200"></tbody>
                     </table>
                 </div>
             </div>
@@ -1264,7 +1249,7 @@
                         </thead>
                         <tbody class="divide-y divide-slate-200">
                             <tr>
-                                <td class="p-2 font-medium">Sample identity and labels verified<br>Collection-to-processing time verified</td>
+                                <td class="p-2 font-medium">Sample identity and labels verified</td>
                                 <td class="p-2"><input type="text" class="table-input"></td>
                                 <td class="p-2"><select class="table-input"><option>Pass</option><option>Hold</option><option>Deviation</option></select></td>
                                 <td class="p-2"><input type="text" class="table-input"></td>
@@ -1351,8 +1336,6 @@
                         <i class="fa-solid fa-plus mr-1"></i> Add New Deviation Record
                     </button>
                 </div>
-
-                <!-- Dynamic Deviation Table -->
                 <div class="space-y-2">
                     <h4 class="text-xs font-bold uppercase text-slate-500">Deviation / Non-conformance Log</h4>
                     <div class="overflow-x-auto">
@@ -1366,68 +1349,18 @@
                                     <th class="p-2 w-12 text-center no-print"></th>
                                 </tr>
                             </thead>
-                            <tbody id="deviation-tbody" class="divide-y divide-slate-200">
-                                <!-- Dynamic Rows -->
-                            </tbody>
+                            <tbody id="deviation-tbody" class="divide-y divide-slate-200"></tbody>
                         </table>
                     </div>
-                </div>
-
-                <!-- Verbatim SOP Troubleshooting Matrix -->
-                <div class="space-y-2">
-                    <h4 class="text-xs font-bold uppercase text-slate-500">Standard SOP Troubleshooting Matrix</h4>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm border-collapse">
-                            <thead>
-                                <tr class="bg-slate-100 text-xs font-bold uppercase text-slate-600 border-b">
-                                    <th class="p-2.5 w-48">Issue</th>
-                                    <th class="p-2.5">Troubleshooting Action from supplied SOP</th>
-                                    <th class="p-2.5 w-64">Record</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-200">
-                                <tr>
-                                    <td class="p-2 font-medium">No PBMC layer visible</td>
-                                    <td class="p-2">Check whether blood/Ficoll mixed, whether brake was used, and whether the spin speed was correct. Notify supervisor.</td>
-                                    <td class="p-2"><input type="text" class="table-input" placeholder="Record / N/A"></td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 font-medium">PBMC layer/interface disrupted</td>
-                                    <td class="p-2">Stop. Follow the recovery instruction specified in this SOP and document the deviation.</td>
-                                    <td class="p-2"><input type="text" class="table-input" placeholder="Record / N/A"></td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 font-medium">Pellet lost during aspiration</td>
-                                    <td class="p-2">Aspirate slowly from the tube wall; document the event.</td>
-                                    <td class="p-2"><input type="text" class="table-input" placeholder="Record / N/A"></td>
-                                </tr>
-                                <tr>
-                                    <td class="p-2 font-medium">Low viability</td>
-                                    <td class="p-2">Check whether reagents were warmed too long, processing was delayed, or mixing was rough; document findings.</td>
-                                    <td class="p-2"><input type="text" class="table-input" placeholder="Record / N/A"></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <p class="text-xs text-slate-400">If no troubleshooting was performed, fill blanks with N/A for not applicable.</p>
                 </div>
             </div>
 
-            <!-- SECTION 9: FINAL SAMPLE RELEASE / DOCUMENTATION CHECKLIST -->
+            <!-- SECTION 9: FINAL SAMPLE RELEASE -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
                 <h3 class="text-lg font-bold text-slate-900 flex items-center border-b pb-3">
                     <span class="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm mr-2.5">9</span>
                     Final Sample Release / Documentation Checklist
                 </h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-slate-700 mb-4">
-                    <label class="flex items-center space-x-2"><input type="checkbox" class="h-4 w-4 text-blue-600"> <span>Each cryovial is labeled using the required nomenclature.</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" class="h-4 w-4 text-blue-600"> <span>Storage location is recorded.</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" class="h-4 w-4 text-blue-600"> <span>Operator initials are recorded.</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" class="h-4 w-4 text-blue-600"> <span>Any deviation or unusual observation has been documented.</span></label>
-                    <label class="flex items-center space-x-2 md:col-span-2"><input type="checkbox" class="h-4 w-4 text-blue-600"> <span>Supervisor/ reviewer has completed the required review.</span></label>
-                </div>
-
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm border-collapse">
                         <thead>
@@ -1439,7 +1372,7 @@
                         <tbody class="divide-y divide-slate-200">
                             <tr>
                                 <td class="p-2 font-medium">Sample ID</td>
-                                <td class="p-2"><input type="text" id="final-sample-id" class="table-input" readonly placeholder="Auto-generated from Sec 2"></td>
+                                <td class="p-2"><input type="text" id="final-sample-id" class="table-input" readonly></td>
                             </tr>
                             <tr>
                                 <td class="p-2 font-medium">Starting blood volume (mL)</td>
@@ -1518,7 +1451,7 @@
                                 <td class="p-2"><input type="datetime-local" id="sign-rev-date" class="table-input"></td>
                             </tr>
                             <tr>
-                                <td class="p-2 font-medium">QA / Final Review (if applicable)</td>
+                                <td class="p-2 font-medium">QA / Final Review</td>
                                 <td class="p-2"><input type="text" id="sign-qa-name" class="table-input"></td>
                                 <td class="p-2"><input type="text" id="sign-qa-sig" class="table-input" placeholder="Digital Sign Initials"></td>
                                 <td class="p-2"><input type="datetime-local" id="sign-qa-date" class="table-input"></td>
@@ -1582,9 +1515,7 @@
                                 <th class="p-3 text-center w-20">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="logs-tbody" class="divide-y divide-slate-200">
-                            <!-- Dynamic Database Rows -->
-                        </tbody>
+                        <tbody id="logs-tbody" class="divide-y divide-slate-200"></tbody>
                     </table>
                 </div>
             </div>
@@ -1592,8 +1523,6 @@
 
         <!-- ==================== TAB 3: ANALYTICS & DASHBOARD ==================== -->
         <div id="analytics-tab" class="tab-content space-y-6 hidden">
-
-            <!-- Summary KPI Cards -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
                     <div>
@@ -1641,41 +1570,15 @@
                     </div>
                 </div>
             </div>
-
             <!-- Charts Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Chart 1: Samples per Disease Code -->
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h3 class="font-bold text-slate-900 text-sm mb-4">Samples per Disease</h3>
-                    <div class="h-64 flex justify-center"><canvas id="chart-disease"></canvas></div>
-                </div>
-                <!-- Chart 2: Processing Trends -->
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h3 class="font-bold text-slate-900 text-sm mb-4">Sample Processing Trends</h3>
-                    <div class="h-64"><canvas id="chart-trends"></canvas></div>
-                </div>
-                <!-- Chart 3: Viability & Yield by Operator -->
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h3 class="font-bold text-slate-900 text-sm mb-4">Viability (%) by Operator</h3>
-                    <div class="h-64"><canvas id="chart-operator"></canvas></div>
-                </div>
-                <!-- Chart 4: Viability Distribution by Disease -->
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h3 class="font-bold text-slate-900 text-sm mb-4">Average Viability (%) by Disease</h3>
-                    <div class="h-64"><canvas id="chart-disease-viability"></canvas></div>
-                </div>
-                <!-- Chart 5: Sample Status Breakdown -->
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h3 class="font-bold text-slate-900 text-sm mb-4">Sample Release Status</h3>
-                    <div class="h-64 flex justify-center"><canvas id="chart-status"></canvas></div>
-                </div>
-                <!-- Chart 6: Sample Type Distribution -->
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h3 class="font-bold text-slate-900 text-sm mb-4">Bulk Sample Type Breakdown</h3>
-                    <div class="h-64 flex justify-center"><canvas id="chart-sample-types"></canvas></div>
-                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><h3 class="font-bold text-slate-900 text-sm mb-4">Samples per Disease</h3><div class="h-64 flex justify-center"><canvas id="chart-disease"></canvas></div></div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><h3 class="font-bold text-slate-900 text-sm mb-4">Sample Processing Trends</h3><div class="h-64"><canvas id="chart-trends"></canvas></div></div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><h3 class="font-bold text-slate-900 text-sm mb-4">Viability (%) by Operator</h3><div class="h-64"><canvas id="chart-operator"></canvas></div></div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><h3 class="font-bold text-slate-900 text-sm mb-4">Average Viability (%) by Disease</h3><div class="h-64"><canvas id="chart-disease-viability"></canvas></div></div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><h3 class="font-bold text-slate-900 text-sm mb-4">Sample Release Status</h3><div class="h-64 flex justify-center"><canvas id="chart-status"></canvas></div></div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><h3 class="font-bold text-slate-900 text-sm mb-4">Bulk Sample Type Breakdown</h3><div class="h-64 flex justify-center"><canvas id="chart-sample-types"></canvas></div></div>
             </div>
-
         </div>
     </main>
 
@@ -1688,8 +1591,7 @@
 
     <!-- Application Script Logic -->
     <script>
-
-         const firebaseConfig = {
+        const firebaseConfig = {
           apiKey: "AIzaSyBQMLfFjIF_WOjxkT8E01ObPeHxRjPvv5U",
           authDomain: "biosesnesseperationsop.firebaseapp.com",
           databaseURL: "https://biosesnesseperationsop-default-rtdb.firebaseio.com",
@@ -1699,7 +1601,6 @@
           appId: "1:284846672947:web:bfdd495cec9b9ce0a9a746"
         };
         
-       
         let db = null;
         try {
             firebase.initializeApp(firebaseConfig);
@@ -1709,7 +1610,6 @@
         }
         let allRecords = [];
         let chartInstances = {};
-
         let currentEditingRecordId = null;
 
         function initCryovialRows() {
@@ -1720,13 +1620,11 @@
             }
         }
 
-        // --- 2. DYNAMIC ROW INITIALIZATION ---
         window.onload = function() {
             initCryovialRows();
             setupCustodyAutoPopulate();
             fetchRecordsFromFirebase();
         };
-
 
         function addCryovialRow(idx = null) {
             const tbody = document.getElementById('cryovial-tbody');
@@ -1782,7 +1680,6 @@
             tbody.appendChild(tr);
         }
 
-        // --- 3. AUTO CALCULATIONS & VERIFICATION LOGIC ---
         function setupCustodyAutoPopulate() {
             const site = document.getElementById('custody-site-code');
             const cond = document.getElementById('custody-condition');
@@ -1791,11 +1688,9 @@
             const op = document.getElementById('custody-operator');
 
             function updateSampleID() {
-                const sampleID = `${site.value || 'JO'}-${cond.value || 'RA'}-${pid.value || '001'}-${samid.value || 'PBMC'}`;
+                const sampleID = `${site.value || 'XX'}-${cond.value || 'RA'}-${pid.value || '001'}-${samid.value || 'PBMC'}`;
                 document.getElementById('final-sample-id').value = sampleID;
                 document.getElementById('procHeaderSampleId').value = sampleID;
-                
-                // Update Innovated Barcode component display
                 const barcodeBox = document.getElementById('barcode-display-box');
                 if (barcodeBox) barcodeBox.innerText = sampleID;
             }
@@ -1812,9 +1707,7 @@
 
         function calculateFicoll() {
             const bVol = parseFloat(document.getElementById('step-4-blood-vol').value) || 0;
-            const pbsVol = parseFloat(document.getElementById('step-5-pbs-added').value) || 0;
             const totalDil = bVol;
-
             document.getElementById('step-10-dil-vol').value = totalDil > 0 ? totalDil + " mL" : "";
             const ficollVal = totalDil > 0 ? (totalDil / 2).toFixed(1) : "";
             document.getElementById('step-11-ficoll-calc').value = ficollVal ? `Ficoll Vol = ${ficollVal} mL` : "";
@@ -1829,11 +1722,10 @@
             const b2nv = parseFloat(document.getElementById('box2-nv').value) || 0;
             const b3v = parseFloat(document.getElementById('box3-v').value) || 0;
             const b3nv = parseFloat(document.getElementById('box3-nv').value) || 0;
-
             const df = parseFloat(document.getElementById('dilution-factor').value) || 2;
 
             const avgViable = (b1v + b2v + b3v) / 3;
-            const avgNonViable = (b1nv + b2nv + b3nv)/3;
+            const avgNonViable = (b1nv + b2nv + b3nv) / 3;
             const totalAvg = avgViable + avgNonViable;
 
             let viabilityPct = 0;
@@ -1842,19 +1734,14 @@
             }
 
             document.getElementById('res-viability-pct').innerText = viabilityPct;
-
-            // Concentration = avg viable * 10^4 * DF
             const conc = avgViable * 10000 * df;
-            const totalYield = conc * 10; // 10 mL suspension
+            const totalYield = conc * 10;
 
             document.getElementById('res-conc').innerText = conc.toLocaleString();
             document.getElementById('res-total-yield').innerText = totalYield.toLocaleString();
-
-            // Populate Final Documentation Section
             document.getElementById('final-total-cells').value = totalYield > 0 ? totalYield.toLocaleString() : "";
             document.getElementById('final-conc').value = conc > 0 ? conc.toLocaleString() : "";
 
-            // MACS Volume Calculation (Step 46): Total cells / 10,000,000
             const macsVol = totalYield > 0 ? (totalYield / 10000000).toFixed(2) : "0.00";
             document.getElementById('res-macs-vol').innerText = macsVol;
             document.getElementById('step-49-vol-used').value = macsVol;
@@ -1862,7 +1749,6 @@
             document.getElementById('final-full-vials').value = Math.floor(totalYield / 10000000);
         }
 
-        // --- 4. NAVIGATION TAB SWITCHING ---
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById(`${tabName}-tab`).classList.remove('hidden');
@@ -1887,14 +1773,12 @@
                 if (!confirm("Sample ID appears to be using placeholder values. Save anyway?")) return;
             }
 
-            // 1. Collect Critical Rules (Section 1)
             const criticalRules = {};
             for (let i = 1; i <= 8; i++) {
                 const el = document.getElementById(`rule-${i}`);
                 if (el) criticalRules[`rule${i}`] = el.checked;
             }
 
-            // 2. Collect Custody Data (Section 2)
             const custody = {
                 siteCode: document.getElementById('custody-site-code')?.value || '',
                 condition: document.getElementById('custody-condition')?.value || '',
@@ -1908,20 +1792,16 @@
                 checker: document.getElementById('custody-checker')?.value || ''
             };
 
-           // 3. Collect Equipment & Materials (Section 3)
+            // Section 3: Safe separation of cell 0 label from cell 1 inputs
             const materials = [];
             document.querySelectorAll('#materials-tbody tr').forEach(tr => {
-                // If cell 0 has an input (custom row), get its value; otherwise get innerText
                 const nameInput = tr.cells[0]?.querySelector('input');
                 const itemName = nameInput ? nameInput.value : (tr.cells[0]?.innerText.trim() || '');
-                
-                // CRITICAL: Collect ONLY inputs from cell 1 to avoid capturing cell 0's label input
                 const cell1Inputs = Array.from(tr.cells[1]?.querySelectorAll('input') || []);
                 const inputs = cell1Inputs.map(inp => inp.type === 'checkbox' ? inp.checked : inp.value);
                 materials.push({ itemName, inputs });
             });
 
-            // 4. Collect Pre-Processing Checklist (Section 4)
             const preChecklist = [];
             document.querySelectorAll('#entry-tab .bg-white:nth-of-type(4) tbody tr').forEach(tr => {
                 const checkItem = tr.cells[0]?.innerText.trim() || '';
@@ -1930,7 +1810,6 @@
                 preChecklist.push({ checkItem, result, initials });
             });
 
-            // 5. Collect Processing Header Bar
             const procHeader = {
                 sampleId: document.getElementById('procHeaderSampleId')?.value || '',
                 collTime: document.querySelector('input[name="procHeaderCollTime"]')?.value || '',
@@ -1939,12 +1818,11 @@
                 operator: document.querySelector('input[name="procHeaderOperator"]')?.value || ''
             };
 
-    // 6. Collect Step Input Records (Section 5 Steps 1 – 53)
             const stepRecords = [];
             document.querySelectorAll('#entry-tab .bg-white:nth-of-type(5) tbody tr').forEach(tr => {
                 const stepNo = tr.cells[0]?.innerText.trim() || '';
-                const recordCell = tr.cells[2]; // The record column containing inputs/radios/checkboxes
-                const doneCell = tr.cells[3];   // The "Done" checkbox column
+                const recordCell = tr.cells[2];
+                const doneCell = tr.cells[3];
                 const done = doneCell?.querySelector('input[type="checkbox"]')?.checked || false;
 
                 const inputs = [];
@@ -1961,13 +1839,10 @@
                 }
                 stepRecords.push({ stepNo, done, inputs });
             });
-            // 7. Collect Cell Calculations & Yield Metrics
+
             const metrics = {
                 bloodVol: document.getElementById('step-4-blood-vol')?.value || '',
                 pbsAdded: document.getElementById('step-5-pbs-added')?.value || '',
-                dilVol: document.getElementById('step-10-dil-vol')?.value || '',
-                ficollCalc: document.getElementById('step-11-ficoll-calc')?.value || '',
-                ficollAdded: document.getElementById('step-12-ficoll-added')?.value || '',
                 box1v: document.getElementById('box1-v')?.value || '',
                 box1nv: document.getElementById('box1-nv')?.value || '',
                 box2v: document.getElementById('box2-v')?.value || '',
@@ -1981,7 +1856,6 @@
                 macsVol: document.getElementById('res-macs-vol')?.innerText || '0'
             };
 
-            // 8. Collect Cryovial Traceability Log (Section 6)
             const cryovials = [];
             document.querySelectorAll('#cryovial-tbody tr').forEach(tr => {
                 cryovials.push({
@@ -1996,7 +1870,6 @@
                 });
             });
 
-            // 9. Collect Quality Control Rows (Section 7)
             const qcList = [];
             document.querySelectorAll('#entry-tab .bg-white:nth-of-type(7) tbody tr').forEach(tr => {
                 qcList.push({
@@ -2007,7 +1880,6 @@
                 });
             });
 
-            // 10. Collect Deviations Log & SOP Matrix (Section 8)
             const deviations = [];
             document.querySelectorAll('#deviation-tbody tr').forEach(tr => {
                 const inps = tr.querySelectorAll('input, textarea');
@@ -2021,7 +1893,6 @@
                 }
             });
 
-            // 11. Collect Final Sample Release (Section 9)
             const finalRelease = {
                 startVol: document.getElementById('final-start-vol')?.value || '',
                 totalCells: document.getElementById('final-total-cells')?.value || '',
@@ -2034,7 +1905,6 @@
                 status: document.querySelector('input[name="proc_status"]:checked')?.value || 'Released'
             };
 
-            // 12. Collect Authorization & Sign-Offs (Section 10)
             const signOff = {
                 opName: document.getElementById('sign-op-name')?.value || '',
                 opSig: document.getElementById('sign-op-sig')?.value || '',
@@ -2047,11 +1917,9 @@
                 qaDate: document.getElementById('sign-qa-date')?.value || ''
             };
 
-            // Existing creation timestamp or new ISO timestamp
             const createdAtTimestamp = (currentEditingRecordId && allRecords.find(r => r.id === currentEditingRecordId)?.createdAt) 
                 || new Date().toLocaleString();
 
-            // Assemble Full Record Object
             const recordData = {
                 sampleID: sampleID,
                 siteCode: custody.siteCode || 'XX',
@@ -2066,28 +1934,13 @@
                 cryovialCount: parseInt(finalRelease.fullVials) || 0,
                 status: finalRelease.status,
                 timestamp: Date.now(),
-                // Embedded Detailed Objects
-                criticalRules,
-                custody,
-                materials,
-                preChecklist,
-                procHeader,
-                stepRecords,
-                metrics,
-                cryovials,
-                qcList,
-                deviations,
-                finalRelease,
-                signOff
+                criticalRules, custody, materials, preChecklist, procHeader, stepRecords, metrics, cryovials, qcList, deviations, finalRelease, signOff
             };
 
-            // Execute Firebase Database Operation
             if (db) {
                 let dbRef;
                 let isUpdate = false;
-
-                // OVERWRITE existing record if currentEditingRecordId is present; otherwise CREATE new record
-                if (typeof currentEditingRecordId !== 'undefined' && currentEditingRecordId) {
+                if (currentEditingRecordId) {
                     dbRef = db.ref('records/' + currentEditingRecordId);
                     isUpdate = true;
                 } else {
@@ -2107,7 +1960,7 @@
                     }
                 });
             } else {
-                showToast("Firebase DB unavailable. Check connection or initialization.", "amber");
+                showToast("Firebase DB unavailable.", "amber");
             }
         }
 
@@ -2129,9 +1982,8 @@
         function renderLogsTable(records) {
             const tbody = document.getElementById('logs-tbody');
             tbody.innerHTML = '';
-
             if (records.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="10" class="text-center p-4 text-slate-400">No processing logs found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center p-4 text-slate-400">No processing logs found.</td></tr>`;
                 return;
             }
 
@@ -2155,12 +2007,8 @@
                     <td class="p-3"><span class="px-2 py-0.5 text-xs font-semibold rounded border ${badgeClass}">${rec.status}</span></td>
                     <td class="p-3 text-center">
                         <div class="inline-flex items-center space-x-1">
-                            <button onclick="editRecord('${rec.id}')" title="Edit Record" class="w-7 h-7 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded flex items-center justify-center transition-colors border border-blue-200 shadow-sm">
-                                <i class="fa-solid fa-pen text-xs"></i>
-                            </button>
-                            <button onclick="deleteRecord('${rec.id}')" title="Delete Record" class="w-7 h-7 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded flex items-center justify-center transition-colors border border-rose-200 shadow-sm">
-                                <i class="fa-solid fa-trash text-xs"></i>
-                            </button>
+                            <button onclick="editRecord('${rec.id}')" title="Edit Record" class="w-7 h-7 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded flex items-center justify-center transition-colors border border-blue-200 shadow-sm"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="deleteRecord('${rec.id}')" title="Delete Record" class="w-7 h-7 bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white rounded flex items-center justify-center transition-colors border border-rose-200 shadow-sm"><i class="fa-solid fa-trash text-xs"></i></button>
                         </div>
                     </td>
                 `;
@@ -2171,7 +2019,6 @@
         function filterLogsTable() {
             const query = document.getElementById('log-search-input').value.toLowerCase();
             const status = document.getElementById('log-status-filter').value;
-
             const filtered = allRecords.filter(r => {
                 const matchesSearch = (r.sampleID && r.sampleID.toLowerCase().includes(query)) ||
                                       (r.patientID && r.patientID.toLowerCase().includes(query)) ||
@@ -2183,14 +2030,15 @@
             renderLogsTable(filtered);
         }
 
-function editRecord(id) {
+        // ==========================================
+        // COMPREHENSIVE EDIT RECORD (100% END-TO-END)
+        // ==========================================
+        function editRecord(id) {
             const rec = allRecords.find(r => r.id === id);
             if (!rec) return;
             currentEditingRecordId = id;
 
-            // ==========================================
-            // SECTION 1: Critical Rules (Checkboxes)
-            // ==========================================
+            // 1. Critical Rules
             if (rec.criticalRules) {
                 for (let i = 1; i <= 8; i++) {
                     const el = document.getElementById(`rule-${i}`);
@@ -2198,9 +2046,7 @@ function editRecord(id) {
                 }
             }
 
-            // ==========================================
-            // SECTION 2: Sample Identification & Custody
-            // ==========================================
+            // 2. Custody & Identification
             if (rec.custody) {
                 document.getElementById('custody-site-code').value = rec.custody.siteCode || rec.siteCode || '';
                 document.getElementById('custody-condition').value = rec.custody.condition || rec.diseaseCode || '';
@@ -2214,14 +2060,10 @@ function editRecord(id) {
                 document.getElementById('custody-checker').value = rec.custody.checker || '';
             }
 
-            // ==========================================
-            // SECTION 3: Required Materials & Equipment (Dynamic Rebuild)
-            // ==========================================
-            // 3. Populate Section 3: Required Materials and Equipment (Bulletproof Rebuild)
+            // 3. Section 3: Materials & Equipment (Type-Safe Rebuild)
             if (rec.materials && Array.isArray(rec.materials)) {
                 const matTbody = document.getElementById('materials-tbody');
                 matTbody.innerHTML = '';
-                
                 const defaultItems = [
                     "15 mL sterile tubes", "50 mL sterile tubes", "K2 EDTA tube 10 mL", 
                     "Plain tube 10 mL", "10 mL serological pipettes", "25 mL serological pipettes", 
@@ -2234,19 +2076,13 @@ function editRecord(id) {
                 rec.materials.forEach(item => {
                     const tr = document.createElement('tr');
                     let detailsHtml = '';
-                    
-                    const isCheckboxRow = item.inputs && (
-                        typeof item.inputs[0] === 'boolean' || 
-                        typeof item.inputs[1] === 'boolean' || 
-                        item.inputs[0] === "on" || 
-                        item.inputs[1] === "on" ||
-                        item.inputs[0] === false || 
-                        item.inputs[1] === false
+                    const isCheckboxRow = defaultItems.slice(0, 6).includes(item.itemName) || item.itemName === "Isopropanol freezing container" || (
+                        item.inputs && (typeof item.inputs[0] === 'boolean' || item.inputs[0] === "on" || item.inputs[0] === false)
                     );
 
                     if (isCheckboxRow) {
-                        const chk1 = item.inputs[0] === true || item.inputs[0] === "on";
-                        const chk2 = item.inputs[1] === true || item.inputs[1] === "on";
+                        const chk1 = item.inputs && (item.inputs[0] === true || item.inputs[0] === "on");
+                        const chk2 = item.inputs && (item.inputs[1] === true || item.inputs[1] === "on");
                         detailsHtml = `
                             <label class="inline-flex items-center mr-4"><input type="checkbox" class="mr-1" ${chk1 ? 'checked' : ''}> Available</label>
                             <label class="inline-flex items-center"><input type="checkbox" class="mr-1" ${chk2 ? 'checked' : ''}> Acceptable / Ready</label>
@@ -2260,7 +2096,6 @@ function editRecord(id) {
                         `;
                     }
 
-                    // If it's a custom user-added row (not in default list), render cell 0 as an editable text input
                     const isDefault = defaultItems.includes(item.itemName);
                     const cell0Html = isDefault 
                         ? `<td class="p-2 font-medium">${item.itemName || ''}</td>`
@@ -2277,9 +2112,7 @@ function editRecord(id) {
                 });
             }
 
-            // ==========================================
-            // SECTION 4: Pre-Processing Readiness Checklist
-            // ==========================================
+            // 4. Pre-Processing Checklist
             if (rec.preChecklist && Array.isArray(rec.preChecklist)) {
                 const preRows = document.querySelectorAll('#entry-tab .bg-white:nth-of-type(4) tbody tr');
                 rec.preChecklist.forEach((pItem, idx) => {
@@ -2291,9 +2124,7 @@ function editRecord(id) {
                 });
             }
 
-            // ==========================================
-            // SECTION 5: Processing Header Bar & Step Checklists (Timestamps, Radios, Checkboxes)
-            // ==========================================
+            // 5. Processing Header & Step Checklists (Timestamps, Radios, Checkboxes)
             if (rec.procHeader) {
                 document.getElementById('procHeaderSampleId').value = rec.procHeader.sampleId || '';
                 const collTimeInput = document.querySelector('input[name="procHeaderCollTime"]');
@@ -2315,11 +2146,9 @@ function editRecord(id) {
                         const doneCell = tr.cells[3];
                         const recordCell = tr.cells[2];
 
-                        // Restore Done checkbox
                         const doneChk = doneCell?.querySelector('input[type="checkbox"]');
                         if (doneChk) doneChk.checked = !!sRec.done;
 
-                        // Restore timestamps, text fields, radio selections, and inner checkboxes accurately
                         if (recordCell && Array.isArray(sRec.inputs)) {
                             const domInputs = recordCell.querySelectorAll('input, select');
                             sRec.inputs.forEach((savedInput, i) => {
@@ -2341,7 +2170,6 @@ function editRecord(id) {
                 });
             }
 
-            // Trigger Cell Counting & Yield Metrics Calculations
             if (rec.metrics) {
                 document.getElementById('step-4-blood-vol').value = rec.metrics.bloodVol || '';
                 document.getElementById('step-5-pbs-added').value = rec.metrics.pbsAdded || '';
@@ -2356,9 +2184,7 @@ function editRecord(id) {
                 calculateCellMetrics();
             }
 
-            // ==========================================
-            // SECTION 6: Cryovial Traceability Record (Dynamic Rebuild)
-            // ==========================================
+            // 6. Cryovials Record
             if (rec.cryovials && Array.isArray(rec.cryovials)) {
                 const cryoTbody = document.getElementById('cryovial-tbody');
                 cryoTbody.innerHTML = '';
@@ -2382,9 +2208,7 @@ function editRecord(id) {
                 });
             }
 
-            // ==========================================
-            // SECTION 7: Quality Control
-            // ==========================================
+            // 7. Quality Control
             if (rec.qcList && Array.isArray(rec.qcList)) {
                 const qcRows = document.querySelectorAll('#entry-tab .bg-white:nth-of-type(7) tbody tr');
                 rec.qcList.forEach((qcItem, idx) => {
@@ -2399,9 +2223,7 @@ function editRecord(id) {
                 });
             }
 
-            // ==========================================
-            // SECTION 8: Deviations Log (Dynamic Rebuild)
-            // ==========================================
+            // 8. Deviations Log
             if (rec.deviations && Array.isArray(rec.deviations)) {
                 const devTbody = document.getElementById('deviation-tbody');
                 devTbody.innerHTML = '';
@@ -2420,9 +2242,7 @@ function editRecord(id) {
                 });
             }
 
-            // ==========================================
-            // SECTION 9: Final Sample Release
-            // ==========================================
+            // 9. Final Sample Release
             if (rec.finalRelease) {
                 document.getElementById('final-start-vol').value = rec.finalRelease.startVol || '';
                 document.getElementById('final-total-cells').value = rec.finalRelease.totalCells || '';
@@ -2438,9 +2258,7 @@ function editRecord(id) {
                 }
             }
 
-            // ==========================================
-            // SECTION 10: Authorization & Sign-Off
-            // ==========================================
+            // 10. Authorization & Sign-Off
             if (rec.signOff) {
                 document.getElementById('sign-op-name').value = rec.signOff.opName || '';
                 document.getElementById('sign-op-sig').value = rec.signOff.opSig || '';
@@ -2456,11 +2274,11 @@ function editRecord(id) {
             switchTab('entry');
             showToast(`Editing Record: ${rec.sampleID || id}`, "blue");
         }
+
         function deleteRecord(id) {
             const rec = allRecords.find(r => r.id === id);
             const sampleName = rec ? rec.sampleID : id;
-
-            if (confirm(`Are you sure you want to delete record ${sampleName}? This action cannot be undone.`)) {
+            if (confirm(`Are you sure you want to delete record ${sampleName}?`)) {
                 if (db) {
                     db.ref('records/' + id).remove().then(() => {
                         showToast(`Record ${sampleName} deleted successfully.`, "rose");
@@ -2484,7 +2302,7 @@ function editRecord(id) {
 
         function clearForm() {
             if (confirm("Are you sure you want to clear the entry form?")) {
-                document.querySelectorAll('#entry-tab input[type="text"], #entry-tab input[type="number"], #entry-tab input[type="time"], #entry-tab input[type="date"], #entry-tab textarea').forEach(i => i.value = '');
+                document.querySelectorAll('#entry-tab input[type="text"], #entry-tab input[type="number"], #entry-tab input[type="time"], #entry-tab input[type="date'], #entry-tab textarea').forEach(i => i.value = '');
                 document.querySelectorAll('#entry-tab input[type="checkbox"]').forEach(i => i.checked = false);
                 initCryovialRows();
                 setupCustodyAutoPopulate();
@@ -2493,7 +2311,6 @@ function editRecord(id) {
             }
         }
 
-        // --- 6. DASHBOARD & ANALYTICS CHARTS ---
         function updateKPICards(records) {
             document.getElementById('kpi-total-samples').innerText = records.length;
             const avgViab = records.length ? (records.reduce((acc, curr) => acc + (curr.viabilityPct || 0), 0) / records.length).toFixed(1) : 0;
@@ -2503,7 +2320,6 @@ function editRecord(id) {
             const deviations = records.filter(r => r.status === 'Deviation pending').length;
             document.getElementById('kpi-total-deviations').innerText = deviations;
 
-            // Bulk Efficiency Insight KPI: Avg Cell Yield per Sample
             let totalYieldSum = 0;
             let countYield = 0;
             records.forEach(r => {
@@ -2520,53 +2336,30 @@ function editRecord(id) {
         }
 
         function renderDashboardCharts() {
-            // Destroy existing charts to prevent duplication
             Object.keys(chartInstances).forEach(key => chartInstances[key].destroy());
 
-            // 1. Chart: Samples per Disease
             const diseaseCounts = {};
             allRecords.forEach(r => {
                 const disease = r.diseaseCode || 'Unknown';
                 diseaseCounts[disease] = (diseaseCounts[disease] || 0) + 1;
             });
 
-            const ctxDisease = document.getElementById('chart-disease').getContext('2d');
-            chartInstances.disease = new Chart(ctxDisease, {
+            chartInstances.disease = new Chart(document.getElementById('chart-disease').getContext('2d'), {
                 type: 'bar',
-                data: {
-                    labels: Object.keys(diseaseCounts),
-                    datasets: [{
-                        label: 'Samples per Disease',
-                        data: Object.values(diseaseCounts),
-                        backgroundColor: '#3b82f6'
-                    }]
-                },
+                data: { labels: Object.keys(diseaseCounts), datasets: [{ label: 'Samples per Disease', data: Object.values(diseaseCounts), backgroundColor: '#3b82f6' }] },
                 options: { responsive: true, maintainAspectRatio: false }
             });
 
-            // 2. Chart: Processing Trends
             const dates = allRecords.map(r => r.processingDate || 'Unknown');
             const datesCount = {};
             dates.forEach(d => datesCount[d] = (datesCount[d] || 0) + 1);
 
-            const ctx1 = document.getElementById('chart-trends').getContext('2d');
-            chartInstances.trends = new Chart(ctx1, {
+            chartInstances.trends = new Chart(document.getElementById('chart-trends').getContext('2d'), {
                 type: 'line',
-                data: {
-                    labels: Object.keys(datesCount),
-                    datasets: [{
-                        label: 'Samples Processed',
-                        data: Object.values(datesCount),
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
+                data: { labels: Object.keys(datesCount), datasets: [{ label: 'Samples Processed', data: Object.values(datesCount), borderColor: '#2563eb', backgroundColor: 'rgba(37, 99, 235, 0.1)', fill: true, tension: 0.3 }] },
                 options: { responsive: true, maintainAspectRatio: false }
             });
 
-            // 3. Chart: Viability by Operator
             const opViab = {};
             allRecords.forEach(r => {
                 const op = r.operator || 'Unknown';
@@ -2578,21 +2371,12 @@ function editRecord(id) {
                 opAvg[op] = (opViab[op].reduce((a,b) => a+b, 0) / opViab[op].length).toFixed(1);
             });
 
-            const ctx2 = document.getElementById('chart-operator').getContext('2d');
-            chartInstances.operator = new Chart(ctx2, {
+            chartInstances.operator = new Chart(document.getElementById('chart-operator').getContext('2d'), {
                 type: 'bar',
-                data: {
-                    labels: Object.keys(opAvg),
-                    datasets: [{
-                        label: 'Average Viability (%)',
-                        data: Object.values(opAvg),
-                        backgroundColor: '#10b981'
-                    }]
-                },
+                data: { labels: Object.keys(opAvg), datasets: [{ label: 'Average Viability (%)', data: Object.values(opAvg), backgroundColor: '#10b981' }] },
                 options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 100 } } }
             });
 
-            // 4. Chart: Average Viability (%) by Disease
             const diseaseViab = {};
             allRecords.forEach(r => {
                 const disease = r.diseaseCode || 'Unknown';
@@ -2604,61 +2388,36 @@ function editRecord(id) {
                 diseaseViabAvg[d] = (diseaseViab[d].reduce((a, b) => a + b, 0) / diseaseViab[d].length).toFixed(1);
             });
 
-            const ctxDiseaseViab = document.getElementById('chart-disease-viability').getContext('2d');
-            chartInstances.diseaseViability = new Chart(ctxDiseaseViab, {
+            chartInstances.diseaseViability = new Chart(document.getElementById('chart-disease-viability').getContext('2d'), {
                 type: 'bar',
-                data: {
-                    labels: Object.keys(diseaseViabAvg),
-                    datasets: [{
-                        label: 'Avg Viability (%)',
-                        data: Object.values(diseaseViabAvg),
-                        backgroundColor: '#8b5cf6'
-                    }]
-                },
+                data: { labels: Object.keys(diseaseViabAvg), datasets: [{ label: 'Avg Viability (%)', data: Object.values(diseaseViabAvg), backgroundColor: '#8b5cf6' }] },
                 options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 100 } } }
             });
 
-            // 5. Chart: Status Breakdown
             const statusCounts = { 'Released': 0, 'Hold': 0, 'Deviation pending': 0 };
             allRecords.forEach(r => {
                 if (statusCounts[r.status] !== undefined) statusCounts[r.status]++;
             });
 
-            const ctx3 = document.getElementById('chart-status').getContext('2d');
-            chartInstances.status = new Chart(ctx3, {
+            chartInstances.status = new Chart(document.getElementById('chart-status').getContext('2d'), {
                 type: 'doughnut',
-                data: {
-                    labels: Object.keys(statusCounts),
-                    datasets: [{
-                        data: Object.values(statusCounts),
-                        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e']
-                    }]
-                },
+                data: { labels: Object.keys(statusCounts), datasets: [{ data: Object.values(statusCounts), backgroundColor: ['#10b981', '#f59e0b', '#f43f5e'] }] },
                 options: { responsive: true, maintainAspectRatio: false }
             });
 
-            // 6. Chart: Bulk Sample Type Breakdown
             const sampleTypeCounts = {};
             allRecords.forEach(r => {
                 const st = r.sampleType || 'Whole Blood';
                 sampleTypeCounts[st] = (sampleTypeCounts[st] || 0) + 1;
             });
 
-            const ctxTypes = document.getElementById('chart-sample-types').getContext('2d');
-            chartInstances.sampleTypes = new Chart(ctxTypes, {
+            chartInstances.sampleTypes = new Chart(document.getElementById('chart-sample-types').getContext('2d'), {
                 type: 'pie',
-                data: {
-                    labels: Object.keys(sampleTypeCounts),
-                    datasets: [{
-                        data: Object.values(sampleTypeCounts),
-                        backgroundColor: ['#06b6d4', '#f97316', '#84cc16', '#e11d48', '#a855f7']
-                    }]
-                },
+                data: { labels: Object.keys(sampleTypeCounts), datasets: [{ data: Object.values(sampleTypeCounts), backgroundColor: ['#06b6d4', '#f97316', '#84cc16', '#e11d48', '#a855f7'] }] },
                 options: { responsive: true, maintainAspectRatio: false }
             });
         }
 
-        // --- 7. TOAST NOTIFICATION HELPERS ---
         function showToast(message, color = 'emerald') {
             const toast = document.getElementById('toast');
             const toastMsg = document.getElementById('toast-message');

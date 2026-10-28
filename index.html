@@ -1589,7 +1589,7 @@
         </div>
     </footer>
 
-    <!-- Application Script Logic -->
+   <!-- Application Script Logic -->
     <script>
         const firebaseConfig = {
           apiKey: "AIzaSyBQMLfFjIF_WOjxkT8E01ObPeHxRjPvv5U",
@@ -1792,7 +1792,6 @@
                 checker: document.getElementById('custody-checker')?.value || ''
             };
 
-            // Section 3: Safe separation of cell 0 label from cell 1 inputs
             const materials = [];
             document.querySelectorAll('#materials-tbody tr').forEach(tr => {
                 const nameInput = tr.cells[0]?.querySelector('input');
@@ -2030,15 +2029,11 @@
             renderLogsTable(filtered);
         }
 
-        // ==========================================
-        // COMPREHENSIVE EDIT RECORD (100% END-TO-END)
-        // ==========================================
         function editRecord(id) {
             const rec = allRecords.find(r => r.id === id);
             if (!rec) return;
             currentEditingRecordId = id;
 
-            // 1. Critical Rules
             if (rec.criticalRules) {
                 for (let i = 1; i <= 8; i++) {
                     const el = document.getElementById(`rule-${i}`);
@@ -2046,7 +2041,6 @@
                 }
             }
 
-            // 2. Custody & Identification
             if (rec.custody) {
                 document.getElementById('custody-site-code').value = rec.custody.siteCode || rec.siteCode || '';
                 document.getElementById('custody-condition').value = rec.custody.condition || rec.diseaseCode || '';
@@ -2060,7 +2054,6 @@
                 document.getElementById('custody-checker').value = rec.custody.checker || '';
             }
 
-            // 3. Section 3: Materials & Equipment (Type-Safe Rebuild)
             if (rec.materials && Array.isArray(rec.materials)) {
                 const matTbody = document.getElementById('materials-tbody');
                 matTbody.innerHTML = '';
@@ -2112,7 +2105,6 @@
                 });
             }
 
-            // 4. Pre-Processing Checklist
             if (rec.preChecklist && Array.isArray(rec.preChecklist)) {
                 const preRows = document.querySelectorAll('#entry-tab .bg-white:nth-of-type(4) tbody tr');
                 rec.preChecklist.forEach((pItem, idx) => {
@@ -2124,7 +2116,6 @@
                 });
             }
 
-            // 5. Processing Header & Step Checklists (Timestamps, Radios, Checkboxes)
             if (rec.procHeader) {
                 document.getElementById('procHeaderSampleId').value = rec.procHeader.sampleId || '';
                 const collTimeInput = document.querySelector('input[name="procHeaderCollTime"]');
@@ -2184,7 +2175,6 @@
                 calculateCellMetrics();
             }
 
-            // 6. Cryovials Record
             if (rec.cryovials && Array.isArray(rec.cryovials)) {
                 const cryoTbody = document.getElementById('cryovial-tbody');
                 cryoTbody.innerHTML = '';
@@ -2208,7 +2198,6 @@
                 });
             }
 
-            // 7. Quality Control
             if (rec.qcList && Array.isArray(rec.qcList)) {
                 const qcRows = document.querySelectorAll('#entry-tab .bg-white:nth-of-type(7) tbody tr');
                 rec.qcList.forEach((qcItem, idx) => {
@@ -2223,7 +2212,6 @@
                 });
             }
 
-            // 8. Deviations Log
             if (rec.deviations && Array.isArray(rec.deviations)) {
                 const devTbody = document.getElementById('deviation-tbody');
                 devTbody.innerHTML = '';
@@ -2242,7 +2230,6 @@
                 });
             }
 
-            // 9. Final Sample Release
             if (rec.finalRelease) {
                 document.getElementById('final-start-vol').value = rec.finalRelease.startVol || '';
                 document.getElementById('final-total-cells').value = rec.finalRelease.totalCells || '';
@@ -2258,7 +2245,6 @@
                 }
             }
 
-            // 10. Authorization & Sign-Off
             if (rec.signOff) {
                 document.getElementById('sign-op-name').value = rec.signOff.opName || '';
                 document.getElementById('sign-op-sig').value = rec.signOff.opSig || '';
@@ -2302,7 +2288,7 @@
 
         function clearForm() {
             if (confirm("Are you sure you want to clear the entry form?")) {
-                document.querySelectorAll('#entry-tab input[type="text"], #entry-tab input[type="number"], #entry-tab input[type="time"], #entry-tab input[type="date'], #entry-tab textarea').forEach(i => i.value = '');
+                document.querySelectorAll('#entry-tab input[type="text"], #entry-tab input[type="number"], #entry-tab input[type="time"], #entry-tab input[type="date"], #entry-tab textarea').forEach(i => i.value = '');
                 document.querySelectorAll('#entry-tab input[type="checkbox"]').forEach(i => i.checked = false);
                 initCryovialRows();
                 setupCustodyAutoPopulate();
@@ -2427,5 +2413,3 @@
             setTimeout(() => { toast.classList.add('hidden'); }, 4000);
         }
     </script>
-</body>
-</html>

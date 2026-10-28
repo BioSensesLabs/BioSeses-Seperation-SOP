@@ -1908,11 +1908,16 @@
                 checker: document.getElementById('custody-checker')?.value || ''
             };
 
-            // 3. Collect Equipment & Materials (Section 3)
+           // 3. Collect Equipment & Materials (Section 3)
             const materials = [];
             document.querySelectorAll('#materials-tbody tr').forEach(tr => {
-                const itemName = tr.cells[0]?.querySelector('input')?.value || tr.cells[0]?.innerText.trim() || '';
-                const inputs = Array.from(tr.querySelectorAll('input')).map(inp => inp.type === 'checkbox' ? inp.checked : inp.value);
+                // If cell 0 has an input (custom row), get its value; otherwise get innerText
+                const nameInput = tr.cells[0]?.querySelector('input');
+                const itemName = nameInput ? nameInput.value : (tr.cells[0]?.innerText.trim() || '');
+                
+                // CRITICAL: Collect ONLY inputs from cell 1 to avoid capturing cell 0's label input
+                const cell1Inputs = Array.from(tr.cells[1]?.querySelectorAll('input') || []);
+                const inputs = cell1Inputs.map(inp => inp.type === 'checkbox' ? inp.checked : inp.value);
                 materials.push({ itemName, inputs });
             });
 
@@ -2212,9 +2217,20 @@ function editRecord(id) {
             // ==========================================
             // SECTION 3: Required Materials & Equipment (Dynamic Rebuild)
             // ==========================================
+            // 3. Populate Section 3: Required Materials and Equipment (Bulletproof Rebuild)
             if (rec.materials && Array.isArray(rec.materials)) {
                 const matTbody = document.getElementById('materials-tbody');
                 matTbody.innerHTML = '';
+                
+                const defaultItems = [
+                    "15 mL sterile tubes", "50 mL sterile tubes", "K2 EDTA tube 10 mL", 
+                    "Plain tube 10 mL", "10 mL serological pipettes", "25 mL serological pipettes", 
+                    "Ficoll / Lymphoprep", "PBS 1X or NaCl 0.9%", "MACS Freezing Solution", 
+                    "Cryovials", "Isopropanol freezing container", "Centrifuge with temperature control", 
+                    "Freezer -86°C", "Liquid nitrogen container", "Biosafety cabinet", 
+                    "Counting and Viability (Trypan blue)"
+                ];
+
                 rec.materials.forEach(item => {
                     const tr = document.createElement('tr');
                     let detailsHtml = '';
@@ -2244,8 +2260,14 @@ function editRecord(id) {
                         `;
                     }
 
+                    // If it's a custom user-added row (not in default list), render cell 0 as an editable text input
+                    const isDefault = defaultItems.includes(item.itemName);
+                    const cell0Html = isDefault 
+                        ? `<td class="p-2 font-medium">${item.itemName || ''}</td>`
+                        : `<td class="p-2 font-medium"><input type="text" class="table-input" value="${item.itemName || ''}" placeholder="Item Name"></td>`;
+
                     tr.innerHTML = `
-                        <td class="p-2 font-medium">${item.itemName || ''}</td>
+                        ${cell0Html}
                         <td class="p-2 flex gap-4">${detailsHtml}</td>
                         <td class="p-2 text-center no-print">
                             <button onclick="this.closest('tr').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>

@@ -1934,17 +1934,30 @@
                 operator: document.querySelector('input[name="procHeaderOperator"]')?.value || ''
             };
 
-            // 6. Collect Step Input Records (Section 5 Steps 1 - 53)
+    
+// 6. Collect Step Input Records (Section 5 Steps 1 – 53)
             const stepRecords = [];
             document.querySelectorAll('#entry-tab .bg-white:nth-of-type(5) tbody tr').forEach(tr => {
                 const stepNo = tr.cells[0]?.innerText.trim() || '';
-                const done = tr.cells[tr.cells.length - 1]?.querySelector('input[type="checkbox"]')?.checked || false;
-                const recInputs = Array.from(tr.cells[tr.cells.length - 2]?.querySelectorAll('input, select') || []).map(i => {
-                    return i.type === 'checkbox' ? i.checked : (i.type === 'radio' ? (i.checked ? i.value : null) : i.value);
-                }).filter(v => v !== null);
-                stepRecords.push({ stepNo, done, recInputs });
-            });
+                const recordCell = tr.cells[2]; // The record column containing inputs/radios/checkboxes
+                const doneCell = tr.cells[3];   // The "Done" checkbox column
+                const done = doneCell?.querySelector('input[type="checkbox"]')?.checked || false;
 
+                // Capture each input with its exact type, name, value, and checked state
+                const inputs = [];
+                if (recordCell) {
+                    recordCell.querySelectorAll('input, select').forEach(inp => {
+                        if (inp.type === 'checkbox') {
+                            inputs.push({ type: 'checkbox', value: inp.checked });
+                        } else if (inp.type === 'radio') {
+                            inputs.push({ type: 'radio', name: inp.name, value: inp.value, checked: inp.checked });
+                        } else {
+                            inputs.push({ type: inp.type || 'text', value: inp.value });
+                        }
+                    });
+                }
+                stepRecords.push({ stepNo, done, inputs });
+            });
             // 7. Collect Cell Calculations & Yield Metrics
             const metrics = {
                 bloodVol: document.getElementById('step-4-blood-vol')?.value || '',
@@ -2194,7 +2207,7 @@ function editRecord(id) {
                 document.getElementById('custody-checker').value = rec.custody.checker || '';
             }
 
-     // 3. Populate Section 3: Required Materials and Equipment (Bulletproof Rebuild)
+            // 3. Populate Section 3: Required Materials and Equipment (Dynamic Rebuild)
             if (rec.materials && Array.isArray(rec.materials)) {
                 const matTbody = document.getElementById('materials-tbody');
                 matTbody.innerHTML = '';
@@ -2202,7 +2215,6 @@ function editRecord(id) {
                     const tr = document.createElement('tr');
                     let detailsHtml = '';
                     
-                    // Determine if this row uses checkboxes or text inputs based on saved values
                     const isCheckboxRow = item.inputs && (
                         typeof item.inputs[0] === 'boolean' || 
                         typeof item.inputs[1] === 'boolean' || 
@@ -2228,7 +2240,6 @@ function editRecord(id) {
                         `;
                     }
 
-                    // CRITICAL: Cell 0 is a static text element (Item Name), NOT an input box
                     tr.innerHTML = `
                         <td class="p-2 font-medium">${item.itemName || ''}</td>
                         <td class="p-2 flex gap-4">${detailsHtml}</td>
@@ -2252,7 +2263,7 @@ function editRecord(id) {
                 });
             }
 
-            // 5. Populate Processing Header Bar & Step Records
+            // 5. Populate Processing Header Bar & Step Records (Section 5)
             if (rec.procHeader) {
                 document.getElementById('procHeaderSampleId').value = rec.procHeader.sampleId || '';
                 const collTimeInput = document.querySelector('input[name="procHeaderCollTime"]');
@@ -2270,22 +2281,29 @@ function editRecord(id) {
                 const stepRows = document.querySelectorAll('#entry-tab .bg-white:nth-of-type(5) tbody tr');
                 rec.stepRecords.forEach((sRec, idx) => {
                     if (stepRows[idx]) {
-                        const chk = stepRows[idx].querySelector('input[type="checkbox"]');
-                        if (chk) chk.checked = !!sRec.done;
-                        
-                        // Robust input mapping matching DOM input types
-                        const inps = stepRows[idx].querySelectorAll('input:not([type="checkbox"]), select');
-                        if (sRec.recInputs && Array.isArray(sRec.recInputs)) {
-                            let valIdx = 0;
-                            inps.forEach(inp => {
-                                if (inp.type === 'radio') {
-                                    // Check if this radio matches any saved value in recInputs
-                                    if (sRec.recInputs.includes(inp.value)) {
-                                        inp.checked = true;
+                        const tr = stepRows[idx];
+                        const doneCell = tr.cells[3];
+                        const recordCell = tr.cells[2];
+
+                        // Restore Done checkbox accurately in the last cell
+                        const doneChk = doneCell?.querySelector('input[type="checkbox"]');
+                        if (doneChk) doneChk.checked = !!sRec.done;
+
+                        // Restore exact type-matched inputs in the record cell
+                        if (recordCell && Array.isArray(sRec.inputs)) {
+                            const domInputs = recordCell.querySelectorAll('input, select');
+                            sRec.inputs.forEach((savedInput, i) => {
+                                const domInp = domInputs[i];
+                                if (domInp) {
+                                    if (savedInput.type === 'checkbox') {
+                                        domInp.checked = !!savedInput.value;
+                                    } else if (savedInput.type === 'radio') {
+                                        if (domInp.value === savedInput.value) {
+                                            domInp.checked = !!savedInput.checked;
+                                        }
+                                    } else {
+                                        domInp.value = savedInput.value || '';
                                     }
-                                } else if (valIdx < sRec.recInputs.length) {
-                                    inp.value = sRec.recInputs[valIdx] || '';
-                                    valIdx++;
                                 }
                             });
                         }
@@ -2293,7 +2311,7 @@ function editRecord(id) {
                 });
             }
 
-            // Populate Yield & Calculation Metrics (Triggers auto-calculations)
+            // Populate Yield & Calculation Metrics (Triggers cell count auto-calculations)
             if (rec.metrics) {
                 document.getElementById('step-4-blood-vol').value = rec.metrics.bloodVol || '';
                 document.getElementById('step-5-pbs-added').value = rec.metrics.pbsAdded || '';

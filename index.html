@@ -2167,12 +2167,20 @@
             renderLogsTable(filtered);
         }
 
-        function editRecord(id) {
+       function editRecord(id) {
             const rec = allRecords.find(r => r.id === id);
             if (!rec) return;
             currentEditingRecordId = id;
 
-            // Populate Section 2 Identification fields
+            // 1. Populate Section 1: Critical Rules
+            if (rec.criticalRules) {
+                for (let i = 1; i <= 8; i++) {
+                    const el = document.getElementById(`rule-${i}`);
+                    if (el) el.checked = !!rec.criticalRules[`rule${i}`];
+                }
+            }
+
+            // 2. Populate Section 2: Sample Identification and Chain of Custody
             if (rec.custody) {
                 document.getElementById('custody-site-code').value = rec.custody.siteCode || rec.siteCode || '';
                 document.getElementById('custody-condition').value = rec.custody.condition || rec.diseaseCode || '';
@@ -2186,12 +2194,79 @@
                 document.getElementById('custody-checker').value = rec.custody.checker || '';
             }
 
-            // Populate Section 1 Checkboxes
-            if (rec.criticalRules) {
-                for (let i = 1; i <= 8; i++) {
-                    const el = document.getElementById(`rule-${i}`);
-                    if (el) el.checked = !!rec.criticalRules[`rule${i}`];
-                }
+            // 3. Populate Section 3: Required Materials and Equipment
+            if (rec.materials && Array.isArray(rec.materials)) {
+                const matTbody = document.getElementById('materials-tbody');
+                matTbody.innerHTML = '';
+                rec.materials.forEach(item => {
+                    const tr = document.createElement('tr');
+                    let detailsHtml = '';
+                    if (item.inputs) {
+                        if (typeof item.inputs[0] === 'boolean') {
+                            detailsHtml = `
+                                <label class="inline-flex items-center mr-4"><input type="checkbox" class="mr-1" ${item.inputs[0] ? 'checked' : ''}> Available</label>
+                                <label class="inline-flex items-center"><input type="checkbox" class="mr-1" ${item.inputs[1] ? 'checked' : ''}> Acceptable</label>
+                            `;
+                        } else {
+                            detailsHtml = `
+                                <input type="text" class="table-input mr-2" value="${item.inputs[0] || ''}" placeholder="Lot:">
+                                <input type="text" class="table-input" value="${item.inputs[1] || ''}" placeholder="Exp:">
+                            `;
+                        }
+                    }
+                    tr.innerHTML = `
+                        <td class="p-2 font-medium"><input type="text" class="table-input" value="${item.itemName || ''}"></td>
+                        <td class="p-2 flex gap-4">${detailsHtml}</td>
+                        <td class="p-2 text-center no-print">
+                            <button onclick="this.closest('tr').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                    matTbody.appendChild(tr);
+                });
+            }
+
+            // 4. Populate Section 4: Pre-Processing Readiness Checklist
+            if (rec.preChecklist && Array.isArray(rec.preChecklist)) {
+                const preRows = document.querySelectorAll('#entry-tab .bg-white:nth-of-type(4) tbody tr');
+                rec.preChecklist.forEach((pItem, idx) => {
+                    if (preRows[idx]) {
+                        const inputs = preRows[idx].querySelectorAll('input');
+                        if (inputs[0]) inputs[0].value = pItem.result || '';
+                        if (inputs[1]) inputs[1].value = pItem.initials || '';
+                    }
+                });
+            }
+
+            // 5. Populate Processing Header Bar & Step Records
+            if (rec.procHeader) {
+                document.getElementById('procHeaderSampleId').value = rec.procHeader.sampleId || '';
+                const hInputs = document.querySelectorAll('#entry-tab .bg-white:nth-of-type(5) .bg-slate-50 input');
+                if (hInputs[1]) hInputs[1].value = rec.procHeader.collTime || '';
+                if (hInputs[2]) hInputs[2].value = rec.procHeader.startTime || '';
+                if (hInputs[3]) hInputs[3].value = rec.procHeader.endTime || '';
+                if (hInputs[4]) hInputs[4].value = rec.procHeader.operator || '';
+            }
+
+            if (rec.stepRecords && Array.isArray(rec.stepRecords)) {
+                const stepRows = document.querySelectorAll('#entry-tab .bg-white:nth-of-type(5) tbody tr');
+                rec.stepRecords.forEach((sRec, idx) => {
+                    if (stepRows[idx]) {
+                        const chk = stepRows[idx].querySelector('input[type="checkbox"]');
+                        if (chk) chk.checked = !!sRec.done;
+                        const inps = stepRows[idx].querySelectorAll('input:not([type="checkbox"]), select');
+                        if (sRec.recInputs && Array.isArray(sRec.recInputs)) {
+                            sRec.recInputs.forEach((val, vIdx) => {
+                                if (inps[vIdx]) {
+                                    if (inps[vIdx].type === 'radio') {
+                                        if (inps[vIdx].value === val) inps[vIdx].checked = true;
+                                    } else {
+                                        inps[vIdx].value = val || '';
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
             }
 
             // Populate Yield & Calculation Metrics
@@ -2209,10 +2284,96 @@
                 calculateCellMetrics();
             }
 
+            // 6. Populate Section 6: Cryovial Traceability Record
+            if (rec.cryovials && Array.isArray(rec.cryovials)) {
+                const cryoTbody = document.getElementById('cryovial-tbody');
+                cryoTbody.innerHTML = '';
+                rec.cryovials.forEach((cItem, idx) => {
+                    const tr = document.createElement('tr');
+                    tr.className = "cryo-row";
+                    tr.innerHTML = `
+                        <td class="p-2 text-center font-bold text-slate-600">${cItem.vialNum || (idx + 1)}</td>
+                        <td class="p-2"><input type="text" class="table-input cryo-id" value="${cItem.cryoID || ''}" placeholder="Cryovial ID"></td>
+                        <td class="p-2"><input type="text" class="table-input cryo-vol" value="${cItem.vol || '1.0'}"></td>
+                        <td class="p-2"><input type="text" class="table-input cryo-target" value="${cItem.targetCells || '10,000,000'}"></td>
+                        <td class="p-2"><input type="time" class="table-input cryo-80time" value="${cItem.time80 || ''}"></td>
+                        <td class="p-2"><input type="time" class="table-input cryo-ln2time" value="${cItem.timeLN2 || ''}"></td>
+                        <td class="p-2"><input type="text" class="table-input cryo-loc" value="${cItem.loc || ''}" placeholder="Tank/Rack/Box/Slot"></td>
+                        <td class="p-2"><input type="text" class="table-input cryo-init" value="${cItem.init || ''}" placeholder="Init"></td>
+                        <td class="p-2 text-center no-print">
+                            <button onclick="this.closest('tr').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                    cryoTbody.appendChild(tr);
+                });
+            }
+
+            // 7. Populate Section 7: Quality Control
+            if (rec.qcList && Array.isArray(rec.qcList)) {
+                const qcRows = document.querySelectorAll('#entry-tab .bg-white:nth-of-type(7) tbody tr');
+                rec.qcList.forEach((qcItem, idx) => {
+                    if (qcRows[idx]) {
+                        const textInp = qcRows[idx].querySelector('input[type="text"]');
+                        const sel = qcRows[idx].querySelector('select');
+                        const initInp = qcRows[idx].querySelectorAll('input[type="text"]')[1];
+                        if (textInp) textInp.value = qcItem.result || '';
+                        if (sel) sel.value = qcItem.status || 'Pass';
+                        if (initInp) initInp.value = qcItem.initials || '';
+                    }
+                });
+            }
+
+            // 8. Populate Section 8: Deviations Log
+            if (rec.deviations && Array.isArray(rec.deviations)) {
+                const devTbody = document.getElementById('deviation-tbody');
+                devTbody.innerHTML = '';
+                rec.deviations.forEach(dItem => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td class="p-2"><input type="text" class="table-input" value="${dItem.devID || ''}"></td>
+                        <td class="p-2"><input type="datetime-local" class="table-input" value="${dItem.dateTime || ''}"></td>
+                        <td class="p-2"><textarea class="table-input" rows="1">${dItem.description || ''}</textarea></td>
+                        <td class="p-2"><input type="text" class="table-input" value="${dItem.supervisor || ''}"></td>
+                        <td class="p-2 text-center no-print">
+                            <button onclick="this.closest('tr').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                    devTbody.appendChild(tr);
+                });
+            }
+
+            // 9. Populate Section 9: Final Sample Release
+            if (rec.finalRelease) {
+                document.getElementById('final-start-vol').value = rec.finalRelease.startVol || '';
+                document.getElementById('final-total-cells').value = rec.finalRelease.totalCells || '';
+                document.getElementById('final-conc').value = rec.finalRelease.conc || '';
+                document.getElementById('final-full-vials').value = rec.finalRelease.fullVials || '';
+                document.getElementById('final-partial-vials').value = rec.finalRelease.partialVials || '';
+                document.getElementById('final-storage-loc').value = rec.finalRelease.storageLoc || '';
+                document.getElementById('final-operator').value = rec.finalRelease.operator || '';
+                document.getElementById('final-reviewer').value = rec.finalRelease.reviewer || '';
+                if (rec.finalRelease.status) {
+                    const statusRadio = document.querySelector(`input[name="proc_status"][value="${rec.finalRelease.status}"]`);
+                    if (statusRadio) statusRadio.checked = true;
+                }
+            }
+
+            // 10. Populate Section 10: Authorization and Sign-Off
+            if (rec.signOff) {
+                document.getElementById('sign-op-name').value = rec.signOff.opName || '';
+                document.getElementById('sign-op-sig').value = rec.signOff.opSig || '';
+                document.getElementById('sign-op-date').value = rec.signOff.opDate || '';
+                document.getElementById('sign-rev-name').value = rec.signOff.revName || '';
+                document.getElementById('sign-rev-sig').value = rec.signOff.revSig || '';
+                document.getElementById('sign-rev-date').value = rec.signOff.revDate || '';
+                document.getElementById('sign-qa-name').value = rec.signOff.qaName || '';
+                document.getElementById('sign-qa-sig').value = rec.signOff.qaSig || '';
+                document.getElementById('sign-qa-date').value = rec.signOff.qaDate || '';
+            }
+
             switchTab('entry');
             showToast(`Editing Record: ${rec.sampleID || id}`, "blue");
         }
-
         function deleteRecord(id) {
             const rec = allRecords.find(r => r.id === id);
             const sampleName = rec ? rec.sampleID : id;

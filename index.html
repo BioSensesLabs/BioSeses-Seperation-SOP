@@ -418,8 +418,7 @@
             <div class="bg-slate-50 p-4 border border-slate-200 rounded-lg grid grid-cols-1 md:grid-cols-5 gap-3">
               <div>
                 <span class="block text-xs font-semibold text-slate-600">Sample ID</span>
-                <!-- <input type="text" id="procHeaderSampleId" readonly class="w-full bg-slate-100 border text-slate-700 font-mono font-bold px-2 py-1 text-sm rounded"> -->
-                <input type="text" id="procHeaderSampleId" class="table-input" readonly class="w-full bg-slate-100 border text-slate-700 font-mono font-bold px-2 py-1 text-sm rounded">
+                <input type="text" id="procHeaderSampleId" class="table-input" readonly>
               </div>
               <div>
                 <span class="block text-xs font-semibold text-slate-600">Collection Time</span>
@@ -546,7 +545,7 @@
                                     <td class="p-2 text-center font-bold">10</td>
                                     <td class="p-2">Select tube according to diluted blood volume: &lt;9 mL diluted blood → 15 mL tube; ≥20 mL diluted blood → 50 mL tube.</td>
                                     <td class="p-2 space-y-1">
-                                        <input type="text" id="step-10-dil-vol" class="table-input" placeholder="Diluted blood (mL)"> readonly>
+                                        <input type="text" id="step-10-dil-vol" class="table-input" placeholder="Diluted blood (mL)" readonly>
                                         <div class="flex gap-4 text-xs mt-1">
                                             <label><input type="radio" name="tube_size" value="15mL"> 15 mL</label>
                                             <label><input type="radio" name="tube_size" value="50mL"> 50 mL</label>
@@ -1546,14 +1545,14 @@
                             <tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase">
                                 <th class="p-3">Sample ID</th>
                                 <th class="p-3">Patient ID</th>
-                                <th class="p-3">Site</th>
                                 <th class="p-3">Date</th>
+                                <th class="p-3">Created At</th>
                                 <th class="p-3">Operator</th>
                                 <th class="p-3">Viability (%)</th>
                                 <th class="p-3">Total Cells</th>
                                 <th class="p-3">Cryovials</th>
                                 <th class="p-3">Status</th>
-                                <th class="p-3 text-center">Action</th>
+                                <th class="p-3 text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="logs-tbody" class="divide-y divide-slate-200">
@@ -1568,7 +1567,7 @@
         <div id="analytics-tab" class="tab-content space-y-6 hidden">
 
             <!-- Summary KPI Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
                     <div>
                         <p class="text-xs font-semibold text-slate-500 uppercase">Total Samples</p>
@@ -1605,29 +1604,48 @@
                         <i class="fa-solid fa-triangle-exclamation"></i>
                     </div>
                 </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-500 uppercase">Avg Yield / Sample</p>
+                        <h3 id="kpi-avg-yield" class="text-2xl font-bold text-indigo-600 mt-1">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center text-xl">
+                        <i class="fa-solid fa-calculator"></i>
+                    </div>
+                </div>
             </div>
 
             <!-- Charts Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Chart 1: Processing Trends -->
+                <!-- Chart 1: Samples per Disease Code -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-900 text-sm mb-4">Samples per Disease</h3>
+                    <div class="h-64 flex justify-center"><canvas id="chart-disease"></canvas></div>
+                </div>
+                <!-- Chart 2: Processing Trends -->
                 <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                     <h3 class="font-bold text-slate-900 text-sm mb-4">Sample Processing Trends</h3>
                     <div class="h-64"><canvas id="chart-trends"></canvas></div>
                 </div>
-                <!-- Chart 2: Viability & Yield by Operator -->
+                <!-- Chart 3: Viability & Yield by Operator -->
                 <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                     <h3 class="font-bold text-slate-900 text-sm mb-4">Viability (%) by Operator</h3>
                     <div class="h-64"><canvas id="chart-operator"></canvas></div>
                 </div>
-                <!-- Chart 3: Sample Status Breakdown -->
+                <!-- Chart 4: Viability Distribution by Disease -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-900 text-sm mb-4">Average Viability (%) by Disease</h3>
+                    <div class="h-64"><canvas id="chart-disease-viability"></canvas></div>
+                </div>
+                <!-- Chart 5: Sample Status Breakdown -->
                 <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                     <h3 class="font-bold text-slate-900 text-sm mb-4">Sample Release Status</h3>
                     <div class="h-64 flex justify-center"><canvas id="chart-status"></canvas></div>
                 </div>
-                <!-- Chart 4: Deviation Frequency -->
+                <!-- Chart 6: Sample Type Distribution -->
                 <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h3 class="font-bold text-slate-900 text-sm mb-4">Deviation Type Frequency</h3>
-                    <div class="h-64 flex justify-center"><canvas id="chart-deviations"></canvas></div>
+                    <h3 class="font-bold text-slate-900 text-sm mb-4">Bulk Sample Type Breakdown</h3>
+                    <div class="h-64 flex justify-center"><canvas id="chart-sample-types"></canvas></div>
                 </div>
             </div>
 
@@ -1655,7 +1673,7 @@
         };
         
        
- let db = null;
+        let db = null;
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.database();
@@ -1665,7 +1683,8 @@
         let allRecords = [];
         let chartInstances = {};
 
-let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
+        let currentEditingRecordId = null;
+
         function initCryovialRows() {
             const tbody = document.getElementById('cryovial-tbody');
             tbody.innerHTML = '';
@@ -1673,13 +1692,6 @@ let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
                 addCryovialRow(i);
             }
         }
-        
-        // --- 1. FIREBASE INITIALIZATION ---
-       
-
-       
-      
-       
 
         // --- 2. DYNAMIC ROW INITIALIZATION ---
         window.onload = function() {
@@ -1839,7 +1851,7 @@ let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
             }
         }
 
-      function saveRecordToFirebase() {
+        function saveRecordToFirebase() {
             const sampleID = document.getElementById('final-sample-id')?.value || '';
             if (!sampleID || sampleID.includes('XX-RA-001')) {
                 if (!confirm("Sample ID appears to be using placeholder values. Save anyway?")) return;
@@ -1989,6 +2001,10 @@ let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
                 qaDate: document.getElementById('sign-qa-date')?.value || ''
             };
 
+            // Existing creation timestamp or new ISO timestamp
+            const createdAtTimestamp = (currentEditingRecordId && allRecords.find(r => r.id === currentEditingRecordId)?.createdAt) 
+                || new Date().toLocaleString();
+
             // Assemble Full Record Object
             const recordData = {
                 sampleID: sampleID,
@@ -1998,6 +2014,7 @@ let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
                 sampleType: custody.sampleType || 'Whole Blood',
                 operator: custody.operator || 'N/A',
                 processingDate: custody.procDate || new Date().toISOString().split('T')[0],
+                createdAt: createdAtTimestamp,
                 viabilityPct: parseFloat(metrics.viabilityPct) || 0,
                 totalCells: metrics.totalYield || '0',
                 cryovialCount: parseInt(finalRelease.fullVials) || 0,
@@ -2037,6 +2054,7 @@ let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
                     } else {
                         if (isUpdate) {
                             showToast(`Record ${sampleID} updated successfully!`, "emerald");
+                            currentEditingRecordId = null;
                         } else {
                             showToast(`New Record ${sampleID} saved successfully!`, "emerald");
                         }
@@ -2076,20 +2094,27 @@ let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
                 if (rec.status === 'Hold') badgeClass = "bg-amber-100 text-amber-800 border-amber-200";
                 if (rec.status === 'Deviation pending') badgeClass = "bg-rose-100 text-rose-800 border-rose-200";
 
+                const createdTime = rec.createdAt || (rec.timestamp ? new Date(rec.timestamp).toLocaleString() : 'N/A');
+
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
                 tr.innerHTML = `
                     <td class="p-3 font-semibold text-blue-900">${rec.sampleID || 'N/A'}</td>
                     <td class="p-3">${rec.patientID || 'N/A'}</td>
-                    <td class="p-3">${rec.siteCode || 'N/A'}</td>
                     <td class="p-3 text-slate-500">${rec.processingDate || 'N/A'}</td>
+                    <td class="p-3 text-xs text-slate-500">${createdTime}</td>
                     <td class="p-3 font-medium">${rec.operator || 'N/A'}</td>
                     <td class="p-3 font-bold text-slate-700">${rec.viabilityPct}%</td>
                     <td class="p-3">${rec.totalCells}</td>
                     <td class="p-3 text-center font-semibold">${rec.cryovialCount}</td>
                     <td class="p-3"><span class="px-2 py-0.5 text-xs font-semibold rounded border ${badgeClass}">${rec.status}</span></td>
-                    <td class="p-3 text-center">
-                        <button onclick="viewRecord('${rec.id}')" class="text-blue-600 hover:text-blue-800 text-xs font-semibold px-2 py-1 bg-blue-50 rounded border border-blue-200">View</button>
+                    <td class="p-3 text-center space-x-1">
+                        <button onclick="editRecord('${rec.id}')" class="text-blue-600 hover:text-blue-800 text-xs font-semibold px-2 py-1 bg-blue-50 rounded border border-blue-200">
+                            <i class="fa-solid fa-pen mr-1"></i>Edit
+                        </button>
+                        <button onclick="deleteRecord('${rec.id}')" class="text-rose-600 hover:text-rose-800 text-xs font-semibold px-2 py-1 bg-rose-50 rounded border border-rose-200">
+                            <i class="fa-solid fa-trash mr-1"></i>Delete
+                        </button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -2103,6 +2128,7 @@ let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
             const filtered = allRecords.filter(r => {
                 const matchesSearch = (r.sampleID && r.sampleID.toLowerCase().includes(query)) ||
                                       (r.patientID && r.patientID.toLowerCase().includes(query)) ||
+                                      (r.diseaseCode && r.diseaseCode.toLowerCase().includes(query)) ||
                                       (r.operator && r.operator.toLowerCase().includes(query));
                 const matchesStatus = status === 'ALL' || r.status === status;
                 return matchesSearch && matchesStatus;
@@ -2110,17 +2136,65 @@ let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
             renderLogsTable(filtered);
         }
 
-        function viewRecord(id) {
+        function editRecord(id) {
             const rec = allRecords.find(r => r.id === id);
             if (!rec) return;
             currentEditingRecordId = id;
-            document.getElementById('custody-site-code').value = rec.siteCode || '';
-            document.getElementById('custody-condition').value = rec.diseaseCode || '';
-            document.getElementById('custody-patient-id').value = rec.patientID || '';
-            document.getElementById('custody-operator').value = rec.operator || '';
-            document.getElementById('custody-proc-date').value = rec.processingDate || '';
+
+            // Populate Section 2 Identification fields
+            if (rec.custody) {
+                document.getElementById('custody-site-code').value = rec.custody.siteCode || rec.siteCode || '';
+                document.getElementById('custody-condition').value = rec.custody.condition || rec.diseaseCode || '';
+                document.getElementById('custody-patient-id').value = rec.custody.patientID || rec.patientID || '';
+                document.getElementById('custody-sample-type').value = rec.custody.sampleType || rec.sampleType || 'Whole Blood';
+                document.getElementById('custody-collection-date').value = rec.custody.collectionDate || '';
+                document.getElementById('custody-collection-time').value = rec.custody.collectionTime || '';
+                document.getElementById('custody-proc-date').value = rec.custody.procDate || rec.processingDate || '';
+                document.getElementById('custody-proc-time').value = rec.custody.procTime || '';
+                document.getElementById('custody-operator').value = rec.custody.operator || rec.operator || '';
+                document.getElementById('custody-checker').value = rec.custody.checker || '';
+            }
+
+            // Populate Section 1 Checkboxes
+            if (rec.criticalRules) {
+                for (let i = 1; i <= 8; i++) {
+                    const el = document.getElementById(`rule-${i}`);
+                    if (el) el.checked = !!rec.criticalRules[`rule${i}`];
+                }
+            }
+
+            // Populate Yield & Calculation Metrics
+            if (rec.metrics) {
+                document.getElementById('step-4-blood-vol').value = rec.metrics.bloodVol || '';
+                document.getElementById('step-5-pbs-added').value = rec.metrics.pbsAdded || '';
+                document.getElementById('box1-v').value = rec.metrics.box1v || '';
+                document.getElementById('box1-nv').value = rec.metrics.box1nv || '';
+                document.getElementById('box2-v').value = rec.metrics.box2v || '';
+                document.getElementById('box2-nv').value = rec.metrics.box2nv || '';
+                document.getElementById('box3-v').value = rec.metrics.box3v || '';
+                document.getElementById('box3-nv').value = rec.metrics.box3nv || '';
+                document.getElementById('dilution-factor').value = rec.metrics.dilutionFactor || '2';
+                calculateFicoll();
+                calculateCellMetrics();
+            }
+
             switchTab('entry');
-            showToast(`Successfully loaded complete record for: ${rec.sampleID}`, "blue");
+            showToast(`Editing Record: ${rec.sampleID || id}`, "blue");
+        }
+
+        function deleteRecord(id) {
+            const rec = allRecords.find(r => r.id === id);
+            const sampleName = rec ? rec.sampleID : id;
+
+            if (confirm(`Are you sure you want to delete record ${sampleName}? This action cannot be undone.`)) {
+                if (db) {
+                    db.ref('records/' + id).remove().then(() => {
+                        showToast(`Record ${sampleName} deleted successfully.`, "rose");
+                    }).catch(error => {
+                        showToast("Failed to delete record: " + error.message, "rose");
+                    });
+                }
+            }
         }
 
         function exportToExcel() {
@@ -2154,17 +2228,53 @@ let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
             document.getElementById('kpi-total-vials').innerText = totalVials;
             const deviations = records.filter(r => r.status === 'Deviation pending').length;
             document.getElementById('kpi-total-deviations').innerText = deviations;
+
+            // Bulk Efficiency Insight KPI: Avg Cell Yield per Sample
+            let totalYieldSum = 0;
+            let countYield = 0;
+            records.forEach(r => {
+                if (r.metrics && r.metrics.totalYield) {
+                    const parsed = parseFloat(r.metrics.totalYield.replace(/,/g, ''));
+                    if (!isNaN(parsed)) {
+                        totalYieldSum += parsed;
+                        countYield++;
+                    }
+                }
+            });
+            const avgYield = countYield > 0 ? (totalYieldSum / countYield / 1e6).toFixed(1) + 'M' : '0M';
+            document.getElementById('kpi-avg-yield').innerText = avgYield;
         }
 
         function renderDashboardCharts() {
             // Destroy existing charts to prevent duplication
             Object.keys(chartInstances).forEach(key => chartInstances[key].destroy());
 
+            // 1. Chart: Samples per Disease
+            const diseaseCounts = {};
+            allRecords.forEach(r => {
+                const disease = r.diseaseCode || 'Unknown';
+                diseaseCounts[disease] = (diseaseCounts[disease] || 0) + 1;
+            });
+
+            const ctxDisease = document.getElementById('chart-disease').getContext('2d');
+            chartInstances.disease = new Chart(ctxDisease, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(diseaseCounts),
+                    datasets: [{
+                        label: 'Samples per Disease',
+                        data: Object.values(diseaseCounts),
+                        backgroundColor: '#3b82f6'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // 2. Chart: Processing Trends
             const dates = allRecords.map(r => r.processingDate || 'Unknown');
             const datesCount = {};
             dates.forEach(d => datesCount[d] = (datesCount[d] || 0) + 1);
 
-            // Chart 1: Processing Trends
             const ctx1 = document.getElementById('chart-trends').getContext('2d');
             chartInstances.trends = new Chart(ctx1, {
                 type: 'line',
@@ -2182,7 +2292,7 @@ let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
                 options: { responsive: true, maintainAspectRatio: false }
             });
 
-            // Chart 2: Viability by Operator
+            // 3. Chart: Viability by Operator
             const opViab = {};
             allRecords.forEach(r => {
                 const op = r.operator || 'Unknown';
@@ -2208,7 +2318,33 @@ let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
                 options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 100 } } }
             });
 
-            // Chart 3: Status Breakdown
+            // 4. Chart: Average Viability (%) by Disease
+            const diseaseViab = {};
+            allRecords.forEach(r => {
+                const disease = r.diseaseCode || 'Unknown';
+                if (!diseaseViab[disease]) diseaseViab[disease] = [];
+                diseaseViab[disease].push(r.viabilityPct || 0);
+            });
+            const diseaseViabAvg = {};
+            Object.keys(diseaseViab).forEach(d => {
+                diseaseViabAvg[d] = (diseaseViab[d].reduce((a, b) => a + b, 0) / diseaseViab[d].length).toFixed(1);
+            });
+
+            const ctxDiseaseViab = document.getElementById('chart-disease-viability').getContext('2d');
+            chartInstances.diseaseViability = new Chart(ctxDiseaseViab, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(diseaseViabAvg),
+                    datasets: [{
+                        label: 'Avg Viability (%)',
+                        data: Object.values(diseaseViabAvg),
+                        backgroundColor: '#8b5cf6'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 100 } } }
+            });
+
+            // 5. Chart: Status Breakdown
             const statusCounts = { 'Released': 0, 'Hold': 0, 'Deviation pending': 0 };
             allRecords.forEach(r => {
                 if (statusCounts[r.status] !== undefined) statusCounts[r.status]++;
@@ -2227,15 +2363,21 @@ let currentEditingRecordId = null; // <--- ADD THIS LINE HERE
                 options: { responsive: true, maintainAspectRatio: false }
             });
 
-            // Chart 4: Deviation Frequency
-            const ctx4 = document.getElementById('chart-deviations').getContext('2d');
-            chartInstances.deviations = new Chart(ctx4, {
+            // 6. Chart: Bulk Sample Type Breakdown
+            const sampleTypeCounts = {};
+            allRecords.forEach(r => {
+                const st = r.sampleType || 'Whole Blood';
+                sampleTypeCounts[st] = (sampleTypeCounts[st] || 0) + 1;
+            });
+
+            const ctxTypes = document.getElementById('chart-sample-types').getContext('2d');
+            chartInstances.sampleTypes = new Chart(ctxTypes, {
                 type: 'pie',
                 data: {
-                    labels: ['No PBMC Layer', 'Interface Disrupted', 'Pellet Loss', 'Low Viability'],
+                    labels: Object.keys(sampleTypeCounts),
                     datasets: [{
-                        data: [1, 2, 0, 1], // Representative analytical breakdown
-                        backgroundColor: ['#6366f1', '#ec4899', '#8b5cf6', '#3b82f6']
+                        data: Object.values(sampleTypeCounts),
+                        backgroundColor: ['#06b6d4', '#f97316', '#84cc16', '#e11d48', '#a855f7']
                     }]
                 },
                 options: { responsive: true, maintainAspectRatio: false }

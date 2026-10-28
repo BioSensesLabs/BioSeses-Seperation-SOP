@@ -15,7 +15,7 @@
     <!-- SheetJS for Excel Export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-    <!-- Firebase SDK (Compat Version for ease of use with RTDB) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -74,9 +74,8 @@
         <!-- ==================== TAB 1: SOP ENTRY FORM ==================== -->
         <div id="entry-tab" class="tab-content space-y-6">
 
-            <!-- INNOVATED HEADER SECTION -->
+            <!-- HEADER SECTION -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-                <!-- Title & Doc ID Info -->
                 <div class="space-y-1.5">
                     <div class="flex items-center gap-2">
                         <span class="inline-block bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-full border border-blue-200 tracking-wide uppercase">Standard Operating Procedure</span>
@@ -85,9 +84,7 @@
                     <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">PBMC Isolation and Cryopreservation</h2>
                 </div>
 
-                <!-- Professional Barcode & Action Icon Toolbar Cluster -->
                 <div class="flex flex-wrap items-center gap-4 w-full lg:w-auto justify-end">
-                    <!-- Professional Barcode Badge Component -->
                     <div class="bg-slate-900 text-white px-4 py-2.5 rounded-xl flex items-center space-x-3 shadow-sm border border-slate-800">
                         <div class="bg-blue-600 text-white p-2 rounded-lg flex items-center justify-center">
                             <i class="fa-solid fa-barcode text-base"></i>
@@ -98,21 +95,17 @@
                         </div>
                     </div>
 
-                    <!-- Icon Action Toolbar -->
                     <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 space-x-1 no-print">
-                        <!-- Clear Form Button -->
                         <button onclick="clearForm()" title="Clear Form" class="group relative w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white text-slate-600 hover:text-rose-600 transition-all shadow-sm">
                             <i class="fa-solid fa-rotate-left text-sm"></i>
                             <span class="absolute -bottom-8 bg-slate-800 text-white text-[10px] px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">Clear Form</span>
                         </button>
                         <div class="w-[1px] h-5 bg-slate-300"></div>
-                        <!-- Print Document Button -->
                         <button onclick="window.print()" title="Print Document" class="group relative w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white text-slate-600 hover:text-slate-900 transition-all shadow-sm">
                             <i class="fa-solid fa-print text-sm"></i>
                             <span class="absolute -bottom-8 bg-slate-800 text-white text-[10px] px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">Print Document</span>
                         </button>
                         <div class="w-[1px] h-5 bg-slate-300"></div>
-                        <!-- Save Record Button -->
                         <button onclick="saveRecordToFirebase()" title="Save Record" class="group relative w-10 h-10 flex items-center justify-center rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-all shadow-sm">
                             <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
                             <span class="absolute -bottom-8 bg-slate-800 text-white text-[10px] px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">Save Record</span>
@@ -121,7 +114,7 @@
                 </div>
             </div>
 
-            <!-- SECTION 1: CRITICAL RULES & MANDATORY BEFORE PROCESSING -->
+            <!-- SECTION 1: CRITICAL RULES -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
                 <h3 class="text-lg font-bold text-slate-900 flex items-center border-b pb-3">
                     <span class="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center text-sm mr-2.5">1</span>
@@ -437,8 +430,9 @@
                         <span class="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm mr-2.5">5</span>
                         Sample Processing Checklist (Steps 1 – 53)
                     </h3>
-                    <p class="text-xs text-slate-500 mt-1">Complete for Every Sample. Use one copy of Sections 5–8 for every participant/sample.</p>
+                    <p class="text-xs text-slate-500 mt-1">Complete for Every Sample.</p>
                 </div>
+
                 <!-- Header Processing Log Bar -->
                 <div class="bg-slate-50 p-4 border border-slate-200 rounded-lg grid grid-cols-1 md:grid-cols-5 gap-3">
                   <div>
@@ -1325,7 +1319,7 @@
                 </div>
             </div>
 
-            <!-- SECTION 8: DEVIATION RECORD AND TROUBLESHOOTING -->
+            <!-- SECTION 8: DEVIATION RECORD -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
                 <div class="flex justify-between items-center border-b pb-3">
                     <h3 class="text-lg font-bold text-slate-900 flex items-center">
@@ -1460,7 +1454,6 @@
                     </table>
                 </div>
 
-                <!-- Footer Save Action -->
                 <div class="pt-4 flex justify-end no-print">
                     <button onclick="saveRecordToFirebase()" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-md transition-colors flex items-center text-base">
                         <i class="fa-solid fa-cloud-arrow-up mr-2 text-lg"></i> Submit &amp; Save Record to Database
@@ -1485,7 +1478,6 @@
                     </div>
                 </div>
 
-                <!-- Filter / Search Bar -->
                 <div class="flex flex-col md:flex-row gap-3">
                     <div class="relative flex-grow">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400"></i>
@@ -1499,7 +1491,6 @@
                     </select>
                 </div>
 
-                <!-- Data Table -->
                 <div class="overflow-x-auto rounded-lg border border-slate-200">
                     <table class="w-full text-left text-sm border-collapse">
                         <thead>
@@ -1570,7 +1561,7 @@
                     </div>
                 </div>
             </div>
-            <!-- Charts Grid -->
+
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><h3 class="font-bold text-slate-900 text-sm mb-4">Samples per Disease</h3><div class="h-64 flex justify-center"><canvas id="chart-disease"></canvas></div></div>
                 <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><h3 class="font-bold text-slate-900 text-sm mb-4">Sample Processing Trends</h3><div class="h-64"><canvas id="chart-trends"></canvas></div></div>
@@ -1582,14 +1573,13 @@
         </div>
     </main>
 
-    <!-- Footer -->
     <footer class="bg-white border-t border-slate-200 py-4 mt-auto no-print">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
-            AXIOM PBMC Isolation & Cryopreservation Web Application | Revision Biosenses_3 | Standard Operating Procedure Form
+            AXIOM PBMC Isolation & Cryopreservation Web Application | Standard Operating Procedure Form
         </div>
     </footer>
 
-   <!-- Application Script Logic -->
+    <!-- Script Logic -->
     <script>
         const firebaseConfig = {
           apiKey: "AIzaSyBQMLfFjIF_WOjxkT8E01ObPeHxRjPvv5U",
@@ -1773,12 +1763,14 @@
                 if (!confirm("Sample ID appears to be using placeholder values. Save anyway?")) return;
             }
 
+            // Section 1: Critical Rules
             const criticalRules = {};
             for (let i = 1; i <= 8; i++) {
                 const el = document.getElementById(`rule-${i}`);
                 if (el) criticalRules[`rule${i}`] = el.checked;
             }
 
+            // Section 2: Chain of Custody
             const custody = {
                 siteCode: document.getElementById('custody-site-code')?.value || '',
                 condition: document.getElementById('custody-condition')?.value || '',
@@ -1792,23 +1784,37 @@
                 checker: document.getElementById('custody-checker')?.value || ''
             };
 
+            // Section 3: Materials & Equipment Saving (Safe type checks on Cell 1)
             const materials = [];
             document.querySelectorAll('#materials-tbody tr').forEach(tr => {
                 const nameInput = tr.cells[0]?.querySelector('input');
                 const itemName = nameInput ? nameInput.value : (tr.cells[0]?.innerText.trim() || '');
-                const cell1Inputs = Array.from(tr.cells[1]?.querySelectorAll('input') || []);
-                const inputs = cell1Inputs.map(inp => inp.type === 'checkbox' ? inp.checked : inp.value);
+                const cell1 = tr.cells[1];
+                let inputs = [];
+                const checkboxes = cell1?.querySelectorAll('input[type="checkbox"]');
+                if (checkboxes && checkboxes.length > 0) {
+                    inputs = Array.from(checkboxes).map(chk => chk.checked);
+                } else {
+                    const textInputs = cell1?.querySelectorAll('input[type="text"]');
+                    inputs = Array.from(textInputs).map(inp => inp.value);
+                }
                 materials.push({ itemName, inputs });
             });
 
+            // Section 4: Pre-Processing Readiness Checklist
             const preChecklist = [];
             document.querySelectorAll('#entry-tab .bg-white:nth-of-type(4) tbody tr').forEach(tr => {
                 const checkItem = tr.cells[0]?.innerText.trim() || '';
-                const result = tr.cells[1]?.querySelector('input')?.value || '';
-                const initials = tr.cells[2]?.querySelector('input')?.value || '';
-                preChecklist.push({ checkItem, result, initials });
+                const timeOrResultInp = tr.cells[1]?.querySelector('input');
+                const initialsInp = tr.cells[2]?.querySelector('input');
+                preChecklist.push({ 
+                    checkItem, 
+                    result: timeOrResultInp ? timeOrResultInp.value : '', 
+                    initials: initialsInp ? initialsInp.value : '' 
+                });
             });
 
+            // Section 5: Header Bar
             const procHeader = {
                 sampleId: document.getElementById('procHeaderSampleId')?.value || '',
                 collTime: document.querySelector('input[name="procHeaderCollTime"]')?.value || '',
@@ -1817,6 +1823,7 @@
                 operator: document.querySelector('input[name="procHeaderOperator"]')?.value || ''
             };
 
+            // Section 5: Step Records (Steps 1 – 53)
             const stepRecords = [];
             document.querySelectorAll('#entry-tab .bg-white:nth-of-type(5) tbody tr').forEach(tr => {
                 const stepNo = tr.cells[0]?.innerText.trim() || '';
@@ -1839,6 +1846,7 @@
                 stepRecords.push({ stepNo, done, inputs });
             });
 
+            // Section 5 Metrics
             const metrics = {
                 bloodVol: document.getElementById('step-4-blood-vol')?.value || '',
                 pbsAdded: document.getElementById('step-5-pbs-added')?.value || '',
@@ -1855,6 +1863,7 @@
                 macsVol: document.getElementById('res-macs-vol')?.innerText || '0'
             };
 
+            // Section 6: Cryovials Record
             const cryovials = [];
             document.querySelectorAll('#cryovial-tbody tr').forEach(tr => {
                 cryovials.push({
@@ -1869,6 +1878,7 @@
                 });
             });
 
+            // Section 7: Quality Control
             const qcList = [];
             document.querySelectorAll('#entry-tab .bg-white:nth-of-type(7) tbody tr').forEach(tr => {
                 qcList.push({
@@ -1879,6 +1889,7 @@
                 });
             });
 
+            // Section 8: Deviations Log
             const deviations = [];
             document.querySelectorAll('#deviation-tbody tr').forEach(tr => {
                 const inps = tr.querySelectorAll('input, textarea');
@@ -1892,6 +1903,7 @@
                 }
             });
 
+            // Section 9: Final Sample Release
             const finalRelease = {
                 startVol: document.getElementById('final-start-vol')?.value || '',
                 totalCells: document.getElementById('final-total-cells')?.value || '',
@@ -1904,6 +1916,7 @@
                 status: document.querySelector('input[name="proc_status"]:checked')?.value || 'Released'
             };
 
+            // Section 10: Authorization & Sign-Off
             const signOff = {
                 opName: document.getElementById('sign-op-name')?.value || '',
                 opSig: document.getElementById('sign-op-sig')?.value || '',
@@ -2034,6 +2047,7 @@
             if (!rec) return;
             currentEditingRecordId = id;
 
+            // 1. Critical Rules
             if (rec.criticalRules) {
                 for (let i = 1; i <= 8; i++) {
                     const el = document.getElementById(`rule-${i}`);
@@ -2041,6 +2055,7 @@
                 }
             }
 
+            // 2. Custody & Identification
             if (rec.custody) {
                 document.getElementById('custody-site-code').value = rec.custody.siteCode || rec.siteCode || '';
                 document.getElementById('custody-condition').value = rec.custody.condition || rec.diseaseCode || '';
@@ -2054,6 +2069,7 @@
                 document.getElementById('custody-checker').value = rec.custody.checker || '';
             }
 
+            // 3. Section 3: Materials & Equipment
             if (rec.materials && Array.isArray(rec.materials)) {
                 const matTbody = document.getElementById('materials-tbody');
                 matTbody.innerHTML = '';
@@ -2069,11 +2085,11 @@
                 rec.materials.forEach(item => {
                     const tr = document.createElement('tr');
                     let detailsHtml = '';
-                    const isCheckboxRow = defaultItems.slice(0, 6).includes(item.itemName) || item.itemName === "Isopropanol freezing container" || (
-                        item.inputs && (typeof item.inputs[0] === 'boolean' || item.inputs[0] === "on" || item.inputs[0] === false)
-                    );
+                    
+                    const isCheckboxItem = defaultItems.slice(0, 6).includes(item.itemName) || item.itemName === "Isopropanol freezing container";
+                    const isBooleanSaved = item.inputs && typeof item.inputs[0] === 'boolean';
 
-                    if (isCheckboxRow) {
+                    if (isCheckboxItem || isBooleanSaved) {
                         const chk1 = item.inputs && (item.inputs[0] === true || item.inputs[0] === "on");
                         const chk2 = item.inputs && (item.inputs[1] === true || item.inputs[1] === "on");
                         detailsHtml = `
@@ -2105,17 +2121,20 @@
                 });
             }
 
+            // 4. Section 4: Pre-Processing Checklist
             if (rec.preChecklist && Array.isArray(rec.preChecklist)) {
                 const preRows = document.querySelectorAll('#entry-tab .bg-white:nth-of-type(4) tbody tr');
                 rec.preChecklist.forEach((pItem, idx) => {
                     if (preRows[idx]) {
-                        const inputs = preRows[idx].querySelectorAll('input');
-                        if (inputs[0]) inputs[0].value = pItem.result || '';
-                        if (inputs[1]) inputs[1].value = pItem.initials || '';
+                        const timeOrResultInp = preRows[idx].cells[1]?.querySelector('input');
+                        const initialsInp = preRows[idx].cells[2]?.querySelector('input');
+                        if (timeOrResultInp) timeOrResultInp.value = pItem.result || '';
+                        if (initialsInp) initialsInp.value = pItem.initials || '';
                     }
                 });
             }
 
+            // 5. Section 5: Processing Header & Steps
             if (rec.procHeader) {
                 document.getElementById('procHeaderSampleId').value = rec.procHeader.sampleId || '';
                 const collTimeInput = document.querySelector('input[name="procHeaderCollTime"]');
@@ -2175,6 +2194,7 @@
                 calculateCellMetrics();
             }
 
+            // 6. Section 6: Cryovials Record
             if (rec.cryovials && Array.isArray(rec.cryovials)) {
                 const cryoTbody = document.getElementById('cryovial-tbody');
                 cryoTbody.innerHTML = '';
@@ -2198,6 +2218,7 @@
                 });
             }
 
+            // 7. Section 7: Quality Control
             if (rec.qcList && Array.isArray(rec.qcList)) {
                 const qcRows = document.querySelectorAll('#entry-tab .bg-white:nth-of-type(7) tbody tr');
                 rec.qcList.forEach((qcItem, idx) => {
@@ -2212,6 +2233,7 @@
                 });
             }
 
+            // 8. Section 8: Deviations Log
             if (rec.deviations && Array.isArray(rec.deviations)) {
                 const devTbody = document.getElementById('deviation-tbody');
                 devTbody.innerHTML = '';
@@ -2230,6 +2252,7 @@
                 });
             }
 
+            // 9. Section 9: Final Sample Release
             if (rec.finalRelease) {
                 document.getElementById('final-start-vol').value = rec.finalRelease.startVol || '';
                 document.getElementById('final-total-cells').value = rec.finalRelease.totalCells || '';
@@ -2245,6 +2268,7 @@
                 }
             }
 
+            // 10. Section 10: Authorization & Sign-Off
             if (rec.signOff) {
                 document.getElementById('sign-op-name').value = rec.signOff.opName || '';
                 document.getElementById('sign-op-sig').value = rec.signOff.opSig || '';
@@ -2413,3 +2437,5 @@
             setTimeout(() => { toast.classList.add('hidden'); }, 4000);
         }
     </script>
+</body>
+</html>

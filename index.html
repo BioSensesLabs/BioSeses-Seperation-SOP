@@ -2194,7 +2194,7 @@ function editRecord(id) {
                 document.getElementById('custody-checker').value = rec.custody.checker || '';
             }
 
-         // 3. Populate Section 3: Required Materials and Equipment (Bulletproof Dynamic Rebuild)
+     // 3. Populate Section 3: Required Materials and Equipment (Bulletproof Rebuild)
             if (rec.materials && Array.isArray(rec.materials)) {
                 const matTbody = document.getElementById('materials-tbody');
                 matTbody.innerHTML = '';
@@ -2202,13 +2202,13 @@ function editRecord(id) {
                     const tr = document.createElement('tr');
                     let detailsHtml = '';
                     
-                    // Determine if this item uses checkboxes (Available/Acceptable) or text inputs (Lot/Exp)
-                    // Standard rows with checkboxes typically have boolean/string "on" values or are known standard items
+                    // Determine if this row uses checkboxes or text inputs based on saved values
                     const isCheckboxRow = item.inputs && (
                         typeof item.inputs[0] === 'boolean' || 
+                        typeof item.inputs[1] === 'boolean' || 
                         item.inputs[0] === "on" || 
-                        item.inputs[0] === false ||
                         item.inputs[1] === "on" ||
+                        item.inputs[0] === false || 
                         item.inputs[1] === false
                     );
 
@@ -2217,19 +2217,20 @@ function editRecord(id) {
                         const chk2 = item.inputs[1] === true || item.inputs[1] === "on";
                         detailsHtml = `
                             <label class="inline-flex items-center mr-4"><input type="checkbox" class="mr-1" ${chk1 ? 'checked' : ''}> Available</label>
-                            <label class="inline-flex items-center"><input type="checkbox" class="mr-1" ${chk2 ? 'checked' : ''}> Acceptable</label>
+                            <label class="inline-flex items-center"><input type="checkbox" class="mr-1" ${chk2 ? 'checked' : ''}> Acceptable / Ready</label>
                         `;
                     } else {
-                        const val1 = (item.inputs && item.inputs[0]) ? item.inputs[0] : '';
-                        const val2 = (item.inputs && item.inputs[1]) ? item.inputs[1] : '';
+                        const val1 = (item.inputs && item.inputs[0]) !== undefined ? item.inputs[0] : '';
+                        const val2 = (item.inputs && item.inputs[1]) !== undefined ? item.inputs[1] : '';
                         detailsHtml = `
-                            <input type="text" class="table-input mr-2" value="${val1}" placeholder="Lot:">
-                            <input type="text" class="table-input" value="${val2}" placeholder="Exp:">
+                            <input type="text" class="table-input mr-2" value="${val1}" placeholder="Lot / ID:">
+                            <input type="text" class="table-input" value="${val2}" placeholder="Exp / Status:">
                         `;
                     }
 
+                    // CRITICAL: Cell 0 is a static text element (Item Name), NOT an input box
                     tr.innerHTML = `
-                        <td class="p-2 font-medium"><input type="text" class="table-input" value="${item.itemName || ''}"></td>
+                        <td class="p-2 font-medium">${item.itemName || ''}</td>
                         <td class="p-2 flex gap-4">${detailsHtml}</td>
                         <td class="p-2 text-center no-print">
                             <button onclick="this.closest('tr').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>

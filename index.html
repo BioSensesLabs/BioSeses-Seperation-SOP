@@ -1934,8 +1934,7 @@
                 operator: document.querySelector('input[name="procHeaderOperator"]')?.value || ''
             };
 
-    
-// 6. Collect Step Input Records (Section 5 Steps 1 – 53)
+    // 6. Collect Step Input Records (Section 5 Steps 1 – 53)
             const stepRecords = [];
             document.querySelectorAll('#entry-tab .bg-white:nth-of-type(5) tbody tr').forEach(tr => {
                 const stepNo = tr.cells[0]?.innerText.trim() || '';
@@ -1943,7 +1942,6 @@
                 const doneCell = tr.cells[3];   // The "Done" checkbox column
                 const done = doneCell?.querySelector('input[type="checkbox"]')?.checked || false;
 
-                // Capture each input with its exact type, name, value, and checked state
                 const inputs = [];
                 if (recordCell) {
                     recordCell.querySelectorAll('input, select').forEach(inp => {
@@ -2185,7 +2183,9 @@ function editRecord(id) {
             if (!rec) return;
             currentEditingRecordId = id;
 
-            // 1. Populate Section 1: Critical Rules
+            // ==========================================
+            // SECTION 1: Critical Rules (Checkboxes)
+            // ==========================================
             if (rec.criticalRules) {
                 for (let i = 1; i <= 8; i++) {
                     const el = document.getElementById(`rule-${i}`);
@@ -2193,7 +2193,9 @@ function editRecord(id) {
                 }
             }
 
-            // 2. Populate Section 2: Sample Identification and Chain of Custody
+            // ==========================================
+            // SECTION 2: Sample Identification & Custody
+            // ==========================================
             if (rec.custody) {
                 document.getElementById('custody-site-code').value = rec.custody.siteCode || rec.siteCode || '';
                 document.getElementById('custody-condition').value = rec.custody.condition || rec.diseaseCode || '';
@@ -2207,7 +2209,9 @@ function editRecord(id) {
                 document.getElementById('custody-checker').value = rec.custody.checker || '';
             }
 
-            // 3. Populate Section 3: Required Materials and Equipment (Dynamic Rebuild)
+            // ==========================================
+            // SECTION 3: Required Materials & Equipment (Dynamic Rebuild)
+            // ==========================================
             if (rec.materials && Array.isArray(rec.materials)) {
                 const matTbody = document.getElementById('materials-tbody');
                 matTbody.innerHTML = '';
@@ -2251,7 +2255,9 @@ function editRecord(id) {
                 });
             }
 
-            // 4. Populate Section 4: Pre-Processing Readiness Checklist
+            // ==========================================
+            // SECTION 4: Pre-Processing Readiness Checklist
+            // ==========================================
             if (rec.preChecklist && Array.isArray(rec.preChecklist)) {
                 const preRows = document.querySelectorAll('#entry-tab .bg-white:nth-of-type(4) tbody tr');
                 rec.preChecklist.forEach((pItem, idx) => {
@@ -2263,7 +2269,9 @@ function editRecord(id) {
                 });
             }
 
-            // 5. Populate Processing Header Bar & Step Records (Section 5)
+            // ==========================================
+            // SECTION 5: Processing Header Bar & Step Checklists (Timestamps, Radios, Checkboxes)
+            // ==========================================
             if (rec.procHeader) {
                 document.getElementById('procHeaderSampleId').value = rec.procHeader.sampleId || '';
                 const collTimeInput = document.querySelector('input[name="procHeaderCollTime"]');
@@ -2285,11 +2293,11 @@ function editRecord(id) {
                         const doneCell = tr.cells[3];
                         const recordCell = tr.cells[2];
 
-                        // Restore Done checkbox accurately in the last cell
+                        // Restore Done checkbox
                         const doneChk = doneCell?.querySelector('input[type="checkbox"]');
                         if (doneChk) doneChk.checked = !!sRec.done;
 
-                        // Restore exact type-matched inputs in the record cell
+                        // Restore timestamps, text fields, radio selections, and inner checkboxes accurately
                         if (recordCell && Array.isArray(sRec.inputs)) {
                             const domInputs = recordCell.querySelectorAll('input, select');
                             sRec.inputs.forEach((savedInput, i) => {
@@ -2311,7 +2319,7 @@ function editRecord(id) {
                 });
             }
 
-            // Populate Yield & Calculation Metrics (Triggers cell count auto-calculations)
+            // Trigger Cell Counting & Yield Metrics Calculations
             if (rec.metrics) {
                 document.getElementById('step-4-blood-vol').value = rec.metrics.bloodVol || '';
                 document.getElementById('step-5-pbs-added').value = rec.metrics.pbsAdded || '';
@@ -2326,7 +2334,9 @@ function editRecord(id) {
                 calculateCellMetrics();
             }
 
-            // 6. Populate Section 6: Cryovial-Level Traceability Record
+            // ==========================================
+            // SECTION 6: Cryovial Traceability Record (Dynamic Rebuild)
+            // ==========================================
             if (rec.cryovials && Array.isArray(rec.cryovials)) {
                 const cryoTbody = document.getElementById('cryovial-tbody');
                 cryoTbody.innerHTML = '';
@@ -2350,7 +2360,9 @@ function editRecord(id) {
                 });
             }
 
-            // 7. Populate Section 7: Quality Control
+            // ==========================================
+            // SECTION 7: Quality Control
+            // ==========================================
             if (rec.qcList && Array.isArray(rec.qcList)) {
                 const qcRows = document.querySelectorAll('#entry-tab .bg-white:nth-of-type(7) tbody tr');
                 rec.qcList.forEach((qcItem, idx) => {
@@ -2365,7 +2377,9 @@ function editRecord(id) {
                 });
             }
 
-            // 8. Populate Section 8: Deviations Log
+            // ==========================================
+            // SECTION 8: Deviations Log (Dynamic Rebuild)
+            // ==========================================
             if (rec.deviations && Array.isArray(rec.deviations)) {
                 const devTbody = document.getElementById('deviation-tbody');
                 devTbody.innerHTML = '';
@@ -2384,7 +2398,9 @@ function editRecord(id) {
                 });
             }
 
-            // 9. Populate Section 9: Final Sample Release
+            // ==========================================
+            // SECTION 9: Final Sample Release
+            // ==========================================
             if (rec.finalRelease) {
                 document.getElementById('final-start-vol').value = rec.finalRelease.startVol || '';
                 document.getElementById('final-total-cells').value = rec.finalRelease.totalCells || '';
@@ -2400,7 +2416,9 @@ function editRecord(id) {
                 }
             }
 
-            // 10. Populate Section 10: Authorization and Sign-Off
+            // ==========================================
+            // SECTION 10: Authorization & Sign-Off
+            // ==========================================
             if (rec.signOff) {
                 document.getElementById('sign-op-name').value = rec.signOff.opName || '';
                 document.getElementById('sign-op-sig').value = rec.signOff.opSig || '';

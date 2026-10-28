@@ -2167,7 +2167,7 @@
             renderLogsTable(filtered);
         }
 
-       function editRecord(id) {
+function editRecord(id) {
             const rec = allRecords.find(r => r.id === id);
             if (!rec) return;
             currentEditingRecordId = id;
@@ -2194,31 +2194,32 @@
                 document.getElementById('custody-checker').value = rec.custody.checker || '';
             }
 
-           // 3. Populate Section 3: Required Materials and Equipment
+            // 3. Populate Section 3: Required Materials and Equipment (Dynamic Rebuild)
             if (rec.materials && Array.isArray(rec.materials)) {
                 const matTbody = document.getElementById('materials-tbody');
-                const rows = matTbody.querySelectorAll('tr');
-                
-                rec.materials.forEach((item, idx) => {
-                    if (rows[idx]) {
-                        const checkboxes = rows[idx].querySelectorAll('input[type="checkbox"]');
-                        const textInputs = rows[idx].querySelectorAll('input[type="text"]');
-                        
-                        if (checkboxes.length > 0 && item.inputs) {
-                            // Standard equipment rows with checkboxes
-                            checkboxes[idx] // (unused, just scoping)
-                            checkboxes.forEach((chk, cIdx) => {
-                                const val = item.inputs[cIdx];
-                                // Handle boolean, string "on", or truthy values
-                                chk.checked = val === true || val === "on";
-                            });
-                        } else if (textInputs.length > 0 && item.inputs) {
-                            // Reagent/Lot/Exp rows with text inputs
-                            textInputs.forEach((txt, tIdx) => {
-                                txt.value = item.inputs[tIdx] || '';
-                            });
-                        }
+                matTbody.innerHTML = '';
+                rec.materials.forEach(item => {
+                    const tr = document.createElement('tr');
+                    let detailsHtml = '';
+                    if (item.inputs && typeof item.inputs[0] === 'boolean' || item.inputs[0] === "on" || item.inputs[0] === false) {
+                        detailsHtml = `
+                            <label class="inline-flex items-center mr-4"><input type="checkbox" class="mr-1" ${item.inputs[0] === true || item.inputs[0] === "on" ? 'checked' : ''}> Available</label>
+                            <label class="inline-flex items-center"><input type="checkbox" class="mr-1" ${item.inputs[1] === true || item.inputs[1] === "on" ? 'checked' : ''}> Acceptable</label>
+                        `;
+                    } else {
+                        detailsHtml = `
+                            <input type="text" class="table-input mr-2" value="${item.inputs[0] || ''}" placeholder="Lot:">
+                            <input type="text" class="table-input" value="${item.inputs[1] || ''}" placeholder="Exp:">
+                        `;
                     }
+                    tr.innerHTML = `
+                        <td class="p-2 font-medium"><input type="text" class="table-input" value="${item.itemName || ''}"></td>
+                        <td class="p-2 flex gap-4">${detailsHtml}</td>
+                        <td class="p-2 text-center no-print">
+                            <button onclick="this.closest('tr').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    `;
+                    matTbody.appendChild(tr);
                 });
             }
 
@@ -2237,11 +2238,15 @@
             // 5. Populate Processing Header Bar & Step Records
             if (rec.procHeader) {
                 document.getElementById('procHeaderSampleId').value = rec.procHeader.sampleId || '';
-                const hInputs = document.querySelectorAll('#entry-tab .bg-white:nth-of-type(5) .bg-slate-50 input');
-                if (hInputs[1]) hInputs[1].value = rec.procHeader.collTime || '';
-                if (hInputs[2]) hInputs[2].value = rec.procHeader.startTime || '';
-                if (hInputs[3]) hInputs[3].value = rec.procHeader.endTime || '';
-                if (hInputs[4]) hInputs[4].value = rec.procHeader.operator || '';
+                const collTimeInput = document.querySelector('input[name="procHeaderCollTime"]');
+                const startTimeInput = document.querySelector('input[name="procHeaderStartTime"]');
+                const endTimeInput = document.querySelector('input[name="procHeaderEndTime"]');
+                const opInput = document.querySelector('input[name="procHeaderOperator"]');
+                
+                if (collTimeInput) collTimeInput.value = rec.procHeader.collTime || '';
+                if (startTimeInput) startTimeInput.value = rec.procHeader.startTime || '';
+                if (endTimeInput) endTimeInput.value = rec.procHeader.endTime || '';
+                if (opInput) opInput.value = rec.procHeader.operator || '';
             }
 
             if (rec.stepRecords && Array.isArray(rec.stepRecords)) {
@@ -2250,15 +2255,20 @@
                     if (stepRows[idx]) {
                         const chk = stepRows[idx].querySelector('input[type="checkbox"]');
                         if (chk) chk.checked = !!sRec.done;
+                        
+                        // Robust input mapping matching DOM input types
                         const inps = stepRows[idx].querySelectorAll('input:not([type="checkbox"]), select');
                         if (sRec.recInputs && Array.isArray(sRec.recInputs)) {
-                            sRec.recInputs.forEach((val, vIdx) => {
-                                if (inps[vIdx]) {
-                                    if (inps[vIdx].type === 'radio') {
-                                        if (inps[vIdx].value === val) inps[vIdx].checked = true;
-                                    } else {
-                                        inps[vIdx].value = val || '';
+                            let valIdx = 0;
+                            inps.forEach(inp => {
+                                if (inp.type === 'radio') {
+                                    // Check if this radio matches any saved value in recInputs
+                                    if (sRec.recInputs.includes(inp.value)) {
+                                        inp.checked = true;
                                     }
+                                } else if (valIdx < sRec.recInputs.length) {
+                                    inp.value = sRec.recInputs[valIdx] || '';
+                                    valIdx++;
                                 }
                             });
                         }
@@ -2266,7 +2276,7 @@
                 });
             }
 
-            // Populate Yield & Calculation Metrics
+            // Populate Yield & Calculation Metrics (Triggers auto-calculations)
             if (rec.metrics) {
                 document.getElementById('step-4-blood-vol').value = rec.metrics.bloodVol || '';
                 document.getElementById('step-5-pbs-added').value = rec.metrics.pbsAdded || '';
@@ -2281,7 +2291,7 @@
                 calculateCellMetrics();
             }
 
-            // 6. Populate Section 6: Cryovial Traceability Record
+            // 6. Populate Section 6: Cryovial-Level Traceability Record
             if (rec.cryovials && Array.isArray(rec.cryovials)) {
                 const cryoTbody = document.getElementById('cryovial-tbody');
                 cryoTbody.innerHTML = '';

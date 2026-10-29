@@ -2362,22 +2362,18 @@ function cancelEditMode() {
 
 function saveRecordToFirebase() {
     if (currentUser && currentUser.role === 'Viewer') return;
+    
+    const sampleID = document.getElementById('final-sample-id')?.value || document.getElementById('procHeaderSampleId')?.value || '';
+    
+    // Resolve editing ID from either global variable OR the persistent DOM banner attribute
+    const banner = document.getElementById('edit-mode-banner');
+    const activeEditId = currentEditingRecordId || (banner ? banner.getAttribute('data-editing-id') : null);
 
-    // Pull Sample ID from final release input, or fallback to header input if blank
-    const sampleIDInput = document.getElementById('final-sample-id');
-    const headerIDInput = document.getElementById('procHeaderSampleId');
-    let sampleID = (sampleIDInput ? sampleIDInput.value.trim() : '') || (headerIDInput ? headerIDInput.value.trim() : '');
-
-    // ABSOLUTE BYPASS: If we are editing an existing record, NEVER show the placeholder warning
-    if (!currentEditingRecordId) {
+    // Bypass placeholder confirmation if editing an existing record
+    if (!activeEditId) {
         if (!sampleID || sampleID.includes('XX-RA-001') || sampleID === '') {
             if (!confirm("Sample ID appears to be using placeholder values. Save anyway?")) return;
         }
-    }
-
-    // If sampleID is still totally empty, assign a fallback ID so it never saves blank
-    if (!sampleID) {
-        sampleID = 'SMP-' + Math.floor(1000 + Math.random() * 9000);
     }
 
     // Gather payload data...
@@ -2423,7 +2419,7 @@ function saveRecordToFirebase() {
     });
 
     const procHeader = {
-        sampleId: document.getElementById('procHeaderSampleId')?.value || '',
+        sampleId: sampleID,
         collTime: document.querySelector('input[name="procHeaderCollTime"]')?.value || '',
         startTime: document.querySelector('input[name="procHeaderStartTime"]')?.value || '',
         endTime: document.querySelector('input[name="procHeaderEndTime"]')?.value || '',
@@ -2537,7 +2533,7 @@ function saveRecordToFirebase() {
         qaDate: document.getElementById('sign-qa-date')?.value || ''
     };
 
-    const createdAtTimestamp = (currentEditingRecordId && allRecords.find(function(r) { return r.id === currentEditingRecordId; })?.createdAt) 
+    const createdAtTimestamp = (activeEditId && allRecords.find(function(r) { return r.id === activeEditId; })?.createdAt) 
         || new Date().toLocaleString();
 
     const recordData = {
@@ -2573,11 +2569,14 @@ function saveRecordToFirebase() {
         let dbRef;
         let isUpdate = false;
 
-        if (currentEditingRecordId) {
-            dbRef = db.ref('records/' + currentEditingRecordId);
+        // STRICT CHECK: If activeEditId is valid, FORCE overwrite. Otherwise push.
+        if (activeEditId && activeEditId.trim() !== '') {
+            dbRef = db.ref('records/' + activeEditId);
             isUpdate = true;
+            console.log("Updating existing record path: records/" + activeEditId);
         } else {
             dbRef = db.ref('records').push();
+            console.log("Creating new record via push()");
         }
 
         dbRef.set(recordData, function(error) {
@@ -2586,17 +2585,31 @@ function saveRecordToFirebase() {
             } else {
                 if (isUpdate) {
                     showToast("Record " + sampleID + " updated successfully!", "emerald");
-                    // Keep currentEditingRecordId active so sequential saves work smoothly, 
-                    // or clear it only when navigating away via cancel/new record.
-                    document.getElementById('edit-mode-banner').classList.add('hidden');
+                    
+                    // Immediately update local array so no refresh is needed
+                    const localIndex = allRecords.findIndex(function(r) { return r.id === activeEditId; });
+                    if (localIndex !== -1) {
+                        recordData.id = activeEditId;
+                        allRecords[localIndex] = recordData;
+                    }
                 } else {
                     showToast("New Record " + sampleID + " saved successfully!", "emerald");
                 }
                 
+                // Clear state
+                currentEditingRecordId = null;
+                if (banner) banner.removeAttribute('data-editing-id');
+                document.getElementById('edit-mode-banner').classList.add('hidden');
+
                 document.getElementById('final-sample-id').value = sampleID;
                 document.getElementById('procHeaderSampleId').value = sampleID;
                 const barcodeBox = document.getElementById('barcode-display-box');
                 if (barcodeBox) barcodeBox.innerText = sampleID;
+
+                // Re-render historical table immediately if function exists
+                if (typeof renderHistoricalTable === 'function') {
+                    renderHistoricalTable();
+                }
 
                 switchTab('historical');
             }

@@ -2569,14 +2569,12 @@ function saveRecordToFirebase() {
         let dbRef;
         let isUpdate = false;
 
-        // STRICT CHECK: If activeEditId is valid, FORCE overwrite. Otherwise push.
+        // TARGET OVERWRITE vs PUSH
         if (activeEditId && activeEditId.trim() !== '') {
             dbRef = db.ref('records/' + activeEditId);
             isUpdate = true;
-            console.log("Updating existing record path: records/" + activeEditId);
         } else {
             dbRef = db.ref('records').push();
-            console.log("Creating new record via push()");
         }
 
         dbRef.set(recordData, function(error) {
@@ -2585,18 +2583,11 @@ function saveRecordToFirebase() {
             } else {
                 if (isUpdate) {
                     showToast("Record " + sampleID + " updated successfully!", "emerald");
-                    
-                    // Immediately update local array so no refresh is needed
-                    const localIndex = allRecords.findIndex(function(r) { return r.id === activeEditId; });
-                    if (localIndex !== -1) {
-                        recordData.id = activeEditId;
-                        allRecords[localIndex] = recordData;
-                    }
                 } else {
                     showToast("New Record " + sampleID + " saved successfully!", "emerald");
                 }
                 
-                // Clear state
+                // Clear edit state
                 currentEditingRecordId = null;
                 if (banner) banner.removeAttribute('data-editing-id');
                 document.getElementById('edit-mode-banner').classList.add('hidden');
@@ -2606,11 +2597,7 @@ function saveRecordToFirebase() {
                 const barcodeBox = document.getElementById('barcode-display-box');
                 if (barcodeBox) barcodeBox.innerText = sampleID;
 
-                // Re-render historical table immediately if function exists
-                if (typeof renderHistoricalTable === 'function') {
-                    renderHistoricalTable();
-                }
-
+                // Switch to historical tab (Firebase listener will auto-refresh the table)
                 switchTab('historical');
             }
         });

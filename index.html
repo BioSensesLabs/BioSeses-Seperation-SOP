@@ -2362,11 +2362,22 @@ function cancelEditMode() {
 
 function saveRecordToFirebase() {
     if (currentUser && currentUser.role === 'Viewer') return;
-    const sampleID = document.getElementById('final-sample-id')?.value || '';
-    
-    // FIX: Only prompt for confirmation if it's a NEW record AND using placeholder values
-    if (!currentEditingRecordId && (!sampleID || sampleID.includes('XX-RA-001'))) {
-        if (!confirm("Sample ID appears to be using placeholder values. Save anyway?")) return;
+
+    // Pull Sample ID from final release input, or fallback to header input if blank
+    const sampleIDInput = document.getElementById('final-sample-id');
+    const headerIDInput = document.getElementById('procHeaderSampleId');
+    let sampleID = (sampleIDInput ? sampleIDInput.value.trim() : '') || (headerIDInput ? headerIDInput.value.trim() : '');
+
+    // ABSOLUTE BYPASS: If we are editing an existing record, NEVER show the placeholder warning
+    if (!currentEditingRecordId) {
+        if (!sampleID || sampleID.includes('XX-RA-001') || sampleID === '') {
+            if (!confirm("Sample ID appears to be using placeholder values. Save anyway?")) return;
+        }
+    }
+
+    // If sampleID is still totally empty, assign a fallback ID so it never saves blank
+    if (!sampleID) {
+        sampleID = 'SMP-' + Math.floor(1000 + Math.random() * 9000);
     }
 
     // Gather payload data...

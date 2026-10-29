@@ -238,7 +238,8 @@
 
         <!-- ==================== TAB 1: SOP ENTRY FORM ==================== -->
         <div id="entry-tab" class="tab-content space-y-6">
-<input type="hidden" id="active-edit-id" value="">
+            <input type="hidden" id="active-edit-id" value="">
+            <input type="hidden" id="permanent-edit-key" value="">
             <!-- EDITING STATUS / ACTION BANNER -->
             <div id="edit-mode-banner" class="hidden bg-amber-50 border border-amber-300 rounded-xl p-4 flex justify-between items-center no-print">
                 <div class="flex items-center space-x-3">
@@ -2690,7 +2691,11 @@ function saveRecordToFirebase() {
 function editRecord(id) {
     const rec = allRecords.find(function(r) { return r.id === id; });
     if (!rec) return;
+// ANCHOR THE ID IN THE DOM (Cannot be wiped out by app resets)
+    document.getElementById('permanent-edit-key').value = id;
+    currentEditingRecordId = id; // Keep this too just in case
 
+    // ... rest of your existing editRecord loading code ...
     // Dual-layer state storage
     // Inside editRecord(id):
 currentEditingRecordId = id;
@@ -2970,9 +2975,8 @@ if (entryTab) entryTab.setAttribute('data-active-edit-id', id);
 // 2. createNewRecordMode: Clears dual-layer state
 function createNewRecordMode() {
     if (currentUser && currentUser.role === 'Viewer') return;
+    document.getElementById('permanent-edit-key').value = '';
     currentEditingRecordId = null;
-    const banner = document.getElementById('edit-mode-banner');
-    if (banner) banner.removeAttribute('data-editing-id');
     document.getElementById('edit-mode-banner').classList.add('hidden');
     clearForm();
     switchTab('entry');
@@ -2981,13 +2985,11 @@ function createNewRecordMode() {
 
 // 3. cancelEditMode: Clears dual-layer state
 function cancelEditMode() {
+    document.getElementById('permanent-edit-key').value = '';
     currentEditingRecordId = null;
-    const banner = document.getElementById('edit-mode-banner');
-    if (banner) banner.removeAttribute('data-editing-id');
     document.getElementById('edit-mode-banner').classList.add('hidden');
     clearForm();
     switchTab('historical');
-    showToast("Edit mode closed.", "amber");
 }
 
 // 4. saveRecordToFirebase: Pulls ID securely from both sources

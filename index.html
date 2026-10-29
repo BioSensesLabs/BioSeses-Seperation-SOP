@@ -238,7 +238,7 @@
 
         <!-- ==================== TAB 1: SOP ENTRY FORM ==================== -->
         <div id="entry-tab" class="tab-content space-y-6">
-
+<input type="hidden" id="active-edit-id" value="">
             <!-- EDITING STATUS / ACTION BANNER -->
             <div id="edit-mode-banner" class="hidden bg-amber-50 border border-amber-300 rounded-xl p-4 flex justify-between items-center no-print">
                 <div class="flex items-center space-x-3">
@@ -2343,22 +2343,22 @@
             }
         }
 
-        function createNewRecordMode() {
-            if (currentUser && currentUser.role === 'Viewer') return;
-            currentEditingRecordId = null;
-            document.getElementById('edit-mode-banner').classList.add('hidden');
-            clearForm();
-            switchTab('entry');
-            showToast("Ready to create new record form.", "blue");
-        }
+ function createNewRecordMode() {
+    if (currentUser && currentUser.role === 'Viewer') return;
+    document.getElementById('active-edit-id').value = ''; // Clear edit state
+    document.getElementById('edit-mode-banner').classList.add('hidden');
+    clearForm();
+    switchTab('entry');
+    showToast("Ready to create new record form.", "blue");
+}
 
-        function cancelEditMode() {
-            currentEditingRecordId = null;
-            document.getElementById('edit-mode-banner').classList.add('hidden');
-            clearForm();
-            switchTab('historical');
-            showToast("Edit mode closed.", "amber");
-        }
+       function cancelEditMode() {
+    document.getElementById('active-edit-id').value = ''; // Clear edit state
+    document.getElementById('edit-mode-banner').classList.add('hidden');
+    clearForm();
+    switchTab('historical');
+    showToast("Edit mode closed.", "amber");
+}
 
 function saveRecordToFirebase() {
     if (currentUser && currentUser.role === 'Viewer') return;
@@ -2686,6 +2686,10 @@ function editRecord(id) {
 
     const isViewer = currentUser && currentUser.role === 'Viewer';
 
+    // Clear form first
+    document.querySelectorAll('#entry-tab input[type="text"]:not(#active-edit-id), #entry-tab input[type="number"], #entry-tab input[type="time"], #entry-tab input[type="date"], #entry-tab textarea, #entry-tab input[type="datetime-local"]').forEach(function(i) { i.value = ''; });
+    document.querySelectorAll('#entry-tab input[type="checkbox"], #entry-tab input[type="radio"]').forEach(function(i) { i.checked = false; });
+
     // 1. Custody & Identification
     if (rec.custody) {
         document.getElementById('custody-site-code').value = rec.custody.siteCode || '';
@@ -2708,8 +2712,8 @@ function editRecord(id) {
         }
     }
 
-    // 3. Materials & Equipment (Fix: Preserving text inputs vs checkboxes)
-if (rec.materials && rec.materials.length > 0) {
+    // 3. Materials
+    if (rec.materials && rec.materials.length > 0) {
         const tbody = document.getElementById('materials-tbody');
         tbody.innerHTML = '';
         rec.materials.forEach(function(mat) {
@@ -2770,7 +2774,7 @@ if (rec.materials && rec.materials.length > 0) {
         });
     }
 
-    // 5. Processing Header Bar
+    // 5. Header Bar
     if (rec.procHeader) {
         document.getElementById('procHeaderSampleId').value = rec.procHeader.sampleId || '';
         const hColl = document.querySelector('input[name="procHeaderCollTime"]');
@@ -2926,8 +2930,8 @@ if (rec.materials && rec.materials.length > 0) {
         document.getElementById('sign-qa-date').value = rec.signOff.qaDate || '';
     }
 
-    // Preserve key
-    currentEditingRecordId = id;
+    // STRICT DOM STATE TRACKING: Set the hidden input value instead of a global variable
+    document.getElementById('active-edit-id').value = id;
 
     if (!isViewer) {
         document.getElementById('edit-mode-banner').classList.remove('hidden');
@@ -2955,7 +2959,7 @@ function saveRecordToFirebase() {
         if (!confirm("Sample ID appears to be using placeholder values. Save anyway?")) return;
     }
 
-    // Gather form payload
+    // Gather payload data...
     const criticalRules = {};
     for (let i = 1; i <= 8; i++) {
         const el = document.getElementById('rule-' + i);
@@ -2975,18 +2979,16 @@ function saveRecordToFirebase() {
         checker: document.getElementById('custody-checker')?.value || ''
     };
 
- const materials = [];
+    const materials = [];
     document.querySelectorAll('#materials-tbody tr').forEach(function(tr) {
         const nameInput = tr.cells[0]?.querySelector('input');
         const itemName = nameInput ? nameInput.value : (tr.cells[0]?.innerText.trim() || '');
         const hasInputs = tr.querySelectorAll('input[type="text"]').length >= 2;
-        
         const stateInputs = Array.from(tr.querySelectorAll('input')).filter(function(inp) {
             return inp !== nameInput;
         }).map(function(inp) {
             return inp.type === 'checkbox' ? inp.checked : inp.value;
         });
-
         materials.push({ itemName: itemName, hasInputs: hasInputs, inputs: stateInputs });
     });
 
@@ -3114,7 +3116,9 @@ function saveRecordToFirebase() {
         qaDate: document.getElementById('sign-qa-date')?.value || ''
     };
 
-    const createdAtTimestamp = (currentEditingRecordId && allRecords.find(function(r) { return r.id === currentEditingRecordId; })?.createdAt) 
+    // Read the active edit ID directly from the DOM element
+    const activeEditId = document.getElementById('active-edit-id').value;
+    const createdAtTimestamp = (activeEditId && allRecords.find(function(r) { return r.id === activeEditId; })?.createdAt) 
         || new Date().toLocaleString();
 
     const recordData = {
@@ -3150,9 +3154,8 @@ function saveRecordToFirebase() {
         let dbRef;
         let isUpdate = false;
 
-        // Save Target Decision
-        if (currentEditingRecordId) {
-            dbRef = db.ref('records/' + currentEditingRecordId);
+        if (activeEditId) {
+            dbRef = db.ref('records/' + activeEditId);
             isUpdate = true;
         } else {
             dbRef = db.ref('records').push();
@@ -3164,11 +3167,17 @@ function saveRecordToFirebase() {
             } else {
                 if (isUpdate) {
                     showToast("Record " + sampleID + " updated successfully!", "emerald");
-                    currentEditingRecordId = null; // Clear edit tracking state
+                    document.getElementById('active-edit-id').value = ''; // Reset edit state
                     document.getElementById('edit-mode-banner').classList.add('hidden');
                 } else {
                     showToast("New Record " + sampleID + " saved successfully!", "emerald");
                 }
+                
+                document.getElementById('final-sample-id').value = sampleID;
+                document.getElementById('procHeaderSampleId').value = sampleID;
+                const barcodeBox = document.getElementById('barcode-display-box');
+                if (barcodeBox) barcodeBox.innerText = sampleID;
+
                 switchTab('historical');
             }
         });

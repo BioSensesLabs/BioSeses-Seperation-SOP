@@ -2783,18 +2783,27 @@ function editRecord(id) {
     }
 
     // 5. Header Bar
-    if (rec.procHeader) {
-        document.getElementById('procHeaderSampleId').value = rec.procHeader.sampleId || '';
-        const hColl = document.querySelector('input[name="procHeaderCollTime"]');
-        if (hColl) hColl.value = rec.procHeader.collTime || '';
-        const hStart = document.querySelector('input[name="procHeaderStartTime"]');
-        if (hStart) hStart.value = rec.procHeader.startTime || '';
-        const hEnd = document.querySelector('input[name="procHeaderEndTime"]');
-        if (hEnd) hEnd.value = rec.procHeader.endTime || '';
-        const hOp = document.querySelector('input[name="procHeaderOperator"]');
-        if (hOp) hOp.value = rec.procHeader.operator || '';
-    }
+    if (rec.procHeader || rec.sampleID) {
+        const actualSampleID = rec.sampleID || (rec.procHeader ? rec.procHeader.sampleId : '') || '';
+        
+        const headerIdInput = document.getElementById('procHeaderSampleId');
+        if (headerIdInput) headerIdInput.value = actualSampleID;
 
+        const finalIdInput = document.getElementById('final-sample-id');
+        if (finalIdInput) finalIdInput.value = actualSampleID;
+
+        const barcodeBox = document.getElementById('barcode-display-box');
+        if (barcodeBox) barcodeBox.innerText = actualSampleID;
+
+        const hColl = document.querySelector('input[name="procHeaderCollTime"]');
+        if (hColl && rec.procHeader) hColl.value = rec.procHeader.collTime || '';
+        const hStart = document.querySelector('input[name="procHeaderStartTime"]');
+        if (hStart && rec.procHeader) hStart.value = rec.procHeader.startTime || '';
+        const hEnd = document.querySelector('input[name="procHeaderEndTime"]');
+        if (hEnd && rec.procHeader) hEnd.value = rec.procHeader.endTime || '';
+        const hOp = document.querySelector('input[name="procHeaderOperator"]');
+        if (hOp && rec.procHeader) hOp.value = rec.procHeader.operator || '';
+    }
     // 6. Step Records
     if (rec.stepRecords) {
         Object.keys(rec.stepRecords).forEach(function(stepNum) {

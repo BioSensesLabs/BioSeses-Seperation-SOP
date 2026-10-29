@@ -2609,20 +2609,15 @@ function saveRecordToFirebase() {
         function fetchRecordsFromFirebase() {
             if (!db) return;
             try {
-                db.ref('records').on('value', function(snapshot) {
-                    const data = snapshot.val();
-                    if (data) {
-                        const fetched = [];
-                        Object.keys(data).forEach(function(key) {
-                            fetched.push(Object.assign({ id: key }, data[key]));
-                        });
-                        if (fetched.length > 0) {
-                            allRecords = fetched;
-                            renderLogsTable(allRecords);
-                            updateKPICards(allRecords);
-                        }
-                    }
-                });
+         db.ref('records').on('value', function(snapshot) {
+    allRecords = [];
+    snapshot.forEach(function(childSnapshot) {
+        const record = childSnapshot.val();
+        record.id = childSnapshot.key; // <--- ADD THIS LINE RIGHT HERE
+        allRecords.push(record);
+    });
+    renderHistoricalTable();
+});
             } catch(e) {
                 console.log("Firebase listener offline");
             }

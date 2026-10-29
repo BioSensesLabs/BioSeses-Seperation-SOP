@@ -2370,6 +2370,13 @@ function cancelEditMode() {
 
 function saveRecordToFirebase() {
     if (currentUser && currentUser.role === 'Viewer') return;
+
+    // --- EMERGENCY DEBUG CHECK ---
+    const hiddenVal = document.getElementById('permanent-edit-key') ? document.getElementById('permanent-edit-key').value : 'ELEMENT NOT FOUND';
+    const globalVal = typeof currentEditingRecordId !== 'undefined' ? currentEditingRecordId : 'VARIABLE NOT FOUND';
+    
+    alert("DEBUG CHECK BEFORE SAVE:\nHidden Input Value: [" + hiddenVal + "]\nGlobal Variable Value: [" + globalVal + "]");
+    // -----------------------------
     
     const sampleID = document.getElementById('final-sample-id')?.value || document.getElementById('procHeaderSampleId')?.value || '';
     

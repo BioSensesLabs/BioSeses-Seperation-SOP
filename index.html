@@ -2345,15 +2345,15 @@
 
  function createNewRecordMode() {
     if (currentUser && currentUser.role === 'Viewer') return;
-    document.getElementById('active-edit-id').value = ''; // Clear edit state
+    currentEditingRecordId = null; // Clear edit state
     document.getElementById('edit-mode-banner').classList.add('hidden');
     clearForm();
     switchTab('entry');
     showToast("Ready to create new record form.", "blue");
 }
 
-       function cancelEditMode() {
-    document.getElementById('active-edit-id').value = ''; // Clear edit state
+function cancelEditMode() {
+    currentEditingRecordId = null; // Clear edit state
     document.getElementById('edit-mode-banner').classList.add('hidden');
     clearForm();
     switchTab('historical');
@@ -2367,14 +2367,13 @@ function saveRecordToFirebase() {
         if (!confirm("Sample ID appears to be using placeholder values. Save anyway?")) return;
     }
 
-    // 1. Critical Rules
+    // Gather payload data...
     const criticalRules = {};
     for (let i = 1; i <= 8; i++) {
         const el = document.getElementById('rule-' + i);
         if (el) criticalRules['rule' + i] = el.checked;
     }
 
-    // 2. Custody Data
     const custody = {
         siteCode: document.getElementById('custody-site-code')?.value || '',
         condition: document.getElementById('custody-condition')?.value || '',
@@ -2388,18 +2387,19 @@ function saveRecordToFirebase() {
         checker: document.getElementById('custody-checker')?.value || ''
     };
 
-    // 3. Materials (Fix: explicitly saving hasInputs structure flag)
     const materials = [];
     document.querySelectorAll('#materials-tbody tr').forEach(function(tr) {
-        const itemName = tr.cells[0]?.querySelector('input')?.value || tr.cells[0]?.innerText.trim() || '';
+        const nameInput = tr.cells[0]?.querySelector('input');
+        const itemName = nameInput ? nameInput.value : (tr.cells[0]?.innerText.trim() || '');
         const hasInputs = tr.querySelectorAll('input[type="text"]').length >= 2;
-        const inputs = Array.from(tr.querySelectorAll('input')).map(function(inp) { 
-            return inp.type === 'checkbox' ? inp.checked : inp.value; 
+        const stateInputs = Array.from(tr.querySelectorAll('input')).filter(function(inp) {
+            return inp !== nameInput;
+        }).map(function(inp) {
+            return inp.type === 'checkbox' ? inp.checked : inp.value;
         });
-        materials.push({ itemName: itemName, hasInputs: hasInputs, inputs: inputs });
+        materials.push({ itemName: itemName, hasInputs: hasInputs, inputs: stateInputs });
     });
 
-    // 4. Pre-Checklist
     const preChecklist = [];
     document.querySelectorAll('#precheck-tbody tr').forEach(function(tr) {
         const checkItem = tr.cells[0]?.innerText.trim() || '';
@@ -2409,7 +2409,6 @@ function saveRecordToFirebase() {
         preChecklist.push({ checkItem: checkItem, time: timeVal, result: resultVal, initials: initials });
     });
 
-    // 5. Processing Header Bar
     const procHeader = {
         sampleId: document.getElementById('procHeaderSampleId')?.value || '',
         collTime: document.querySelector('input[name="procHeaderCollTime"]')?.value || '',
@@ -2418,7 +2417,6 @@ function saveRecordToFirebase() {
         operator: document.querySelector('input[name="procHeaderOperator"]')?.value || ''
     };
 
-    // 6. Step Records
     const stepRecords = {};
     document.querySelectorAll('#entry-tab [data-step]').forEach(function(tr) {
         const stepNum = tr.getAttribute('data-step');
@@ -2444,7 +2442,6 @@ function saveRecordToFirebase() {
         cellDist: document.querySelector('input[name="cell_dist"]:checked')?.value || ''
     };
 
-    // 7. Metrics
     const metrics = {
         bloodVol: document.getElementById('step-4-blood-vol')?.value || '',
         pbsAdded: document.getElementById('step-5-pbs-added')?.value || '',
@@ -2464,7 +2461,6 @@ function saveRecordToFirebase() {
         macsVol: document.getElementById('res-macs-vol')?.innerText || '0'
     };
 
-    // 8. Cryovials
     const cryovials = [];
     document.querySelectorAll('#cryovial-tbody tr').forEach(function(tr) {
         cryovials.push({
@@ -2479,7 +2475,6 @@ function saveRecordToFirebase() {
         });
     });
 
-    // 9. QC List
     const qcList = [];
     document.querySelectorAll('#qc-tbody tr').forEach(function(tr) {
         qcList.push({
@@ -2490,7 +2485,6 @@ function saveRecordToFirebase() {
         });
     });
 
-    // 10. Deviations
     const deviations = [];
     document.querySelectorAll('#deviation-tbody tr').forEach(function(tr) {
         const inps = tr.querySelectorAll('input, textarea');
@@ -2504,7 +2498,6 @@ function saveRecordToFirebase() {
         }
     });
 
-    // 11. Final Release
     const finalCheckboxes = Array.from(document.querySelectorAll('#final-checkboxes input[type="checkbox"]')).map(function(cb) { return cb.checked; });
     const finalRelease = {
         finalCheckboxes: finalCheckboxes,
@@ -2519,7 +2512,6 @@ function saveRecordToFirebase() {
         status: document.querySelector('input[name="proc_status"]:checked')?.value || 'Released'
     };
 
-    // 12. Sign-Off
     const signOff = {
         opName: document.getElementById('sign-op-name')?.value || '',
         opSig: document.getElementById('sign-op-sig')?.value || '',
@@ -2581,13 +2573,13 @@ function saveRecordToFirebase() {
             } else {
                 if (isUpdate) {
                     showToast("Record " + sampleID + " updated successfully!", "emerald");
-                    currentEditingRecordId = null;
+                    // Keep currentEditingRecordId active so sequential saves work smoothly, 
+                    // or clear it only when navigating away via cancel/new record.
                     document.getElementById('edit-mode-banner').classList.add('hidden');
                 } else {
                     showToast("New Record " + sampleID + " saved successfully!", "emerald");
                 }
                 
-                // Fix: keep Sample ID fields populated rather than wiping out
                 document.getElementById('final-sample-id').value = sampleID;
                 document.getElementById('procHeaderSampleId').value = sampleID;
                 const barcodeBox = document.getElementById('barcode-display-box');
@@ -2684,10 +2676,13 @@ function editRecord(id) {
     const rec = allRecords.find(function(r) { return r.id === id; });
     if (!rec) return;
 
+    // Set the global editing record ID immediately
+    currentEditingRecordId = id;
+
     const isViewer = currentUser && currentUser.role === 'Viewer';
 
-    // Clear form first
-    document.querySelectorAll('#entry-tab input[type="text"]:not(#active-edit-id), #entry-tab input[type="number"], #entry-tab input[type="time"], #entry-tab input[type="date"], #entry-tab textarea, #entry-tab input[type="datetime-local"]').forEach(function(i) { i.value = ''; });
+    // Clear form fields first
+    document.querySelectorAll('#entry-tab input[type="text"], #entry-tab input[type="number"], #entry-tab input[type="time"], #entry-tab input[type="date"], #entry-tab textarea, #entry-tab input[type="datetime-local"]').forEach(function(i) { i.value = ''; });
     document.querySelectorAll('#entry-tab input[type="checkbox"], #entry-tab input[type="radio"]').forEach(function(i) { i.checked = false; });
 
     // 1. Custody & Identification
@@ -2929,9 +2924,6 @@ function editRecord(id) {
         document.getElementById('sign-qa-sig').value = rec.signOff.qaSig || '';
         document.getElementById('sign-qa-date').value = rec.signOff.qaDate || '';
     }
-
-    // STRICT DOM STATE TRACKING: Set the hidden input value instead of a global variable
-    document.getElementById('active-edit-id').value = id;
 
     if (!isViewer) {
         document.getElementById('edit-mode-banner').classList.remove('hidden');

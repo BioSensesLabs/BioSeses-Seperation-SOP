@@ -2685,7 +2685,6 @@ function saveRecordToFirebase() {
         }
 
 // 1. Corrected editRecord Function
-// 1. editRecord: Stores ID in both global variable and the DOM banner element
 function editRecord(id) {
     const rec = allRecords.find(function(r) { return r.id === id; });
     if (!rec) return;

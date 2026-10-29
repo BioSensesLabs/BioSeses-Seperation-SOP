@@ -2709,31 +2709,42 @@ function editRecord(id) {
     }
 
     // 3. Materials & Equipment (Fix: Preserving text inputs vs checkboxes)
-    if (rec.materials && rec.materials.length > 0) {
+if (rec.materials && rec.materials.length > 0) {
         const tbody = document.getElementById('materials-tbody');
         tbody.innerHTML = '';
         rec.materials.forEach(function(mat) {
             const tr = document.createElement('tr');
-            
-            const useInputs = mat.hasInputs !== undefined ? mat.hasInputs : (mat.inputs.length === 2 && typeof mat.inputs[1] === 'string');
+            const useInputs = mat.hasInputs !== undefined ? mat.hasInputs : false;
+            const isDefaultItem = defaultMaterials.some(function(dm) { return dm.name === mat.itemName; });
 
-            if (useInputs) {
-                tr.innerHTML = '<td class="p-2 font-medium"><input type="text" class="table-input" value="' + mat.itemName + '"></td>' +
-                    '<td class="p-2 flex gap-4">' +
-                        '<input type="text" class="table-input" value="' + (mat.inputs[0] || '') + '" placeholder="Lot / ID:">' +
-                        '<input type="text" class="table-input" value="' + (mat.inputs[1] || '') + '" placeholder="Exp / Status:">' +
-                    '</td>' +
-                    '<td class="p-2 text-center no-print">' +
-                        '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
-                    '</td>';
+            if (isDefaultItem) {
+                if (useInputs) {
+                    tr.innerHTML = '<td class="p-2 font-medium">' + mat.itemName + '</td>' +
+                        '<td class="p-2 flex gap-4">' +
+                            '<input type="text" class="table-input" value="' + (mat.inputs[0] || '') + '" placeholder="Lot / ID:">' +
+                            '<input type="text" class="table-input" value="' + (mat.inputs[1] || '') + '" placeholder="Exp / Status:">' +
+                        '</td>' +
+                        '<td class="p-2 text-center no-print">' +
+                            '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
+                        '</td>';
+                } else {
+                    const availChecked = mat.inputs[0] === true || mat.inputs[0] === 'true' ? 'checked' : '';
+                    const acceptChecked = mat.inputs[1] === true || mat.inputs[1] === 'true' ? 'checked' : '';
+
+                    tr.innerHTML = '<td class="p-2 font-medium">' + mat.itemName + '</td>' +
+                        '<td class="p-2">' +
+                            '<label class="inline-flex items-center mr-4"><input type="checkbox" class="mr-1" ' + availChecked + '> Available</label>' +
+                            '<label class="inline-flex items-center"><input type="checkbox" class="mr-1" ' + acceptChecked + '> Acceptable</label>' +
+                        '</td>' +
+                        '<td class="p-2 text-center no-print">' +
+                            '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
+                        '</td>';
+                }
             } else {
-                const availChecked = mat.inputs[0] === true || mat.inputs[0] === 'true' ? 'checked' : '';
-                const acceptChecked = mat.inputs[1] === true || mat.inputs[1] === 'true' ? 'checked' : '';
-
-                tr.innerHTML = '<td class="p-2 font-medium">' + mat.itemName + '</td>' +
+                tr.innerHTML = '<td class="p-2 font-medium"><input type="text" class="table-input" value="' + mat.itemName + '"></td>' +
                     '<td class="p-2">' +
-                        '<label class="inline-flex items-center mr-4"><input type="checkbox" class="mr-1" ' + availChecked + '> Available</label>' +
-                        '<label class="inline-flex items-center"><input type="checkbox" class="mr-1" ' + acceptChecked + '> Acceptable</label>' +
+                        '<label class="inline-flex items-center mr-4"><input type="checkbox" class="mr-1" ' + (mat.inputs[0] ? 'checked' : '') + '> Available</label>' +
+                        '<label class="inline-flex items-center"><input type="checkbox" ' + (mat.inputs[1] ? 'checked' : '') + '> Acceptable</label>' +
                     '</td>' +
                     '<td class="p-2 text-center no-print">' +
                         '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
@@ -2965,13 +2976,19 @@ function saveRecordToFirebase() {
     };
 
  const materials = [];
-document.querySelectorAll('#materials-tbody tr').forEach(function(tr) {
-    const itemName = tr.cells[0]?.querySelector('input')?.value || tr.cells[0]?.innerText.trim() || '';
-    const inputs = Array.from(tr.querySelectorAll('input')).map(function(inp) { 
-        return inp.type === 'checkbox' ? inp.checked : inp.value; 
+    document.querySelectorAll('#materials-tbody tr').forEach(function(tr) {
+        const nameInput = tr.cells[0]?.querySelector('input');
+        const itemName = nameInput ? nameInput.value : (tr.cells[0]?.innerText.trim() || '');
+        const hasInputs = tr.querySelectorAll('input[type="text"]').length >= 2;
+        
+        const stateInputs = Array.from(tr.querySelectorAll('input')).filter(function(inp) {
+            return inp !== nameInput;
+        }).map(function(inp) {
+            return inp.type === 'checkbox' ? inp.checked : inp.value;
+        });
+
+        materials.push({ itemName: itemName, hasInputs: hasInputs, inputs: stateInputs });
     });
-    materials.push({ itemName: itemName, inputs: inputs });
-});
 
     const preChecklist = [];
     document.querySelectorAll('#precheck-tbody tr').forEach(function(tr) {

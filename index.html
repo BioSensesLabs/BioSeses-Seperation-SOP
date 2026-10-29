@@ -2685,18 +2685,30 @@ function saveRecordToFirebase() {
         }
 
 // 1. Corrected editRecord Function
+// 1. editRecord: Stores ID in both global variable and the DOM banner element
 function editRecord(id) {
     const rec = allRecords.find(function(r) { return r.id === id; });
     if (!rec) return;
 
-    // Set the global editing record ID immediately
+    // Dual-layer state storage
     currentEditingRecordId = id;
+    const banner = document.getElementById('edit-mode-banner');
+    if (banner) banner.setAttribute('data-editing-id', id);
 
     const isViewer = currentUser && currentUser.role === 'Viewer';
 
     // Clear form fields first
     document.querySelectorAll('#entry-tab input[type="text"], #entry-tab input[type="number"], #entry-tab input[type="time"], #entry-tab input[type="date"], #entry-tab textarea, #entry-tab input[type="datetime-local"]').forEach(function(i) { i.value = ''; });
     document.querySelectorAll('#entry-tab input[type="checkbox"], #entry-tab input[type="radio"]').forEach(function(i) { i.checked = false; });
+
+    // Populate Sample IDs safely into BOTH header and final release inputs
+    const actualSampleID = rec.sampleID || (rec.procHeader ? rec.procHeader.sampleId : '') || '';
+    const headerIdInput = document.getElementById('procHeaderSampleId');
+    if (headerIdInput) headerIdInput.value = actualSampleID;
+    const finalIdInput = document.getElementById('final-sample-id');
+    if (finalIdInput) finalIdInput.value = actualSampleID;
+    const barcodeBox = document.getElementById('barcode-display-box');
+    if (barcodeBox) barcodeBox.innerText = actualSampleID;
 
     // 1. Custody & Identification
     if (rec.custody) {
@@ -2782,28 +2794,18 @@ function editRecord(id) {
         });
     }
 
-    // 5. Header Bar
-    if (rec.procHeader || rec.sampleID) {
-        const actualSampleID = rec.sampleID || (rec.procHeader ? rec.procHeader.sampleId : '') || '';
-        
-        const headerIdInput = document.getElementById('procHeaderSampleId');
-        if (headerIdInput) headerIdInput.value = actualSampleID;
-
-        const finalIdInput = document.getElementById('final-sample-id');
-        if (finalIdInput) finalIdInput.value = actualSampleID;
-
-        const barcodeBox = document.getElementById('barcode-display-box');
-        if (barcodeBox) barcodeBox.innerText = actualSampleID;
-
+    // 5. Header Times
+    if (rec.procHeader) {
         const hColl = document.querySelector('input[name="procHeaderCollTime"]');
-        if (hColl && rec.procHeader) hColl.value = rec.procHeader.collTime || '';
+        if (hColl) hColl.value = rec.procHeader.collTime || '';
         const hStart = document.querySelector('input[name="procHeaderStartTime"]');
-        if (hStart && rec.procHeader) hStart.value = rec.procHeader.startTime || '';
+        if (hStart) hStart.value = rec.procHeader.startTime || '';
         const hEnd = document.querySelector('input[name="procHeaderEndTime"]');
-        if (hEnd && rec.procHeader) hEnd.value = rec.procHeader.endTime || '';
+        if (hEnd) hEnd.value = rec.procHeader.endTime || '';
         const hOp = document.querySelector('input[name="procHeaderOperator"]');
-        if (hOp && rec.procHeader) hOp.value = rec.procHeader.operator || '';
+        if (hOp) hOp.value = rec.procHeader.operator || '';
     }
+
     // 6. Step Records
     if (rec.stepRecords) {
         Object.keys(rec.stepRecords).forEach(function(stepNum) {
@@ -2949,15 +2951,281 @@ function editRecord(id) {
 
     if (!isViewer) {
         document.getElementById('edit-mode-banner').classList.remove('hidden');
-        document.getElementById('editing-sample-id-label').innerText = rec.sampleID || id;
+        document.getElementById('editing-sample-id-label').innerText = actualSampleID || id;
     }
 
     switchTab('entry');
     if (isViewer) {
         applyRolePermissions();
-        showToast("Viewing historical record (Read-Only Mode): " + (rec.sampleID || id), "blue");
+        showToast("Viewing historical record (Read-Only Mode): " + (actualSampleID || id), "blue");
     } else {
-        showToast("Loaded Record: " + (rec.sampleID || id) + " for editing.", "blue");
+        showToast("Loaded Record: " + (actualSampleID || id) + " for editing.", "blue");
+    }
+}
+
+// 2. createNewRecordMode: Clears dual-layer state
+function createNewRecordMode() {
+    if (currentUser && currentUser.role === 'Viewer') return;
+    currentEditingRecordId = null;
+    const banner = document.getElementById('edit-mode-banner');
+    if (banner) banner.removeAttribute('data-editing-id');
+    document.getElementById('edit-mode-banner').classList.add('hidden');
+    clearForm();
+    switchTab('entry');
+    showToast("Ready to create new record form.", "blue");
+}
+
+// 3. cancelEditMode: Clears dual-layer state
+function cancelEditMode() {
+    currentEditingRecordId = null;
+    const banner = document.getElementById('edit-mode-banner');
+    if (banner) banner.removeAttribute('data-editing-id');
+    document.getElementById('edit-mode-banner').classList.add('hidden');
+    clearForm();
+    switchTab('historical');
+    showToast("Edit mode closed.", "amber");
+}
+
+// 4. saveRecordToFirebase: Pulls ID securely from both sources
+function saveRecordToFirebase() {
+    if (currentUser && currentUser.role === 'Viewer') return;
+    const sampleID = document.getElementById('final-sample-id')?.value || document.getElementById('procHeaderSampleId')?.value || '';
+    
+    // Resolve editing ID from either global variable OR the persistent DOM banner attribute
+    const banner = document.getElementById('edit-mode-banner');
+    const activeEditId = currentEditingRecordId || (banner ? banner.getAttribute('data-editing-id') : null);
+
+    // Bypass placeholder confirmation if we are editing an existing record
+    if (!activeEditId) {
+        if (!sampleID || sampleID.includes('XX-RA-001') || sampleID === '') {
+            if (!confirm("Sample ID appears to be using placeholder values. Save anyway?")) return;
+        }
+    }
+
+    // Gather payload data...
+    const criticalRules = {};
+    for (let i = 1; i <= 8; i++) {
+        const el = document.getElementById('rule-' + i);
+        if (el) criticalRules['rule' + i] = el.checked;
+    }
+
+    const custody = {
+        siteCode: document.getElementById('custody-site-code')?.value || '',
+        condition: document.getElementById('custody-condition')?.value || '',
+        patientID: document.getElementById('custody-patient-id')?.value || '',
+        sampleType: document.getElementById('custody-sample-type')?.value || '',
+        collectionDate: document.getElementById('custody-collection-date')?.value || '',
+        collectionTime: document.getElementById('custody-collection-time')?.value || '',
+        procDate: document.getElementById('custody-proc-date')?.value || '',
+        procTime: document.getElementById('custody-proc-time')?.value || '',
+        operator: document.getElementById('custody-operator')?.value || '',
+        checker: document.getElementById('custody-checker')?.value || ''
+    };
+
+    const materials = [];
+    document.querySelectorAll('#materials-tbody tr').forEach(function(tr) {
+        const nameInput = tr.cells[0]?.querySelector('input');
+        const itemName = nameInput ? nameInput.value : (tr.cells[0]?.innerText.trim() || '');
+        const hasInputs = tr.querySelectorAll('input[type="text"]').length >= 2;
+        const stateInputs = Array.from(tr.querySelectorAll('input')).filter(function(inp) {
+            return inp !== nameInput;
+        }).map(function(inp) {
+            return inp.type === 'checkbox' ? inp.checked : inp.value;
+        });
+        materials.push({ itemName: itemName, hasInputs: hasInputs, inputs: stateInputs });
+    });
+
+    const preChecklist = [];
+    document.querySelectorAll('#precheck-tbody tr').forEach(function(tr) {
+        const checkItem = tr.cells[0]?.innerText.trim() || '';
+        const timeVal = tr.querySelector('.sec4-time')?.value || '';
+        const resultVal = tr.querySelector('.sec4-result')?.value || '';
+        const initials = tr.querySelector('.sec4-initials')?.value || '';
+        preChecklist.push({ checkItem: checkItem, time: timeVal, result: resultVal, initials: initials });
+    });
+
+    const procHeader = {
+        sampleId: sampleID,
+        collTime: document.querySelector('input[name="procHeaderCollTime"]')?.value || '',
+        startTime: document.querySelector('input[name="procHeaderStartTime"]')?.value || '',
+        endTime: document.querySelector('input[name="procHeaderEndTime"]')?.value || '',
+        operator: document.querySelector('input[name="procHeaderOperator"]')?.value || ''
+    };
+
+    const stepRecords = {};
+    document.querySelectorAll('#entry-tab [data-step]').forEach(function(tr) {
+        const stepNum = tr.getAttribute('data-step');
+        const done = tr.querySelector('input[type="checkbox"]')?.checked || false;
+        const fieldValues = Array.from(tr.querySelectorAll('input, select, textarea')).map(function(el) {
+            if (el.type === 'checkbox') return el.checked;
+            if (el.type === 'radio') return el.checked ? el.value : null;
+            return el.value;
+        }).filter(function(v) { return v !== null && v !== false && v !== ""; });
+        stepRecords[stepNum] = { done: done, fieldValues: fieldValues };
+    });
+
+    const globalStepInputs = {
+        tubeSize: document.querySelector('input[name="tube_size"]:checked')?.value || '',
+        pipetteSize: document.querySelector('input[name="pipette_size"]:checked')?.value || '',
+        interfaceIntact: document.querySelector('input[name="interface_intact"]:checked')?.value || '',
+        qcPlasma: document.querySelector('input[name="qc_plasma"]:checked')?.value || '',
+        qcPbmc: document.querySelector('input[name="qc_pbmc"]:checked')?.value || '',
+        qcFicoll: document.querySelector('input[name="qc_ficoll"]:checked')?.value || '',
+        qcRbc: document.querySelector('input[name="qc_rbc"]:checked')?.value || '',
+        qcSuitable: document.querySelector('input[name="qc_suitable"]:checked')?.value || '',
+        qcNotified: document.querySelector('input[name="qc_notified"]:checked')?.value || '',
+        cellDist: document.querySelector('input[name="cell_dist"]:checked')?.value || ''
+    };
+
+    const metrics = {
+        bloodVol: document.getElementById('step-4-blood-vol')?.value || '',
+        pbsAdded: document.getElementById('step-5-pbs-added')?.value || '',
+        dilVol: document.getElementById('step-10-dil-vol')?.value || '',
+        ficollCalc: document.getElementById('step-11-ficoll-calc')?.value || '',
+        ficollAdded: document.getElementById('step-12-ficoll-added')?.value || '',
+        box1v: document.getElementById('box1-v')?.value || '',
+        box1nv: document.getElementById('box1-nv')?.value || '',
+        box2v: document.getElementById('box2-v')?.value || '',
+        box2nv: document.getElementById('box2-nv')?.value || '',
+        box3v: document.getElementById('box3-v')?.value || '',
+        box3nv: document.getElementById('box3-nv')?.value || '',
+        dilutionFactor: document.getElementById('dilution-factor')?.value || '2',
+        viabilityPct: document.getElementById('res-viability-pct')?.innerText || '0',
+        concentration: document.getElementById('res-conc')?.innerText || '0',
+        totalYield: document.getElementById('res-total-yield')?.innerText || '0',
+        macsVol: document.getElementById('res-macs-vol')?.innerText || '0'
+    };
+
+    const cryovials = [];
+    document.querySelectorAll('#cryovial-tbody tr').forEach(function(tr) {
+        cryovials.push({
+            vialNum: tr.cells[0]?.innerText.trim() || '',
+            cryoID: tr.querySelector('.cryo-id')?.value || '',
+            vol: tr.querySelector('.cryo-vol')?.value || '1.0',
+            targetCells: tr.querySelector('.cryo-target')?.value || '10,000,000',
+            time80: tr.querySelector('.cryo-80time')?.value || '',
+            timeLN2: tr.querySelector('.cryo-ln2time')?.value || '',
+            loc: tr.querySelector('.cryo-loc')?.value || '',
+            init: tr.querySelector('.cryo-init')?.value || ''
+        });
+    });
+
+    const qcList = [];
+    document.querySelectorAll('#qc-tbody tr').forEach(function(tr) {
+        qcList.push({
+            point: tr.cells[0]?.innerText.trim() || '',
+            result: tr.cells[1]?.querySelector('input')?.value || '',
+            status: tr.cells[2]?.querySelector('select')?.value || 'Pass',
+            initials: tr.cells[3]?.querySelector('input')?.value || ''
+        });
+    });
+
+    const deviations = [];
+    document.querySelectorAll('#deviation-tbody tr').forEach(function(tr) {
+        const inps = tr.querySelectorAll('input, textarea');
+        if (inps.length > 0) {
+            deviations.push({
+                devID: inps[0]?.value || '',
+                dateTime: inps[1]?.value || '',
+                description: inps[2]?.value || '',
+                supervisor: inps[3]?.value || ''
+            });
+        }
+    });
+
+    const finalCheckboxes = Array.from(document.querySelectorAll('#final-checkboxes input[type="checkbox"]')).map(function(cb) { return cb.checked; });
+    const finalRelease = {
+        finalCheckboxes: finalCheckboxes,
+        startVol: document.getElementById('final-start-vol')?.value || '',
+        totalCells: document.getElementById('final-total-cells')?.value || '',
+        conc: document.getElementById('final-conc')?.value || '',
+        fullVials: document.getElementById('final-full-vials')?.value || '',
+        partialVials: document.getElementById('final-partial-vials')?.value || '',
+        storageLoc: document.getElementById('final-storage-loc')?.value || '',
+        operator: document.getElementById('final-operator')?.value || '',
+        reviewer: document.getElementById('final-reviewer')?.value || '',
+        status: document.querySelector('input[name="proc_status"]:checked')?.value || 'Released'
+    };
+
+    const signOff = {
+        opName: document.getElementById('sign-op-name')?.value || '',
+        opSig: document.getElementById('sign-op-sig')?.value || '',
+        opDate: document.getElementById('sign-op-date')?.value || '',
+        revName: document.getElementById('sign-rev-name')?.value || '',
+        revSig: document.getElementById('sign-rev-sig')?.value || '',
+        revDate: document.getElementById('sign-rev-date')?.value || '',
+        qaName: document.getElementById('sign-qa-name')?.value || '',
+        qaSig: document.getElementById('sign-qa-sig')?.value || '',
+        qaDate: document.getElementById('sign-qa-date')?.value || ''
+    };
+
+    const createdAtTimestamp = (activeEditId && allRecords.find(function(r) { return r.id === activeEditId; })?.createdAt) 
+        || new Date().toLocaleString();
+
+    const recordData = {
+        sampleID: sampleID,
+        siteCode: custody.siteCode || 'XX',
+        diseaseCode: custody.condition || 'RA',
+        patientID: custody.patientID || '001',
+        sampleType: custody.sampleType || 'Whole Blood',
+        operator: custody.operator || 'N/A',
+        processingDate: custody.procDate || new Date().toISOString().split('T')[0],
+        createdAt: createdAtTimestamp,
+        viabilityPct: parseFloat(metrics.viabilityPct) || 0,
+        totalCells: metrics.totalYield || '0',
+        cryovialCount: parseInt(finalRelease.fullVials) || 0,
+        status: finalRelease.status,
+        timestamp: Date.now(),
+        criticalRules: criticalRules,
+        custody: custody,
+        materials: materials,
+        preChecklist: preChecklist,
+        procHeader: procHeader,
+        stepRecords: stepRecords,
+        globalStepInputs: globalStepInputs,
+        metrics: metrics,
+        cryovials: cryovials,
+        qcList: qcList,
+        deviations: deviations,
+        finalRelease: finalRelease,
+        signOff: signOff
+    };
+
+    if (db) {
+        let dbRef;
+        let isUpdate = false;
+
+        // TARGET OVERWRITE vs PUSH
+        if (activeEditId) {
+            dbRef = db.ref('records/' + activeEditId);
+            isUpdate = true;
+        } else {
+            dbRef = db.ref('records').push();
+        }
+
+        dbRef.set(recordData, function(error) {
+            if (error) {
+                showToast("Failed to save to database: " + error.message, "rose");
+            } else {
+                if (isUpdate) {
+                    showToast("Record " + sampleID + " updated successfully!", "emerald");
+                    currentEditingRecordId = null;
+                    if (banner) banner.removeAttribute('data-editing-id');
+                    document.getElementById('edit-mode-banner').classList.add('hidden');
+                } else {
+                    showToast("New Record " + sampleID + " saved successfully!", "emerald");
+                }
+                
+                document.getElementById('final-sample-id').value = sampleID;
+                document.getElementById('procHeaderSampleId').value = sampleID;
+                const barcodeBox = document.getElementById('barcode-display-box');
+                if (barcodeBox) barcodeBox.innerText = sampleID;
+
+                switchTab('historical');
+            }
+        });
+    } else {
+        showToast("Firebase DB unavailable.", "amber");
     }
 }
         

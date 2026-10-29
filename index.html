@@ -2363,7 +2363,9 @@ function cancelEditMode() {
 function saveRecordToFirebase() {
     if (currentUser && currentUser.role === 'Viewer') return;
     const sampleID = document.getElementById('final-sample-id')?.value || '';
-    if (!sampleID || sampleID.includes('XX-RA-001')) {
+    
+    // FIX: Only prompt for confirmation if it's a NEW record AND using placeholder values
+    if (!currentEditingRecordId && (!sampleID || sampleID.includes('XX-RA-001'))) {
         if (!confirm("Sample ID appears to be using placeholder values. Save anyway?")) return;
     }
 

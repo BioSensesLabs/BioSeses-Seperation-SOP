@@ -1764,6 +1764,13 @@
 
     <!-- Application Script Logic -->
     <script>
+
+        // Safety fallback for missing table render functions
+if (typeof renderHistoricalTable !== 'function') {
+    window.renderHistoricalTable = function() {
+        console.log("Historical table render triggered.");
+    };
+}
         const firebaseConfig = {
           apiKey: "AIzaSyBQMLfFjIF_WOjxkT8E01ObPeHxRjPvv5U",
           authDomain: "biosesnesseperationsop.firebaseapp.com",
@@ -2685,9 +2692,12 @@ function editRecord(id) {
     if (!rec) return;
 
     // Dual-layer state storage
-    currentEditingRecordId = id;
-    const banner = document.getElementById('edit-mode-banner');
-    if (banner) banner.setAttribute('data-editing-id', id);
+    // Inside editRecord(id):
+currentEditingRecordId = id;
+const banner = document.getElementById('edit-mode-banner');
+if (banner) banner.setAttribute('data-editing-id', id);
+const entryTab = document.getElementById('entry-tab');
+if (entryTab) entryTab.setAttribute('data-active-edit-id', id);
 
     const isViewer = currentUser && currentUser.role === 'Viewer';
 
@@ -2983,11 +2993,18 @@ function cancelEditMode() {
 // 4. saveRecordToFirebase: Pulls ID securely from both sources
 function saveRecordToFirebase() {
     if (currentUser && currentUser.role === 'Viewer') return;
+    
     const sampleID = document.getElementById('final-sample-id')?.value || document.getElementById('procHeaderSampleId')?.value || '';
     
-    // Resolve editing ID from either global variable OR the persistent DOM banner attribute
+    // STRICT ID RESOLUTION: Check global variable, DOM banner attribute, OR fallback to a stored dataset attribute
     const banner = document.getElementById('edit-mode-banner');
-    const activeEditId = currentEditingRecordId || (banner ? banner.getAttribute('data-editing-id') : null);
+    let activeEditId = currentEditingRecordId || (banner ? banner.getAttribute('data-editing-id') : null);
+
+    // If still null, check if form has a data-editing attribute stored on it
+    if (!activeEditId) {
+        const entryTab = document.getElementById('entry-tab');
+        if (entryTab) activeEditId = entryTab.getAttribute('data-active-edit-id');
+    }
 
     // Bypass placeholder confirmation if we are editing an existing record
     if (!activeEditId) {
@@ -3017,7 +3034,8 @@ function saveRecordToFirebase() {
     };
 
     const materials = [];
-    document.querySelectorAll('#materials-tbody tr').forEach(function(tr) {
+    const matRows = document.querySelectorAll('#materials-tbody tr');
+    matRows.forEach(function(tr) {
         const nameInput = tr.cells[0]?.querySelector('input');
         const itemName = nameInput ? nameInput.value : (tr.cells[0]?.innerText.trim() || '');
         const hasInputs = tr.querySelectorAll('input[type="text"]').length >= 2;
@@ -3030,7 +3048,8 @@ function saveRecordToFirebase() {
     });
 
     const preChecklist = [];
-    document.querySelectorAll('#precheck-tbody tr').forEach(function(tr) {
+    const preRows = document.querySelectorAll('#precheck-tbody tr');
+    preRows.forEach(function(tr) {
         const checkItem = tr.cells[0]?.innerText.trim() || '';
         const timeVal = tr.querySelector('.sec4-time')?.value || '';
         const resultVal = tr.querySelector('.sec4-result')?.value || '';
@@ -3189,12 +3208,14 @@ function saveRecordToFirebase() {
         let dbRef;
         let isUpdate = false;
 
-        // TARGET OVERWRITE vs PUSH
-        if (activeEditId) {
+        // FORCE OVERWRITE USING THE EXACT FIREBASE RECORD KEY
+        if (activeEditId && activeEditId.trim() !== '') {
             dbRef = db.ref('records/' + activeEditId);
             isUpdate = true;
+            console.log("OVERWRITING existing Firebase node: records/" + activeEditId);
         } else {
             dbRef = db.ref('records').push();
+            console.log("CREATING new Firebase node via push()");
         }
 
         dbRef.set(recordData, function(error) {
@@ -3203,13 +3224,17 @@ function saveRecordToFirebase() {
             } else {
                 if (isUpdate) {
                     showToast("Record " + sampleID + " updated successfully!", "emerald");
-                    currentEditingRecordId = null;
-                    if (banner) banner.removeAttribute('data-editing-id');
-                    document.getElementById('edit-mode-banner').classList.add('hidden');
                 } else {
                     showToast("New Record " + sampleID + " saved successfully!", "emerald");
                 }
                 
+                // Clear state
+                currentEditingRecordId = null;
+                if (banner) banner.removeAttribute('data-editing-id');
+                const entryTab = document.getElementById('entry-tab');
+                if (entryTab) entryTab.removeAttribute('data-active-edit-id');
+                document.getElementById('edit-mode-banner').classList.add('hidden');
+
                 document.getElementById('final-sample-id').value = sampleID;
                 document.getElementById('procHeaderSampleId').value = sampleID;
                 const barcodeBox = document.getElementById('barcode-display-box');

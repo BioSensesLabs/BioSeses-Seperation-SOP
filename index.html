@@ -47,8 +47,8 @@
                 <div class="inline-flex bg-blue-600 text-white p-3.5 rounded-2xl shadow-xl shadow-blue-500/30">
                     <i class="fa-solid fa-shield-halved text-2xl"></i>
                 </div>
-                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">BioSenses Medical laboratories</h2>
-                <p class="text-xs text-slate-500">Security Access Layer</p>
+                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">BioSenses SOP Portal</h2>
+                <p class="text-xs text-slate-500">AXIOM PBMC Isolation Security Access Layer</p>
             </div>
 
             <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
@@ -98,7 +98,7 @@
                 </button>
             </div>
 
-            <!-- Option 1: Change Admin Username or Password -->
+            <!-- Option 1: Change Admin Credentials -->
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
                 <h4 class="font-bold text-slate-800 text-sm flex items-center">
                     <i class="fa-solid fa-key text-blue-600 mr-2"></i> 1- Change Admin Credentials
@@ -166,9 +166,7 @@
                                 <th class="p-2.5 text-center w-20">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="users-list-tbody" class="divide-y divide-slate-200 text-xs">
-                            <!-- Populated dynamically -->
-                        </tbody>
+                        <tbody id="users-list-tbody" class="divide-y divide-slate-200 text-xs"></tbody>
                     </table>
                 </div>
             </div>
@@ -355,58 +353,71 @@
                     <span class="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm mr-2.5">2</span>
                     Sample Identification and Chain of Custody
                 </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Site Code</label>
-                        <input type="text" id="custody-site-code" class="table-input" placeholder="e.g. JO">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Condition / Disease Code</label>
-                        <input type="text" id="custody-condition" class="table-input" placeholder="e.g. RA">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Patient Identifier</label>
-                        <input type="text" id="custody-patient-id" class="table-input" placeholder="e.g. 001">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Sample Type</label>
-                        <select id="custody-sample-type" class="table-input">
-                            <option value="Whole Blood">Whole Blood</option>
-                            <option value="Plasma">Plasma</option>
-                            <option value="PBMC">PBMC</option>
-                            <option value="Serum">Serum</option>
-                            <option value="Urine">Urine</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Collection Date</label>
-                        <input type="date" id="custody-collection-date" class="table-input">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Collection Time</label>
-                        <input type="time" id="custody-collection-time" class="table-input">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Processing Start Date</label>
-                        <input type="date" id="custody-proc-date" class="table-input">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Processing Start Time</label>
-                        <input type="time" id="custody-proc-time" class="table-input">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Operator</label>
-                        <input type="text" id="custody-operator" class="table-input" placeholder="Technician Initials/Name">
-                    </div>
-                    <div class="md:col-span-3">
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Second Checker (if applicable)</label>
-                        <input type="text" id="custody-checker" class="table-input" placeholder="Checker Initials/Name">
-                    </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-xs font-bold uppercase text-slate-600 border-b">
+                                <th class="p-2.5 w-1/3">Field</th>
+                                <th class="p-2.5">Record</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">
+                            <tr>
+                                <td class="p-2.5 font-medium text-slate-700">Site Code</td>
+                                <td class="p-2"><input type="text" id="custody-site-code" class="table-input" placeholder="e.g. XX"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-medium text-slate-700">Condition / Disease Code</td>
+                                <td class="p-2"><input type="text" id="custody-condition" class="table-input" placeholder="e.g. RA"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-medium text-slate-700">Patient Identifier</td>
+                                <td class="p-2"><input type="text" id="custody-patient-id" class="table-input" placeholder="e.g. 001"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-medium text-slate-700">Sample Type</td>
+                                <td class="p-2">
+                                    <select id="custody-sample-type" class="table-input">
+                                        <option value="Whole Blood">Whole Blood</option>
+                                        <option value="Plasma">Plasma</option>
+                                        <option value="PBMC">PBMC</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-medium text-slate-700">Collection Date</td>
+                                <td class="p-2"><input type="date" id="custody-collection-date" class="table-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-medium text-slate-700">Collection Time</td>
+                                <td class="p-2"><input type="time" id="custody-collection-time" class="table-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-medium text-slate-700">Processing Start Date</td>
+                                <td class="p-2"><input type="date" id="custody-proc-date" class="table-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-medium text-slate-700">Processing Start Time</td>
+                                <td class="p-2"><input type="time" id="custody-proc-time" class="table-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-medium text-slate-700">Operator</td>
+                                <td class="p-2"><input type="text" id="custody-operator" class="table-input" placeholder="Operator name/initials"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5 font-medium text-slate-700">Second Checker (if applicable)</td>
+                                <td class="p-2"><input type="text" id="custody-checker" class="table-input" placeholder="Second checker initials"></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+                <p class="text-xs text-slate-500 italic mt-2">
+                    Collect 5 tubes per participant: 4 K2 EDTA tubes (10 mL) and 1 plain SST (10 mL) unless indicated otherwise in Disease's CRF/Survey sheet. Immediately label all tubes. Gently invert EDTA tubes after collection to mix with anticoagulants. Handle plain SST tubes according to the applicable serum-processing procedure. Record collection date and time.
+                </p>
             </div>
 
-            <!-- SECTION 3: REQUIRED MATERIALS AND EQUIPMENT -->
+            <!-- SECTION 3: REAGENTS AND MATERIALS CHECKLIST -->
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-4">
                 <div class="flex justify-between items-center border-b pb-3">
                     <h3 class="text-lg font-bold text-slate-900 flex items-center">
@@ -414,16 +425,16 @@
                         Required Materials and Equipment
                     </h3>
                     <button id="add-equipment-btn" onclick="addEquipmentRow()" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 font-semibold px-3 py-1.5 rounded-md border border-blue-200 transition-colors no-print">
-                        <i class="fa-solid fa-plus mr-1"></i> Add Equipment/Reagent Item
+                        <i class="fa-solid fa-plus mr-1"></i> Add Custom Item
                     </button>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm border-collapse">
                         <thead>
-                            <tr class="bg-slate-100 text-slate-700 text-xs uppercase font-bold border-b border-slate-200">
+                            <tr class="bg-slate-100 text-xs font-bold uppercase text-slate-600 border-b">
                                 <th class="p-2.5">Item</th>
-                                <th class="p-2.5">Pre-use QC / Status / Details</th>
-                                <th class="p-2.5 w-16 text-center no-print">Action</th>
+                                <th class="p-2.5">Pre-use QC / Status</th>
+                                <th class="p-2.5 w-12 text-center no-print"></th>
                             </tr>
                         </thead>
                         <tbody id="materials-tbody" class="divide-y divide-slate-200"></tbody>
@@ -440,55 +451,47 @@
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm border-collapse">
                         <thead>
-                            <tr class="bg-slate-100 text-slate-700 text-xs uppercase font-bold border-b border-slate-200">
+                            <tr class="bg-slate-100 text-xs font-bold uppercase text-slate-600 border-b">
                                 <th class="p-2.5">Pre-processing timestamp / check</th>
-                                <th class="p-2.5 w-48">Time</th>
-                                <th class="p-2.5">Result</th>
-                                <th class="p-2.5 w-32">Initials</th>
+                                <th class="p-2.5 w-64">Time / Result</th>
+                                <th class="p-2.5 w-36">Initials</th>
                             </tr>
                         </thead>
-                        <tbody id="precheck-tbody" class="divide-y divide-slate-200">
+                        <tbody id="readiness-tbody" class="divide-y divide-slate-200">
                             <tr>
                                 <td class="p-2 font-medium">Reagent RT confirmed</td>
-                                <td class="p-2"><input type="time" class="table-input sec4-time"></td>
-                                <td class="p-2"><input type="text" class="table-input sec4-result" placeholder="Result / Status"></td>
-                                <td class="p-2"><input type="text" class="table-input sec4-initials" placeholder="Initials"></td>
+                                <td class="p-2"><input type="time" id="ready-reagent-rt-time" class="table-input"></td>
+                                <td class="p-2"><input type="text" id="ready-reagent-rt-init" class="table-input" placeholder="Initials"></td>
                             </tr>
                             <tr>
                                 <td class="p-2 font-medium">Blood RT confirmed</td>
-                                <td class="p-2"><input type="time" class="table-input sec4-time"></td>
-                                <td class="p-2"><input type="text" class="table-input sec4-result" placeholder="Result / Status"></td>
-                                <td class="p-2"><input type="text" class="table-input sec4-initials" placeholder="Initials"></td>
+                                <td class="p-2"><input type="time" id="ready-blood-rt-time" class="table-input"></td>
+                                <td class="p-2"><input type="text" id="ready-blood-rt-init" class="table-input" placeholder="Initials"></td>
                             </tr>
                             <tr>
                                 <td class="p-2 font-medium">BSC ready</td>
-                                <td class="p-2"><input type="time" class="table-input sec4-time"></td>
-                                <td class="p-2"><input type="text" class="table-input sec4-result" placeholder="Result / Status"></td>
-                                <td class="p-2"><input type="text" class="table-input sec4-initials" placeholder="Initials"></td>
+                                <td class="p-2"><input type="time" id="ready-bsc-time" class="table-input"></td>
+                                <td class="p-2"><input type="text" id="ready-bsc-init" class="table-input" placeholder="Initials"></td>
                             </tr>
                             <tr>
                                 <td class="p-2 font-medium">Centrifuge set to 37°C</td>
-                                <td class="p-2"><input type="time" class="table-input sec4-time"></td>
-                                <td class="p-2"><input type="text" class="table-input sec4-result" placeholder="Confirmed temp"></td>
-                                <td class="p-2"><input type="text" class="table-input sec4-initials" placeholder="Initials"></td>
+                                <td class="p-2"><input type="text" id="ready-cent-37-res" class="table-input" placeholder="Result/Time"></td>
+                                <td class="p-2"><input type="text" id="ready-cent-37-init" class="table-input" placeholder="Initials"></td>
                             </tr>
                             <tr>
                                 <td class="p-2 font-medium">Centrifuge set to 4°C</td>
-                                <td class="p-2"><input type="time" class="table-input sec4-time"></td>
-                                <td class="p-2"><input type="text" class="table-input sec4-result" placeholder="Confirmed temp"></td>
-                                <td class="p-2"><input type="text" class="table-input sec4-initials" placeholder="Initials"></td>
+                                <td class="p-2"><input type="text" id="ready-cent-4-res" class="table-input" placeholder="Result/Time"></td>
+                                <td class="p-2"><input type="text" id="ready-cent-4-init" class="table-input" placeholder="Initials"></td>
                             </tr>
                             <tr>
                                 <td class="p-2 font-medium">Cryovials labeled</td>
-                                <td class="p-2"><input type="time" class="table-input sec4-time"></td>
-                                <td class="p-2"><input type="text" class="table-input sec4-result" placeholder="Result / Status"></td>
-                                <td class="p-2"><input type="text" class="table-input sec4-initials" placeholder="Initials"></td>
+                                <td class="p-2"><input type="text" id="ready-cryovials-res" class="table-input" placeholder="Result/Time"></td>
+                                <td class="p-2"><input type="text" id="ready-cryovials-init" class="table-input" placeholder="Initials"></td>
                             </tr>
                             <tr>
                                 <td class="p-2 font-medium">Freezing container ready</td>
-                                <td class="p-2"><input type="time" class="table-input sec4-time"></td>
-                                <td class="p-2"><input type="text" class="table-input sec4-result" placeholder="Result / Status"></td>
-                                <td class="p-2"><input type="text" class="table-input sec4-initials" placeholder="Initials"></td>
+                                <td class="p-2"><input type="text" id="ready-freezer-res" class="table-input" placeholder="Result/Time"></td>
+                                <td class="p-2"><input type="text" id="ready-freezer-init" class="table-input" placeholder="Initials"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -500,34 +503,36 @@
                 <div class="border-b pb-3">
                     <h3 class="text-lg font-bold text-slate-900 flex items-center">
                         <span class="w-7 h-7 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm mr-2.5">5</span>
-                        Sample Processing Checklist (Steps 1 – 53)
+                        Sample Processing Checklist
                     </h3>
-                </div>
-                <!-- Header Processing Log Bar -->
-                <div class="bg-slate-50 p-4 border border-slate-200 rounded-lg grid grid-cols-1 md:grid-cols-5 gap-3">
-                  <div>
-                    <span class="block text-xs font-semibold text-slate-600">Sample ID</span>
-                    <input type="text" id="procHeaderSampleId" class="table-input" readonly>
-                  </div>
-                  <div>
-                    <span class="block text-xs font-semibold text-slate-600">Collection Time</span>
-                    <input type="time" name="procHeaderCollTime" class="table-input">
-                  </div>
-                  <div>
-                    <span class="block text-xs font-semibold text-slate-600">Processing Start</span>
-                    <input type="time" name="procHeaderStartTime" class="table-input">
-                  </div>
-                  <div>
-                    <span class="block text-xs font-semibold text-slate-600">Processing End</span>
-                    <input type="time" name="procHeaderEndTime" class="table-input">
-                  </div>
-                  <div>
-                    <span class="block text-xs font-semibold text-slate-600">Operator</span>
-                    <input type="text" name="procHeaderOperator" class="table-input">
-                  </div>
+                    <p class="text-xs text-slate-500 mt-1">Complete for Every Sample. Use one copy of Sections 5-8 for every participant/sample.</p>
                 </div>
 
-                <!-- 5.1 Plasma Collection -->
+                <!-- Section 5 Header Table -->
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-1 md:grid-cols-5 gap-3 text-xs">
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Sample ID</label>
+                        <input type="text" id="procHeaderSampleId" name="procHeaderSampleId" class="table-input bg-white font-mono font-bold text-blue-700" readonly>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Collection Time</label>
+                        <input type="time" name="procHeaderCollTime" class="table-input bg-white">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Processing Start</label>
+                        <input type="time" name="procHeaderStartTime" class="table-input bg-white">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Processing End</label>
+                        <input type="time" name="procHeaderEndTime" class="table-input bg-white">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-600 mb-1">Operator</label>
+                        <input type="text" name="procHeaderOperator" class="table-input bg-white" placeholder="Operator initials">
+                    </div>
+                </div>
+
+                <!-- 5.1 Plasma Collection and Blood Dilution -->
                 <div class="space-y-3">
                     <h4 class="font-bold text-md text-blue-900 bg-blue-50 p-2.5 rounded-lg border border-blue-100">5.1 Plasma Collection and Blood Dilution</h4>
                     <div class="overflow-x-auto">
@@ -536,52 +541,75 @@
                                 <tr class="bg-slate-100 text-xs font-bold uppercase text-slate-600 border-b">
                                     <th class="p-2 w-12 text-center">Step</th>
                                     <th class="p-2">Action</th>
-                                    <th class="p-2 w-72">Record</th>
+                                    <th class="p-2 w-80">Record</th>
                                     <th class="p-2 w-16 text-center">Done</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y">
                                 <tr data-step="1">
                                     <td class="p-2 text-center font-bold">1</td>
-                                    <td class="p-2">Centrifuge 2 of the 4 EDTA blood tubes at 2000 rpm for 10 minutes.</td>
+                                    <td class="p-2">Centrifuge 2 of the 4 EDTA blood tubes at 2000 rpm for 10 minutes. Unless indicated in the Disease's CRF/Survey sheet to collect plasma from all tubes.</td>
                                     <td class="p-2 flex gap-2">
-                                        <input type="time" class="table-input" title="Start">
-                                        <input type="time" class="table-input" title="End">
+                                        <input type="time" class="table-input" placeholder="Start">
+                                        <input type="time" class="table-input" placeholder="End">
                                     </td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                                 <tr data-step="2">
                                     <td class="p-2 text-center font-bold">2</td>
-                                    <td class="p-2">Collect plasma into cryovials (1 mL each); store in freezing container.</td>
-                                    <td class="p-2 flex gap-2">
-                                        <input type="time" class="table-input" title="Start">
-                                        <input type="time" class="table-input" title="End">
-                                    </td>
+                                    <td class="p-2">Collect plasma (top layer) into a labeled tube and aliquot into 2–4 labeled cryovials, each containing 1 mL; store cryovials in the freezing container.</td>
+                                    <td class="p-2"><input type="time" class="table-input"></td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                                 <tr data-step="3">
                                     <td class="p-2 text-center font-bold">3</td>
-                                    <td class="p-2">Replace volume removed as plasma with sterile PBS or NaCl 0.9%.</td>
+                                    <td class="p-2">Replace the same volume removed as plasma with sterile PBS or sterile NaCl 0.9%. Invert to mix.</td>
                                     <td class="p-2 space-y-1">
-                                        <input type="text" class="table-input" placeholder="Vol removed (mL)">
-                                        <input type="text" class="table-input" placeholder="Replacement (mL)">
+                                        <input type="text" class="table-input" placeholder="Volume removed: mL">
+                                        <input type="text" class="table-input" placeholder="Replacement: mL">
                                     </td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                                 <tr data-step="4">
                                     <td class="p-2 text-center font-bold">4</td>
-                                    <td class="p-2">Measure and record total blood volume.</td>
+                                    <td class="p-2">Measure and record total blood volume in all tubes.</td>
                                     <td class="p-2 space-y-1">
-                                        <input type="number" step="0.1" id="step-4-blood-vol" oninput="calculateFicoll()" class="table-input" placeholder="Total blood (mL)">
+                                        <input type="number" id="step-4-blood-vol" oninput="calculateFicoll()" class="table-input" placeholder="Total blood: mL">
+                                        <input type="time" class="table-input">
                                     </td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                                 <tr data-step="5">
                                     <td class="p-2 text-center font-bold">5</td>
-                                    <td class="p-2">Add equal volume of sterile PBS or NaCl 0.9% (1:1).</td>
+                                    <td class="p-2">Add an equal volume of sterile PBS or sterile NaCl 0.9% (1:1).</td>
                                     <td class="p-2 space-y-1">
-                                        <input type="number" step="0.1" id="step-5-pbs-added" oninput="calculateFicoll()" class="table-input" placeholder="PBS added (mL)">
+                                        <input type="text" class="table-input" placeholder="PBS/saline added: mL">
+                                        <input type="time" class="table-input">
                                     </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="6">
+                                    <td class="p-2 text-center font-bold">6</td>
+                                    <td class="p-2">Mix gently by inversion. Do not vortex.</td>
+                                    <td class="p-2"><input type="time" class="table-input"></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="7">
+                                    <td class="p-2 text-center font-bold">7</td>
+                                    <td class="p-2">Centrifuge the plain SST blood collection tube at 2000 rpm for 10 min.</td>
+                                    <td class="p-2"><input type="time" class="table-input"></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="8">
+                                    <td class="p-2 text-center font-bold">8</td>
+                                    <td class="p-2">Collect serum from the serum layer. Transfer 1 mL of serum into each cryovial. ≥ 2 vials of 1 mL aliquots.</td>
+                                    <td class="p-2"><input type="time" class="table-input"></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="9">
+                                    <td class="p-2 text-center font-bold">9</td>
+                                    <td class="p-2">Store cryovial in the freezing container.</td>
+                                    <td class="p-2"><input type="time" class="table-input"></td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                             </tbody>
@@ -589,7 +617,7 @@
                     </div>
                 </div>
 
-                <!-- 5.2 Ficoll Selection & Layering -->
+                <!-- 5.2 Ficoll Tube Selection and Layering -->
                 <div class="space-y-3">
                     <h4 class="font-bold text-md text-blue-900 bg-blue-50 p-2.5 rounded-lg border border-blue-100">5.2 Ficoll Tube Selection and Layering</h4>
                     <div class="overflow-x-auto">
@@ -598,19 +626,19 @@
                                 <tr class="bg-slate-100 text-xs font-bold uppercase text-slate-600 border-b">
                                     <th class="p-2 w-12 text-center">Step</th>
                                     <th class="p-2">Action</th>
-                                    <th class="p-2 w-72">Record</th>
+                                    <th class="p-2 w-80">Record</th>
                                     <th class="p-2 w-16 text-center">Done</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y">
                                 <tr data-step="10">
                                     <td class="p-2 text-center font-bold">10</td>
-                                    <td class="p-2">Select tube according to diluted blood volume.</td>
+                                    <td class="p-2">Select tube according to diluted blood volume: &lt;9 mL diluted blood → 15 mL tube; ≥20 mL diluted blood → 50 mL tube.</td>
                                     <td class="p-2 space-y-1">
-                                        <input type="text" id="step-10-dil-vol" class="table-input" placeholder="Diluted blood (mL)" readonly>
-                                        <div class="flex gap-4 text-xs mt-1">
-                                            <label><input type="radio" name="tube_size" value="15mL"> 15 mL</label>
-                                            <label><input type="radio" name="tube_size" value="50mL"> 50 mL</label>
+                                        <input type="text" id="step-10-dil-vol" class="table-input" placeholder="Diluted blood: mL" readonly>
+                                        <div class="flex gap-4 text-xs font-semibold mt-1">
+                                            <label><input type="radio" name="tube_size" value="15mL"> 15 mL tube</label>
+                                            <label><input type="radio" name="tube_size" value="50mL"> 50 mL tube</label>
                                         </div>
                                     </td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
@@ -618,17 +646,402 @@
                                 <tr data-step="11">
                                     <td class="p-2 text-center font-bold">11</td>
                                     <td class="p-2">Calculate Ficoll volume as diluted blood volume ÷ 2.</td>
-                                    <td class="p-2">
-                                        <input type="text" id="step-11-ficoll-calc" class="table-input font-semibold text-blue-700" placeholder="Ficoll Vol = mL" readonly>
-                                    </td>
+                                    <td class="p-2"><input type="text" id="step-11-ficoll-calc" class="table-input font-semibold text-blue-700" placeholder="Calculation: ÷ 2 = mL" readonly></td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                                 <tr data-step="12">
                                     <td class="p-2 text-center font-bold">12</td>
-                                    <td class="p-2">Add calculated Ficoll volume to tube and label.</td>
+                                    <td class="p-2">Add the calculated Ficoll volume to the appropriate empty centrifuge tube. Label the tube for the designated sample to be used.</td>
                                     <td class="p-2 space-y-1">
-                                        <input type="text" id="step-12-ficoll-added" class="table-input" placeholder="Ficoll added (mL)">
+                                        <input type="text" id="step-12-ficoll-added" class="table-input" placeholder="Ficoll added: mL">
+                                        <input type="time" class="table-input">
+                                        <label class="flex items-center text-xs font-semibold"><input type="checkbox" class="mr-1.5"> Tube labeled with sample ID</label>
                                     </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="13">
+                                    <td class="p-2 text-center font-bold">13</td>
+                                    <td class="p-2">Set pipettor dispensing to gravity or the lowest speed.</td>
+                                    <td class="p-2 space-y-1">
+                                        <label class="flex items-center text-xs font-semibold"><input type="checkbox" class="mr-1.5"> Setting verified</label>
+                                        <input type="time" class="table-input">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="14">
+                                    <td class="p-2 text-center font-bold">14</td>
+                                    <td class="p-2">Use suitable serological pipette: ≤9 mL diluted blood → 10 mL pipette; ≥13 mL → 25 mL pipette. Slowly layer diluted blood over Ficoll.</td>
+                                    <td class="p-2 space-y-1">
+                                        <div class="flex gap-4 text-xs font-semibold">
+                                            <label><input type="radio" name="pipette_size" value="10mL"> 10 mL pipette</label>
+                                            <label><input type="radio" name="pipette_size" value="25mL"> 25 mL pipette</label>
+                                        </div>
+                                        <input type="time" class="table-input">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="15">
+                                    <td class="p-2 text-center font-bold">15</td>
+                                    <td class="p-2">Do not exceed 30 mL diluted blood in a 50 mL tube containing 15 mL Ficoll.</td>
+                                    <td class="p-2"><input type="text" class="table-input" placeholder="Volume check: mL"></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="16">
+                                    <td class="p-2 text-center font-bold">16</td>
+                                    <td class="p-2">Add diluted blood slowly down the tube wall; establish an approximately 3 mL layer dropwise, then continue with slow steady flow.</td>
+                                    <td class="p-2"><input type="time" class="table-input"></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="17">
+                                    <td class="p-2 text-center font-bold">17</td>
+                                    <td class="p-2">Confirm two distinct layers: Diluted blood on top, Ficoll at the bottom. Make sure to not disturb the interface.</td>
+                                    <td class="p-2 space-y-1">
+                                        <div class="flex gap-4 text-xs font-semibold">
+                                            <label><input type="radio" name="interface_intact" value="Yes"> Interface intact: Yes</label>
+                                            <label><input type="radio" name="interface_intact" value="No"> No</label>
+                                        </div>
+                                        <input type="time" class="table-input">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 5.3 Ficoll Centrifugation -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-md text-blue-900 bg-blue-50 p-2.5 rounded-lg border border-blue-100">5.3 Ficoll Centrifugation</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-xs font-bold uppercase text-slate-600 border-b">
+                                    <th class="p-2 w-12 text-center">Step</th>
+                                    <th class="p-2">Action</th>
+                                    <th class="p-2 w-80">Record</th>
+                                    <th class="p-2 w-16 text-center">Done</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr data-step="18">
+                                    <td class="p-2 text-center font-bold">18</td>
+                                    <td class="p-2">Set centrifuge to LOWEST acceleration and LOWEST brake.</td>
+                                    <td class="p-2"><label class="flex items-center text-xs font-semibold"><input type="checkbox" class="mr-1.5"> Verified</label></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="19">
+                                    <td class="p-2 text-center font-bold">19</td>
+                                    <td class="p-2">Confirm centrifuge is at least room temperature or warmed to 37°C as specified in the supplied SOP.</td>
+                                    <td class="p-2 space-y-1">
+                                        <input type="text" class="table-input" placeholder="Actual temp: °C">
+                                        <input type="time" class="table-input">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="20">
+                                    <td class="p-2 text-center font-bold">20</td>
+                                    <td class="p-2">Use the validated programmed centrifuge method for the instrument and double-check the selected program before START.</td>
+                                    <td class="p-2 space-y-1">
+                                        <input type="text" class="table-input" placeholder="Program ID:">
+                                        <input type="text" class="table-input" placeholder="Verified by:">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="21">
+                                    <td class="p-2 text-center font-bold">21</td>
+                                    <td class="p-2">Centrifuge at 2500 rpm for 20 minutes.</td>
+                                    <td class="p-2 space-y-1">
+                                        <div class="flex gap-2">
+                                            <input type="time" class="table-input" placeholder="Start">
+                                            <input type="time" class="table-input" placeholder="End">
+                                        </div>
+                                        <input type="text" class="table-input" placeholder="Temp °C">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 5.4 Separation QC Check -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-md text-blue-900 bg-blue-50 p-2.5 rounded-lg border border-blue-100">5.4 Separation QC Check</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-xs font-bold uppercase text-slate-600 border-b">
+                                    <th class="p-2.5">QC Check</th>
+                                    <th class="p-2.5">Result / Time / Initials</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-200">
+                                <tr>
+                                    <td class="p-2 font-medium">Plasma top layer visible</td>
+                                    <td class="p-2 space-y-1">
+                                        <div class="flex items-center space-x-4 text-xs font-semibold">
+                                            <label><input type="radio" name="qc_plasma" value="Yes"> Yes</label>
+                                            <label><input type="radio" name="qc_plasma" value="No"> No</label>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <input type="time" class="table-input">
+                                            <input type="text" class="table-input" placeholder="Initials">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-medium">PBMC interface visible as a thin cloudy white layer</td>
+                                    <td class="p-2 space-y-1">
+                                        <div class="flex items-center space-x-4 text-xs font-semibold">
+                                            <label><input type="radio" name="qc_pbmc" value="Yes"> Yes</label>
+                                            <label><input type="radio" name="qc_pbmc" value="No"> No</label>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <input type="time" class="table-input">
+                                            <input type="text" class="table-input" placeholder="Initials">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-medium">Ficoll layer visible</td>
+                                    <td class="p-2 space-y-1">
+                                        <div class="flex items-center space-x-4 text-xs font-semibold">
+                                            <label><input type="radio" name="qc_ficoll" value="Yes"> Yes</label>
+                                            <label><input type="radio" name="qc_ficoll" value="No"> No</label>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <input type="time" class="table-input">
+                                            <input type="text" class="table-input" placeholder="Initials">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-medium">RBC/granulocyte layer visible at bottom</td>
+                                    <td class="p-2 space-y-1">
+                                        <div class="flex items-center space-x-4 text-xs font-semibold">
+                                            <label><input type="radio" name="qc_rbc" value="Yes"> Yes</label>
+                                            <label><input type="radio" name="qc_rbc" value="No"> No</label>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <input type="time" class="table-input">
+                                            <input type="text" class="table-input" placeholder="Initials">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-medium">PBMC interface suitable for collection</td>
+                                    <td class="p-2 space-y-1">
+                                        <div class="flex items-center space-x-4 text-xs font-semibold">
+                                            <label><input type="radio" name="qc_suitable" value="Yes"> Yes</label>
+                                            <label><input type="radio" name="qc_suitable" value="No"> No</label>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <input type="time" class="table-input">
+                                            <input type="text" class="table-input" placeholder="Initials">
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="p-2 font-medium">If PBMC layer is not visible: supervisor notified</td>
+                                    <td class="p-2 space-y-1">
+                                        <div class="flex items-center space-x-4 text-xs font-semibold">
+                                            <label><input type="radio" name="qc_supervisor" value="Yes"> Yes</label>
+                                            <label><input type="radio" name="qc_supervisor" value="N/A"> N/A</label>
+                                        </div>
+                                        <div class="flex gap-2">
+                                            <input type="time" class="table-input">
+                                            <input type="text" class="table-input" placeholder="Initials">
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 5.5 PBMC Collection -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-md text-blue-900 bg-blue-50 p-2.5 rounded-lg border border-blue-100">5.5 PBMC Collection</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-xs font-bold uppercase text-slate-600 border-b">
+                                    <th class="p-2 w-12 text-center">Step</th>
+                                    <th class="p-2">Action</th>
+                                    <th class="p-2 w-80">Record</th>
+                                    <th class="p-2 w-16 text-center">Done</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr data-step="22">
+                                    <td class="p-2 text-center font-bold">22</td>
+                                    <td class="p-2">Insert pipette tip carefully through the plasma layer.</td>
+                                    <td class="p-2"><input type="time" class="table-input"></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="23">
+                                    <td class="p-2 text-center font-bold">23</td>
+                                    <td class="p-2">Collect ONLY the cloudy PBMC interface layer.</td>
+                                    <td class="p-2"><input type="text" class="table-input" placeholder="Collected volume: mL"></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="24">
+                                    <td class="p-2 text-center font-bold">24</td>
+                                    <td class="p-2">Avoid collecting Ficoll or red cells.</td>
+                                    <td class="p-2"><label class="flex items-center text-xs font-semibold"><input type="checkbox" class="mr-1.5"> Visual check</label></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="25">
+                                    <td class="p-2 text-center font-bold">25</td>
+                                    <td class="p-2">Transfer PBMCs to a new labeled 50 mL tube.</td>
+                                    <td class="p-2 space-y-1">
+                                        <input type="text" class="table-input" placeholder="Tube ID:">
+                                        <input type="time" class="table-input">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 5.6 First Wash -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-md text-blue-900 bg-blue-50 p-2.5 rounded-lg border border-blue-100">5.6 First Wash</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-xs font-bold uppercase text-slate-600 border-b">
+                                    <th class="p-2 w-12 text-center">Step</th>
+                                    <th class="p-2">Action</th>
+                                    <th class="p-2 w-80">Record</th>
+                                    <th class="p-2 w-16 text-center">Done</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr data-step="26">
+                                    <td class="p-2 text-center font-bold">26</td>
+                                    <td class="p-2">Fill the tube to 50 mL with PBS.</td>
+                                    <td class="p-2 space-y-1">
+                                        <input type="text" class="table-input" placeholder="Final volume: mL">
+                                        <input type="time" class="table-input">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="27">
+                                    <td class="p-2 text-center font-bold">27</td>
+                                    <td class="p-2">Use HIGHEST acceleration and HIGHEST brake.</td>
+                                    <td class="p-2"><label class="flex items-center text-xs font-semibold"><input type="checkbox" class="mr-1.5"> Verified</label></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="28">
+                                    <td class="p-2 text-center font-bold">28</td>
+                                    <td class="p-2">Centrifuge at 1700 rpm for 10 minutes at 4°C.</td>
+                                    <td class="p-2 space-y-1">
+                                        <div class="flex gap-2">
+                                            <input type="time" class="table-input" placeholder="Start">
+                                            <input type="time" class="table-input" placeholder="End">
+                                        </div>
+                                        <input type="text" class="table-input" placeholder="Temp °C">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="29">
+                                    <td class="p-2 text-center font-bold">29</td>
+                                    <td class="p-2">Discard supernatant carefully without disturbing the pellet.</td>
+                                    <td class="p-2 space-y-1">
+                                        <input type="time" class="table-input">
+                                        <label class="flex items-center text-xs font-semibold"><input type="checkbox" class="mr-1.5"> Pellet intact</label>
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="30">
+                                    <td class="p-2 text-center font-bold">30</td>
+                                    <td class="p-2">Resuspend pellet in PBS equal to half the tube fill volume (25 mL cold PBS when using a 50 mL tube).</td>
+                                    <td class="p-2 space-y-1">
+                                        <input type="text" class="table-input" placeholder="PBS: mL">
+                                        <input type="time" class="table-input">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 5.7 Second Wash -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-md text-blue-900 bg-blue-50 p-2.5 rounded-lg border border-blue-100">5.7 Second Wash</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-xs font-bold uppercase text-slate-600 border-b">
+                                    <th class="p-2 w-12 text-center">Step</th>
+                                    <th class="p-2">Action</th>
+                                    <th class="p-2 w-80">Record</th>
+                                    <th class="p-2 w-16 text-center">Done</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr data-step="31">
+                                    <td class="p-2 text-center font-bold">31</td>
+                                    <td class="p-2">Use MIDDLE acceleration and MIDDLE brake.</td>
+                                    <td class="p-2"><label class="flex items-center text-xs font-semibold"><input type="checkbox" class="mr-1.5"> Verified</label></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="32">
+                                    <td class="p-2 text-center font-bold">32</td>
+                                    <td class="p-2">Centrifuge at 600 rpm for 10 minutes at 4°C.</td>
+                                    <td class="p-2 space-y-1">
+                                        <div class="flex gap-2">
+                                            <input type="time" class="table-input" placeholder="Start">
+                                            <input type="time" class="table-input" placeholder="End">
+                                        </div>
+                                        <input type="text" class="table-input" placeholder="Temp °C">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="33">
+                                    <td class="p-2 text-center font-bold">33</td>
+                                    <td class="p-2">Carefully aspirate supernatant without disturbing the pellet.</td>
+                                    <td class="p-2 space-y-1">
+                                        <input type="time" class="table-input">
+                                        <label class="flex items-center text-xs font-semibold"><input type="checkbox" class="mr-1.5"> Pellet intact</label>
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 5.8 Final Resuspension -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-md text-blue-900 bg-blue-50 p-2.5 rounded-lg border border-blue-100">5.8 Final Resuspension</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-xs font-bold uppercase text-slate-600 border-b">
+                                    <th class="p-2 w-12 text-center">Step</th>
+                                    <th class="p-2">Action</th>
+                                    <th class="p-2 w-80">Record</th>
+                                    <th class="p-2 w-16 text-center">Done</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr data-step="34">
+                                    <td class="p-2 text-center font-bold">34</td>
+                                    <td class="p-2">Resuspend pellet in 10 mL PBS or normal saline.</td>
+                                    <td class="p-2 space-y-1">
+                                        <input type="text" class="table-input" placeholder="Final volume: mL">
+                                        <input type="time" class="table-input">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="35">
+                                    <td class="p-2 text-center font-bold">35</td>
+                                    <td class="p-2">Mix gently.</td>
+                                    <td class="p-2"><input type="time" class="table-input"></td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                             </tbody>
@@ -650,17 +1063,45 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y">
+                                <tr data-step="36">
+                                    <td class="p-2 text-center font-bold">36</td>
+                                    <td class="p-2">Keep cell suspension on ice or at 4°C throughout counting process.</td>
+                                    <td class="p-2"><input type="time" class="table-input"></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="37">
+                                    <td class="p-2 text-center font-bold">37</td>
+                                    <td class="p-2">Into a separate labeled Eppendorf tube: Add 20 µL of the cell suspension.</td>
+                                    <td class="p-2"><input type="time" class="table-input"></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="38">
+                                    <td class="p-2 text-center font-bold">38</td>
+                                    <td class="p-2">Into the labeled Eppendorf tube, add 20 µL of 0.4% Trypan blue solution (one to one ratio) and gently mix the cells.</td>
+                                    <td class="p-2"><input type="time" class="table-input"></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
                                 <tr data-step="39">
                                     <td class="p-2 text-center font-bold">39</td>
-                                    <td class="p-2">Load mixture into hemocytometer chamber.</td>
+                                    <td class="p-2">Load 10 µL of the cell suspension - Trypan blue mixture into the hemocytometer chamber. If overcrowded perform dilution as needed.</td>
                                     <td class="p-2 space-y-1">
+                                        <div class="flex gap-4 text-xs font-semibold">
+                                            <label><input type="radio" name="cell_dist" value="Well distributed"> Well distributed cells</label>
+                                            <label><input type="radio" name="cell_dist" value="Overcrowded"> Overcrowded cells</label>
+                                        </div>
                                         <input type="number" id="dilution-factor" oninput="calculateCellMetrics()" class="table-input" placeholder="Dilution factor (default 2)" value="2">
                                     </td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
+                                <tr data-step="40">
+                                    <td class="p-2 text-center font-bold">40</td>
+                                    <td class="p-2">Count unstained cells as viable cells and blue stained as non-viable/dead cells.</td>
+                                    <td class="p-2"><input type="time" class="table-input"></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
                                 <tr data-step="41">
                                     <td class="p-2 text-center font-bold">41</td>
-                                    <td class="p-2">Count 3 large diagonal boxes on hemocytometer.</td>
+                                    <td class="p-2">Count 3 large diagonal boxes (Each containing 9 small boxes).</td>
                                     <td class="p-2 space-y-2">
                                         <div class="grid grid-cols-2 gap-1 text-xs">
                                             <span>Box 1 Viable:</span><input type="number" id="box1-v" oninput="calculateCellMetrics()" class="table-input py-0.5">
@@ -675,18 +1116,18 @@
                                 </tr>
                                 <tr data-step="42">
                                     <td class="p-2 text-center font-bold">42</td>
-                                    <td class="p-2">Cell Viability Calculation (%)</td>
+                                    <td class="p-2">Average the viable & non-viable cell counts across 3 counted boxes.<br><em class="text-xs text-slate-500">Cell Viability (%) = (Avg Viable / Total Cells) × 100</em></td>
                                     <td class="p-2 space-y-1">
-                                        <div class="font-bold text-xs text-emerald-700">Viability: <span id="res-viability-pct">--</span> %</div>
+                                        <div class="font-bold text-xs text-emerald-700">Cell Viability (%): <span id="res-viability-pct">--</span> %</div>
                                     </td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                                 <tr data-step="43">
                                     <td class="p-2 text-center font-bold">43</td>
-                                    <td class="p-2">Concentration &amp; Total Cell Yield</td>
+                                    <td class="p-2">Calculate lymphocyte concentration (cells/mL) & total cell count.</td>
                                     <td class="p-2 space-y-1">
-                                        <div class="text-xs font-semibold">Conc: <span id="res-conc" class="text-blue-800">--</span> cells/mL</div>
-                                        <div class="text-xs font-semibold">Total Yield: <span id="res-total-yield" class="text-indigo-800">--</span> cells</div>
+                                        <div class="text-xs font-semibold">Cells/mL: <span id="res-conc" class="text-blue-800">--</span></div>
+                                        <div class="text-xs font-semibold">Total cell count: <span id="res-total-yield" class="text-indigo-800">--</span></div>
                                     </td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
@@ -700,33 +1141,117 @@
                     <h4 class="font-bold text-md text-blue-900 bg-blue-50 p-2.5 rounded-lg border border-blue-100">5.10 Preparation for Freezing</h4>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm border-collapse">
-                            <tbody class="divide-y">
-                                <tr data-step="46">
-                                    <td class="p-2 text-center font-bold w-12">46</td>
-                                    <td class="p-2">Calculate volume needed for MACS Freezing Media resuspend.</td>
-                                    <td class="p-2 w-80">
-                                        <div class="text-xs font-bold text-purple-800 bg-purple-50 p-2 rounded border border-purple-200">
-                                            MACS Media Vol: <span id="res-macs-vol">--</span> mL
-                                        </div>
-                                    </td>
-                                    <td class="p-2 text-center w-16"><input type="checkbox" class="w-4 h-4"></td>
+                            <thead>
+                                <tr class="bg-slate-100 text-xs font-bold uppercase text-slate-600 border-b">
+                                    <th class="p-2 w-12 text-center">Step</th>
+                                    <th class="p-2">Action</th>
+                                    <th class="p-2 w-80">Record</th>
+                                    <th class="p-2 w-16 text-center">Done</th>
                                 </tr>
-                                <tr data-step="49">
-                                    <td class="p-2 text-center font-bold w-12">49</td>
-                                    <td class="p-2">Resuspend cell pellet with calculated MACS volume.</td>
-                                    <td class="p-2 w-80">
-                                        <input type="text" id="step-49-vol-used" class="table-input" placeholder="Volume used (mL)">
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr data-step="44">
+                                    <td class="p-2 text-center font-bold">44</td>
+                                    <td class="p-2">Centrifuge the 10 mL cell suspension at 1500 rpm at 4°C for 5 minutes.</td>
+                                    <td class="p-2 flex gap-2">
+                                        <input type="time" class="table-input" placeholder="Start">
+                                        <input type="time" class="table-input" placeholder="End">
                                     </td>
-                                    <td class="p-2 text-center w-16"><input type="checkbox" class="w-4 h-4"></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="45">
+                                    <td class="p-2 text-center font-bold">45</td>
+                                    <td class="p-2">Decant supernatant without reverting the tube. Keep tilted and flip tube onto a clean alcohol-sprayed paper towel.</td>
+                                    <td class="p-2 space-y-1">
+                                        <input type="time" class="table-input">
+                                        <label class="flex items-center text-xs font-semibold"><input type="checkbox" class="mr-1.5"> Pellet intact</label>
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="46">
+                                    <td class="p-2 text-center font-bold">46</td>
+                                    <td class="p-2">Calculate volume needed to resuspend cells at a concentration of 10 million cells/mL.</td>
+                                    <td class="p-2 font-bold text-xs text-purple-800">
+                                        Calculation: ÷ 10,000,000 = <span id="res-macs-vol">--</span> mL
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="47">
+                                    <td class="p-2 text-center font-bold">47</td>
+                                    <td class="p-2">Confirm freezing container is pre-chilled.</td>
+                                    <td class="p-2"><input type="time" class="table-input"></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="48">
+                                    <td class="p-2 text-center font-bold">48</td>
+                                    <td class="p-2">Confirm MACS Freezing Solution is cold and ready to use.</td>
+                                    <td class="p-2 space-y-1">
+                                        <input type="text" class="table-input" placeholder="Lot:">
+                                        <input type="text" class="table-input" placeholder="Exp:">
+                                        <input type="time" class="table-input">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 5.11 Cryopreservation and Storage -->
+                <div class="space-y-3">
+                    <h4 class="font-bold text-md text-blue-900 bg-blue-50 p-2.5 rounded-lg border border-blue-100">5.11 Cryopreservation and Storage</h4>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-xs font-bold uppercase text-slate-600 border-b">
+                                    <th class="p-2 w-12 text-center">Step</th>
+                                    <th class="p-2">Action</th>
+                                    <th class="p-2 w-80">Record</th>
+                                    <th class="p-2 w-16 text-center">Done</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                <tr data-step="49">
+                                    <td class="p-2 text-center font-bold">49</td>
+                                    <td class="p-2">Resuspend cell pellet with calculated volume using MACS Freezing Solution.</td>
+                                    <td class="p-2 space-y-1">
+                                        <input type="text" id="step-49-vol-used" class="table-input" placeholder="Volume used: mL">
+                                        <input type="time" class="table-input">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                                 <tr data-step="50">
-                                    <td class="p-2 text-center font-bold w-12">50</td>
-                                    <td class="p-2">Aliquot cell suspension into cryovials (1 mL each).</td>
-                                    <td class="p-2 w-80 space-y-1">
-                                        <input type="number" id="step-50-full-vials" class="table-input" placeholder="Full vials count">
-                                        <input type="number" id="step-50-partial-vials" class="table-input" placeholder="Partial vials count">
+                                    <td class="p-2 text-center font-bold">50</td>
+                                    <td class="p-2">Aliquot cell suspension into cryovials each containing 1mL. Determine number of full cryovials and any partial aliquot.</td>
+                                    <td class="p-2 space-y-1">
+                                        <input type="number" id="step-50-full-vials" oninput="syncFinalVials()" class="table-input" placeholder="Full vials:">
+                                        <input type="number" id="step-50-partial-vials" oninput="syncFinalVials()" class="table-input" placeholder="Partial:">
                                     </td>
-                                    <td class="p-2 text-center w-16"><input type="checkbox" class="w-4 h-4"></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="51">
+                                    <td class="p-2 text-center font-bold">51</td>
+                                    <td class="p-2">Place cryovials in isopropanol freezing container.</td>
+                                    <td class="p-2"><input type="time" class="table-input"></td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="52">
+                                    <td class="p-2 text-center font-bold">52</td>
+                                    <td class="p-2">Store at -80°C for 24 hours.</td>
+                                    <td class="p-2 space-y-1">
+                                        <input type="time" class="table-input" placeholder="Time">
+                                        <input type="date" class="table-input">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
+                                </tr>
+                                <tr data-step="53">
+                                    <td class="p-2 text-center font-bold">53</td>
+                                    <td class="p-2">After 24 hours, transfer cryovials to liquid nitrogen.</td>
+                                    <td class="p-2 space-y-1">
+                                        <input type="time" class="table-input" placeholder="Transfer time">
+                                        <input type="text" class="table-input" placeholder="LN2 location:">
+                                    </td>
+                                    <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -789,6 +1314,12 @@
                                 <td class="p-2"><input type="text" class="table-input"></td>
                             </tr>
                             <tr>
+                                <td class="p-2 font-medium">Collection-to-processing time verified</td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                                <td class="p-2"><select class="table-input"><option>Pass</option><option>Hold</option><option>Deviation</option></select></td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                            </tr>
+                            <tr>
                                 <td class="p-2 font-medium">Reagent temperature status verified</td>
                                 <td class="p-2"><input type="text" class="table-input"></td>
                                 <td class="p-2"><select class="table-input"><option>Pass</option><option>Hold</option><option>Deviation</option></select></td>
@@ -796,6 +1327,60 @@
                             </tr>
                             <tr>
                                 <td class="p-2 font-medium">Ficoll layering/interface acceptable</td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                                <td class="p-2"><select class="table-input"><option>Pass</option><option>Hold</option><option>Deviation</option></select></td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 font-medium">Centrifuge program and parameters verified</td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                                <td class="p-2"><select class="table-input"><option>Pass</option><option>Hold</option><option>Deviation</option></select></td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 font-medium">PBMC layer visible</td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                                <td class="p-2"><select class="table-input"><option>Pass</option><option>Hold</option><option>Deviation</option></select></td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 font-medium">Pellet recovered without visible loss</td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                                <td class="p-2"><select class="table-input"><option>Pass</option><option>Hold</option><option>Deviation</option></select></td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 font-medium">Cell count documented</td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                                <td class="p-2"><select class="table-input"><option>Pass</option><option>Hold</option><option>Deviation</option></select></td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 font-medium">Viability documented</td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                                <td class="p-2"><select class="table-input"><option>Pass</option><option>Hold</option><option>Deviation</option></select></td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 font-medium">Final concentration calculation checked</td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                                <td class="p-2"><select class="table-input"><option>Pass</option><option>Hold</option><option>Deviation</option></select></td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 font-medium">Cryovial volume/identity verified</td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                                <td class="p-2"><select class="table-input"><option>Pass</option><option>Hold</option><option>Deviation</option></select></td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 font-medium">-80°C placement documented</td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                                <td class="p-2"><select class="table-input"><option>Pass</option><option>Hold</option><option>Deviation</option></select></td>
+                                <td class="p-2"><input type="text" class="table-input"></td>
+                            </tr>
+                            <tr>
+                                <td class="p-2 font-medium">24-hour transfer to LN2 documented</td>
                                 <td class="p-2"><input type="text" class="table-input"></td>
                                 <td class="p-2"><select class="table-input"><option>Pass</option><option>Hold</option><option>Deviation</option></select></td>
                                 <td class="p-2"><input type="text" class="table-input"></td>
@@ -843,27 +1428,34 @@
                     <label class="flex items-center space-x-2"><input type="checkbox" class="h-4 w-4 text-blue-600"> <span>Each cryovial is labeled using required nomenclature.</span></label>
                     <label class="flex items-center space-x-2"><input type="checkbox" class="h-4 w-4 text-blue-600"> <span>Storage location is recorded.</span></label>
                     <label class="flex items-center space-x-2"><input type="checkbox" class="h-4 w-4 text-blue-600"> <span>Operator initials are recorded.</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" class="h-4 w-4 text-blue-600"> <span>Deviations documented.</span></label>
+                    <label class="flex items-center space-x-2"><input type="checkbox" class="h-4 w-4 text-blue-600"> <span>Any deviation or unusual observation has been documented.</span></label>
+                    <label class="flex items-center space-x-2 md:col-span-2"><input type="checkbox" class="h-4 w-4 text-blue-600"> <span>Supervisor / reviewer has completed the required review.</span></label>
                 </div>
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-xs font-bold uppercase text-slate-600 border-b">
+                                <th class="p-2.5 w-1/2">Final Documentation</th>
+                                <th class="p-2.5 w-1/2">Value</th>
+                            </tr>
+                        </thead>
                         <tbody class="divide-y divide-slate-200">
                             <tr>
                                 <td class="p-2 font-medium">Sample ID</td>
                                 <td class="p-2"><input type="text" id="final-sample-id" class="table-input" readonly></td>
                             </tr>
                             <tr>
-                                <td class="p-2 font-medium">Starting blood volume (mL)</td>
-                                <td class="p-2"><input type="text" id="final-start-vol" class="table-input" readonly></td>
+                                <td class="p-2 font-medium">Starting blood volume</td>
+                                <td class="p-2"><input type="text" id="final-start-vol" class="table-input" readonly placeholder="mL"></td>
                             </tr>
                             <tr>
-                                <td class="p-2 font-medium">Total viable cell count (cells)</td>
-                                <td class="p-2"><input type="text" id="final-total-cells" class="table-input" readonly></td>
+                                <td class="p-2 font-medium">Total viable cell count</td>
+                                <td class="p-2"><input type="text" id="final-total-cells" class="table-input" readonly placeholder="cells"></td>
                             </tr>
                             <tr>
-                                <td class="p-2 font-medium">Final concentration (cells/mL)</td>
-                                <td class="p-2"><input type="text" id="final-conc" class="table-input" readonly></td>
+                                <td class="p-2 font-medium">Final concentration</td>
+                                <td class="p-2"><input type="text" id="final-conc" class="table-input" readonly placeholder="cells/mL"></td>
                             </tr>
                             <tr>
                                 <td class="p-2 font-medium">Number of full cryovials</td>
@@ -1115,6 +1707,52 @@
         let currentUser = null;
         let systemUsers = [];
 
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.add('hidden'));
+
+            const navButtons = [
+                { id: 'nav-entry', name: 'entry' },
+                { id: 'nav-historical', name: 'historical' },
+                { id: 'nav-analytics', name: 'analytics' }
+            ];
+
+            navButtons.forEach(nav => {
+                const btn = document.getElementById(nav.id);
+                if (btn) {
+                    if (nav.name === tabName) {
+                        btn.className = "px-4 py-2 rounded-md font-medium text-sm transition-all bg-blue-600 text-white";
+                    } else {
+                        btn.className = "px-4 py-2 rounded-md font-medium text-sm transition-all text-slate-300 hover:text-white hover:bg-slate-800";
+                    }
+                }
+            });
+
+            const activeTab = document.getElementById(tabName + '-tab');
+            if (activeTab) {
+                activeTab.classList.remove('hidden');
+            }
+
+            if (tabName === 'analytics') {
+                renderDashboardCharts();
+            } else if (tabName === 'historical') {
+                renderLogsTable(allRecords);
+            }
+        }
+
+        function createNewRecordMode() {
+            if (currentUser && currentUser.role === 'Viewer') return;
+            cancelEditMode();
+            switchTab('entry');
+        }
+
+        function cancelEditMode() {
+            currentEditingRecordId = null;
+            const banner = document.getElementById('edit-mode-banner');
+            if (banner) banner.classList.add('hidden');
+            clearForm();
+        }
+
         const seedDemoRecords = [
             {
                 id: "rec_001",
@@ -1215,15 +1853,15 @@
 
             if (isAdmin) {
                 banner.className = "mb-4 p-3 rounded-xl border flex items-center justify-between text-xs font-semibold bg-blue-50 border-blue-200 text-blue-900";
-                bannerText.innerHTML = 'Active Role: <strong>Super Admin</strong> - Access to everything, including User Access & Credentials Management.';
+                bannerText.innerHTML = 'Active Role: <strong>Super Admin</strong> - Full control over forms, data, users, and administrative functions.';
                 readOnlyTag.classList.add('hidden');
             } else if (isEditor) {
                 banner.className = "mb-4 p-3 rounded-xl border flex items-center justify-between text-xs font-semibold bg-emerald-50 border-emerald-200 text-emerald-900";
-                bannerText.innerHTML = 'Active Role: <strong>Editor</strong> - Full access to application entry, updating records, and logs. User management restricted.';
+                bannerText.innerHTML = 'Active Role: <strong>Editor</strong> - Full access to application entry, updating records, and logs.';
                 readOnlyTag.classList.add('hidden');
             } else if (isViewer) {
                 banner.className = "mb-4 p-3 rounded-xl border flex items-center justify-between text-xs font-semibold bg-purple-50 border-purple-200 text-purple-900";
-                bannerText.innerHTML = 'Active Role: <strong>Viewer</strong> - Read-only access to all SOP section data, steps, logs, analytics, printing & Excel export.';
+                bannerText.innerHTML = 'Active Role: <strong>Viewer</strong> - Read-only access to all SOP section data, steps, logs, analytics.';
                 readOnlyTag.classList.remove('hidden');
             }
 
@@ -1330,6 +1968,7 @@
 
         function renderUsersList() {
             const tbody = document.getElementById('users-list-tbody');
+            if (!tbody) return;
             tbody.innerHTML = '';
             document.getElementById('user-count-badge').innerText = systemUsers.length + " Users";
 
@@ -1381,6 +2020,7 @@
 
         function initMaterialsTable() {
             const tbody = document.getElementById('materials-tbody');
+            if (!tbody) return;
             tbody.innerHTML = '';
             defaultMaterials.forEach(item => {
                 const tr = document.createElement('tr');
@@ -1410,6 +2050,7 @@
 
         function initCryovialRows() {
             const tbody = document.getElementById('cryovial-tbody');
+            if (!tbody) return;
             tbody.innerHTML = '';
             for (let i = 1; i <= 5; i++) {
                 addCryovialRow(i);
@@ -1456,8 +2097,27 @@
             });
         }
 
+        function fetchRecordsFromFirebase() {
+            if (!db) return;
+            try {
+                db.ref('records').on('value', function(snapshot) {
+                    allRecords = [];
+                    snapshot.forEach(function(childSnapshot) {
+                        const record = childSnapshot.val();
+                        record.id = childSnapshot.key;
+                        allRecords.push(record);
+                    });
+                    renderLogsTable(allRecords);
+                    updateKPICards(allRecords);
+                });
+            } catch(e) {
+                console.log("Firebase listener offline", e);
+            }
+        }
+
         function addCryovialRow(idx = null) {
             const tbody = document.getElementById('cryovial-tbody');
+            if (!tbody) return;
             const rowCount = tbody.rows.length + 1;
             const vialNum = idx || rowCount;
             const tr = document.createElement('tr');
@@ -1479,6 +2139,7 @@
 
         function addEquipmentRow() {
             const tbody = document.getElementById('materials-tbody');
+            if (!tbody) return;
             const tr = document.createElement('tr');
             tr.innerHTML = '<td class="p-2 font-medium"><input type="text" class="table-input" placeholder="New Item Name"></td>' +
                 '<td class="p-2">' +
@@ -1494,6 +2155,7 @@
 
         function addDeviationRow() {
             const tbody = document.getElementById('deviation-tbody');
+            if (!tbody) return;
             const count = tbody.rows.length + 1;
             const devCode = "DEV-" + String(count).padStart(3, '0');
             const tr = document.createElement('tr');
@@ -1516,44 +2178,65 @@
             const op = document.getElementById('custody-operator');
 
             function updateSampleID() {
-                const sampleID = (site.value || 'JO') + '-' + (cond.value || 'RA') + '-' + (pid.value || '001') + '-' + (samid.value || 'PBMC');
-                document.getElementById('final-sample-id').value = sampleID;
-                document.getElementById('procHeaderSampleId').value = sampleID;
+                const sampleID = (site?.value || 'XX') + '-' + (cond?.value || 'RA') + '-' + (pid?.value || '001') + '-' + (samid?.value || 'PBMC');
+                const finalIdInput = document.getElementById('final-sample-id');
+                if (finalIdInput) finalIdInput.value = sampleID;
+                
+                const headerIdInput = document.getElementById('procHeaderSampleId');
+                if (headerIdInput) headerIdInput.value = sampleID;
                 
                 const barcodeBox = document.getElementById('barcode-display-box');
                 if (barcodeBox) barcodeBox.innerText = sampleID;
             }
 
-            site.addEventListener('input', updateSampleID);
-            cond.addEventListener('input', updateSampleID);
-            pid.addEventListener('input', updateSampleID);
-            samid.addEventListener('input', updateSampleID);
-            op.addEventListener('input', function() {
-                document.getElementById('final-operator').value = op.value;
-            });
+            if (site) site.addEventListener('input', updateSampleID);
+            if (cond) cond.addEventListener('input', updateSampleID);
+            if (pid) pid.addEventListener('input', updateSampleID);
+            if (samid) samid.addEventListener('input', updateSampleID);
+            if (op) {
+                op.addEventListener('input', function() {
+                    const finalOp = document.getElementById('final-operator');
+                    if (finalOp) finalOp.value = op.value;
+                });
+            }
             updateSampleID();
         }
 
         function calculateFicoll() {
-            const bVol = parseFloat(document.getElementById('step-4-blood-vol').value) || 0;
-            const totalDil = bVol;
+            const bloodVolInput = document.getElementById('step-4-blood-vol');
+            const bloodVol = parseFloat(bloodVolInput?.value) || 0;
 
-            document.getElementById('step-10-dil-vol').value = totalDil > 0 ? totalDil + " mL" : "";
-            const ficollVal = totalDil > 0 ? (totalDil / 2).toFixed(1) : "";
-            document.getElementById('step-11-ficoll-calc').value = ficollVal ? "Ficoll Vol = " + ficollVal + " mL" : "";
-            document.getElementById('step-12-ficoll-added').value = ficollVal;
-            document.getElementById('final-start-vol').value = bVol;
+            const finalStartVol = document.getElementById('final-start-vol');
+            if (finalStartVol) {
+                finalStartVol.value = bloodVol > 0 ? bloodVol + " mL" : "";
+            }
+
+            const dilVolInput = document.getElementById('step-10-dil-vol');
+            const ficollCalcInput = document.getElementById('step-11-ficoll-calc');
+            const ficollAddedInput = document.getElementById('step-12-ficoll-added');
+
+            if (bloodVol > 0) {
+                const dilutedVol = bloodVol * 2;
+                const ficollVol = dilutedVol / 2;
+
+                if (dilVolInput) dilVolInput.value = dilutedVol + " mL";
+                if (ficollCalcInput) ficollCalcInput.value = "Calculation: " + dilutedVol + " ÷ 2 = " + ficollVol + " mL";
+                if (ficollAddedInput && !ficollAddedInput.value) ficollAddedInput.value = ficollVol;
+            } else {
+                if (dilVolInput) dilVolInput.value = "";
+                if (ficollCalcInput) ficollCalcInput.value = "";
+            }
         }
 
         function calculateCellMetrics() {
-            const b1v = parseFloat(document.getElementById('box1-v').value) || 0;
-            const b1nv = parseFloat(document.getElementById('box1-nv').value) || 0;
-            const b2v = parseFloat(document.getElementById('box2-v').value) || 0;
-            const b2nv = parseFloat(document.getElementById('box2-nv').value) || 0;
-            const b3v = parseFloat(document.getElementById('box3-v').value) || 0;
-            const b3nv = parseFloat(document.getElementById('box3-nv').value) || 0;
+            const b1v = parseFloat(document.getElementById('box1-v')?.value) || 0;
+            const b1nv = parseFloat(document.getElementById('box1-nv')?.value) || 0;
+            const b2v = parseFloat(document.getElementById('box2-v')?.value) || 0;
+            const b2nv = parseFloat(document.getElementById('box2-nv')?.value) || 0;
+            const b3v = parseFloat(document.getElementById('box3-v')?.value) || 0;
+            const b3nv = parseFloat(document.getElementById('box3-nv')?.value) || 0;
 
-            const df = parseFloat(document.getElementById('dilution-factor').value) || 2;
+            const df = parseFloat(document.getElementById('dilution-factor')?.value) || 2;
 
             const avgViable = (b1v + b2v + b3v) / 3;
             const avgNonViable = (b1nv + b2nv + b3nv) / 3;
@@ -1564,289 +2247,56 @@
                 viabilityPct = ((avgViable / totalAvg) * 100).toFixed(1);
             }
 
-            document.getElementById('res-viability-pct').innerText = viabilityPct;
+            const viabEl = document.getElementById('res-viability-pct');
+            if (viabEl) viabEl.innerText = viabilityPct;
 
             const conc = avgViable * 10000 * df;
             const totalYield = conc * 10;
 
-            document.getElementById('res-conc').innerText = conc.toLocaleString();
-            document.getElementById('res-total-yield').innerText = totalYield.toLocaleString();
+            const concEl = document.getElementById('res-conc');
+            if (concEl) concEl.innerText = conc.toLocaleString();
 
-            document.getElementById('final-total-cells').value = totalYield > 0 ? totalYield.toLocaleString() : "";
-            document.getElementById('final-conc').value = conc > 0 ? conc.toLocaleString() : "";
+            const yieldEl = document.getElementById('res-total-yield');
+            if (yieldEl) yieldEl.innerText = totalYield.toLocaleString();
+
+            const finalCells = document.getElementById('final-total-cells');
+            if (finalCells) finalCells.value = totalYield > 0 ? totalYield.toLocaleString() + " cells" : "";
+
+            const finalConc = document.getElementById('final-conc');
+            if (finalConc) finalConc.value = conc > 0 ? conc.toLocaleString() + " cells/mL" : "";
 
             const macsVol = totalYield > 0 ? (totalYield / 10000000).toFixed(2) : "0.00";
-            document.getElementById('res-macs-vol').innerText = macsVol;
-            document.getElementById('step-49-vol-used').value = macsVol;
-            document.getElementById('step-50-full-vials').value = Math.floor(totalYield / 10000000);
-            document.getElementById('final-full-vials').value = Math.floor(totalYield / 10000000);
+            const macsVolEl = document.getElementById('res-macs-vol');
+            if (macsVolEl) macsVolEl.innerText = macsVol;
+
+            const step49 = document.getElementById('step-49-vol-used');
+            if (step49) step49.value = macsVol;
+
+            const fullVialsCount = Math.floor(totalYield / 10000000);
+            const fullVialsEl = document.getElementById('step-50-full-vials');
+            if (fullVialsEl) fullVialsEl.value = fullVialsCount;
+
+            const finalFull = document.getElementById('final-full-vials');
+            if (finalFull) finalFull.value = fullVialsCount;
         }
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.add('hidden'); });
-            document.getElementById(tabName + '-tab').classList.remove('hidden');
-
-            ['entry', 'historical', 'analytics'].forEach(function(t) {
-                const btn = document.getElementById('nav-' + t);
-                if (t === tabName) {
-                    btn.className = "px-4 py-2 rounded-md font-medium text-sm transition-all bg-blue-600 text-white";
-                } else {
-                    btn.className = "px-4 py-2 rounded-md font-medium text-sm transition-all text-slate-300 hover:text-white hover:bg-slate-800";
-                }
-            });
-
-            if (tabName === 'analytics') {
-                renderDashboardCharts();
-            }
-        }
-
-        function createNewRecordMode() {
-            if (currentUser && currentUser.role === 'Viewer') return;
-            currentEditingRecordId = null;
-            document.getElementById('active-edit-id').value = '';
-            document.getElementById('permanent-edit-key').value = '';
-            document.getElementById('edit-mode-banner').classList.add('hidden');
-            clearForm();
-            switchTab('entry');
-            showToast("Ready to create new record form.", "blue");
-        }
-
-        function cancelEditMode() {
-            currentEditingRecordId = null;
-            document.getElementById('active-edit-id').value = '';
-            document.getElementById('permanent-edit-key').value = '';
-            document.getElementById('edit-mode-banner').classList.add('hidden');
-            clearForm();
-            switchTab('historical');
-            showToast("Edit mode closed.", "amber");
-        }
-
-        function editRecord(id) {
-            const rec = allRecords.find(function(r) { return r.id === id; });
-            if (!rec) return;
-
-            currentEditingRecordId = id;
-            document.getElementById('active-edit-id').value = id;
-            document.getElementById('permanent-edit-key').value = id;
-
-            const banner = document.getElementById('edit-mode-banner');
-            if (banner) banner.setAttribute('data-editing-id', id);
-
-            const isViewer = currentUser && currentUser.role === 'Viewer';
-
-            document.querySelectorAll('#entry-tab input[type="text"], #entry-tab input[type="number"], #entry-tab input[type="time"], #entry-tab input[type="date"], #entry-tab textarea, #entry-tab input[type="datetime-local"]').forEach(function(i) { i.value = ''; });
-            document.querySelectorAll('#entry-tab input[type="checkbox"], #entry-tab input[type="radio"]').forEach(function(i) { i.checked = false; });
-
-            const actualSampleID = rec.sampleID || (rec.procHeader ? rec.procHeader.sampleId : '') || '';
-            const headerIdInput = document.getElementById('procHeaderSampleId');
-            if (headerIdInput) headerIdInput.value = actualSampleID;
-            const finalIdInput = document.getElementById('final-sample-id');
-            if (finalIdInput) finalIdInput.value = actualSampleID;
-            const barcodeBox = document.getElementById('barcode-display-box');
-            if (barcodeBox) barcodeBox.innerText = actualSampleID;
-
-            if (rec.custody) {
-                document.getElementById('custody-site-code').value = rec.custody.siteCode || '';
-                document.getElementById('custody-condition').value = rec.custody.condition || '';
-                document.getElementById('custody-patient-id').value = rec.custody.patientID || '';
-                document.getElementById('custody-sample-type').value = rec.custody.sampleType || 'Whole Blood';
-                document.getElementById('custody-collection-date').value = rec.custody.collectionDate || '';
-                document.getElementById('custody-collection-time').value = rec.custody.collectionTime || '';
-                document.getElementById('custody-proc-date').value = rec.custody.procDate || '';
-                document.getElementById('custody-proc-time').value = rec.custody.procTime || '';
-                document.getElementById('custody-operator').value = rec.custody.operator || '';
-                document.getElementById('custody-checker').value = rec.custody.checker || '';
-            }
-
-            if (rec.criticalRules) {
-                for (let i = 1; i <= 8; i++) {
-                    const el = document.getElementById('rule-' + i);
-                    if (el) el.checked = !!rec.criticalRules['rule' + i];
-                }
-            }
-
-            if (rec.materials && rec.materials.length > 0) {
-                const tbody = document.getElementById('materials-tbody');
-                tbody.innerHTML = '';
-                rec.materials.forEach(function(mat) {
-                    const tr = document.createElement('tr');
-                    const useInputs = mat.hasInputs !== undefined ? mat.hasInputs : false;
-                    const isDefaultItem = defaultMaterials.some(function(dm) { return dm.name === mat.itemName; });
-
-                    if (isDefaultItem) {
-                        if (useInputs) {
-                            tr.innerHTML = '<td class="p-2 font-medium">' + mat.itemName + '</td>' +
-                                '<td class="p-2 flex gap-4">' +
-                                    '<input type="text" class="table-input" value="' + (mat.inputs[0] || '') + '" placeholder="Lot / ID:">' +
-                                    '<input type="text" class="table-input" value="' + (mat.inputs[1] || '') + '" placeholder="Exp / Status:">' +
-                                '</td>' +
-                                '<td class="p-2 text-center no-print">' +
-                                    '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
-                                '</td>';
-                        } else {
-                            const availChecked = mat.inputs[0] === true || mat.inputs[0] === 'true' ? 'checked' : '';
-                            const acceptChecked = mat.inputs[1] === true || mat.inputs[1] === 'true' ? 'checked' : '';
-
-                            tr.innerHTML = '<td class="p-2 font-medium">' + mat.itemName + '</td>' +
-                                '<td class="p-2">' +
-                                    '<label class="inline-flex items-center mr-4"><input type="checkbox" class="mr-1" ' + availChecked + '> Available</label>' +
-                                    '<label class="inline-flex items-center"><input type="checkbox" class="mr-1" ' + acceptChecked + '> Acceptable</label>' +
-                                '</td>' +
-                                '<td class="p-2 text-center no-print">' +
-                                    '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
-                                '</td>';
-                        }
-                    } else {
-                        tr.innerHTML = '<td class="p-2 font-medium"><input type="text" class="table-input" value="' + mat.itemName + '"></td>' +
-                            '<td class="p-2">' +
-                                '<label class="inline-flex items-center mr-4"><input type="checkbox" class="mr-1" ' + (mat.inputs[0] ? 'checked' : '') + '> Available</label>' +
-                                '<label class="inline-flex items-center"><input type="checkbox" ' + (mat.inputs[1] ? 'checked' : '') + '> Acceptable</label>' +
-                            '</td>' +
-                            '<td class="p-2 text-center no-print">' +
-                                '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
-                            '</td>';
-                    }
-                    tbody.appendChild(tr);
-                });
-            }
-
-            if (rec.preChecklist && rec.preChecklist.length > 0) {
-                const rows = document.querySelectorAll('#precheck-tbody tr');
-                rec.preChecklist.forEach(function(pc, index) {
-                    if (rows[index]) {
-                        const timeInput = rows[index].querySelector('.sec4-time');
-                        const resultInput = rows[index].querySelector('.sec4-result');
-                        const initInput = rows[index].querySelector('.sec4-initials');
-
-                        if (timeInput) timeInput.value = pc.time || (pc.result && pc.result.includes(':') ? pc.result : '');
-                        if (resultInput) resultInput.value = pc.result || '';
-                        if (initInput) initInput.value = pc.initials || '';
-                    }
-                });
-            }
-
-            if (rec.procHeader) {
-                const hColl = document.querySelector('input[name="procHeaderCollTime"]');
-                if (hColl) hColl.value = rec.procHeader.collTime || '';
-                const hStart = document.querySelector('input[name="procHeaderStartTime"]');
-                if (hStart) hStart.value = rec.procHeader.startTime || '';
-                const hEnd = document.querySelector('input[name="procHeaderEndTime"]');
-                if (hEnd) hEnd.value = rec.procHeader.endTime || '';
-                const hOp = document.querySelector('input[name="procHeaderOperator"]');
-                if (hOp) hOp.value = rec.procHeader.operator || '';
-            }
-
-            if (rec.stepRecords) {
-                Object.keys(rec.stepRecords).forEach(function(stepNum) {
-                    const stepData = rec.stepRecords[stepNum];
-                    const tr = document.querySelector('[data-step="' + stepNum + '"]');
-                    if (tr) {
-                        const chk = tr.querySelector('input[type="checkbox"]');
-                        if (chk) chk.checked = !!stepData.done;
-                        const inputs = tr.querySelectorAll('input:not([type="checkbox"]), select, textarea');
-                        if (stepData.fieldValues) {
-                            stepData.fieldValues.forEach(function(val, idx) {
-                                if (inputs[idx]) inputs[idx].value = val;
-                            });
-                        }
-                    }
-                });
-            }
-
-            if (rec.metrics) {
-                document.getElementById('step-4-blood-vol').value = rec.metrics.bloodVol || '';
-                document.getElementById('step-5-pbs-added').value = rec.metrics.pbsAdded || '';
-                document.getElementById('box1-v').value = rec.metrics.box1v || '';
-                document.getElementById('box1-nv').value = rec.metrics.box1nv || '';
-                document.getElementById('box2-v').value = rec.metrics.box2v || '';
-                document.getElementById('box2-nv').value = rec.metrics.box2nv || '';
-                document.getElementById('box3-v').value = rec.metrics.box3v || '';
-                document.getElementById('box3-nv').value = rec.metrics.box3nv || '';
-                document.getElementById('dilution-factor').value = rec.metrics.dilutionFactor || '2';
-                calculateFicoll();
-                calculateCellMetrics();
-            }
-
-            if (rec.cryovials && rec.cryovials.length > 0) {
-                const tbody = document.getElementById('cryovial-tbody');
-                tbody.innerHTML = '';
-                rec.cryovials.forEach(function(cv) {
-                    const tr = document.createElement('tr');
-                    tr.className = "cryo-row";
-                    tr.innerHTML = '<td class="p-2 text-center font-bold text-slate-600">' + cv.vialNum + '</td>' +
-                        '<td class="p-2"><input type="text" class="table-input cryo-id" value="' + (cv.cryoID || '') + '" placeholder="Cryovial ID"></td>' +
-                        '<td class="p-2"><input type="text" class="table-input cryo-vol" value="' + (cv.vol || '1.0') + '"></td>' +
-                        '<td class="p-2"><input type="text" class="table-input cryo-target" value="' + (cv.targetCells || '10,000,000') + '"></td>' +
-                        '<td class="p-2"><input type="time" class="table-input cryo-80time" value="' + (cv.time80 || '') + '"></td>' +
-                        '<td class="p-2"><input type="time" class="table-input cryo-ln2time" value="' + (cv.timeLN2 || '') + '"></td>' +
-                        '<td class="p-2"><input type="text" class="table-input cryo-loc" value="' + (cv.loc || '') + '" placeholder="Tank/Rack/Box/Slot"></td>' +
-                        '<td class="p-2"><input type="text" class="table-input cryo-init" value="' + (cv.init || '') + '" placeholder="Init"></td>' +
-                        '<td class="p-2 text-center no-print">' +
-                            '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
-                        '</td>';
-                    tbody.appendChild(tr);
-                });
-            }
-
-            if (rec.finalRelease) {
-                if (rec.finalRelease.finalCheckboxes) {
-                    const cbs = document.querySelectorAll('#final-checkboxes input[type="checkbox"]');
-                    rec.finalRelease.finalCheckboxes.forEach(function(val, idx) {
-                        if (cbs[idx]) cbs[idx].checked = !!val;
-                    });
-                }
-                document.getElementById('final-start-vol').value = rec.finalRelease.startVol || '';
-                document.getElementById('final-total-cells').value = rec.finalRelease.totalCells || '';
-                document.getElementById('final-conc').value = rec.finalRelease.conc || '';
-                document.getElementById('final-full-vials').value = rec.finalRelease.fullVials || '';
-                document.getElementById('final-partial-vials').value = rec.finalRelease.partialVials || '';
-                document.getElementById('final-storage-loc').value = rec.finalRelease.storageLoc || '';
-                document.getElementById('final-operator').value = rec.finalRelease.operator || '';
-                document.getElementById('final-reviewer').value = rec.finalRelease.reviewer || '';
-                if (rec.finalRelease.status) {
-                    const rb = document.querySelector('input[name="proc_status"][value="' + rec.finalRelease.status + '"]');
-                    if (rb) rb.checked = true;
-                }
-            }
-
-            if (rec.signOff) {
-                document.getElementById('sign-op-name').value = rec.signOff.opName || '';
-                document.getElementById('sign-op-sig').value = rec.signOff.opSig || '';
-                document.getElementById('sign-op-date').value = rec.signOff.opDate || '';
-                document.getElementById('sign-rev-name').value = rec.signOff.revName || '';
-                document.getElementById('sign-rev-sig').value = rec.signOff.revSig || '';
-                document.getElementById('sign-rev-date').value = rec.signOff.revDate || '';
-                document.getElementById('sign-qa-name').value = rec.signOff.qaName || '';
-                document.getElementById('sign-qa-sig').value = rec.signOff.qaSig || '';
-                document.getElementById('sign-qa-date').value = rec.signOff.qaDate || '';
-            }
-
-            if (!isViewer) {
-                document.getElementById('edit-mode-banner').classList.remove('hidden');
-                document.getElementById('editing-sample-id-label').innerText = actualSampleID || id;
-            }
-
-            switchTab('entry');
-            if (isViewer) {
-                applyRolePermissions();
-                showToast("Viewing historical record: " + (actualSampleID || id), "blue");
-            } else {
-                showToast("Loaded Record: " + (actualSampleID || id) + " for editing.", "blue");
-            }
+        function syncFinalVials() {
+            const full = document.getElementById('step-50-full-vials')?.value || '';
+            const part = document.getElementById('step-50-partial-vials')?.value || '';
+            const finalFull = document.getElementById('final-full-vials');
+            const finalPart = document.getElementById('final-partial-vials');
+            if (finalFull) finalFull.value = full;
+            if (finalPart) finalPart.value = part;
         }
 
         function saveRecordToFirebase() {
             if (currentUser && currentUser.role === 'Viewer') return;
-
-            const sampleID = document.getElementById('final-sample-id')?.value || document.getElementById('procHeaderSampleId')?.value || '';
             
-            const activeEditId = currentEditingRecordId || 
-                                 document.getElementById('active-edit-id')?.value || 
-                                 document.getElementById('permanent-edit-key')?.value || 
-                                 document.getElementById('edit-mode-banner')?.getAttribute('data-editing-id');
+            const sampleID = document.getElementById('final-sample-id')?.value || document.getElementById('procHeaderSampleId')?.value || '';
+            const activeEditId = currentEditingRecordId || document.getElementById('active-edit-id')?.value || null;
 
             if (!activeEditId) {
-                if (!sampleID || sampleID.includes('XX-RA-001') || sampleID === '') {
+                if (!sampleID || sampleID.includes('XX') || sampleID === '') {
                     if (!confirm("Sample ID appears to be using placeholder values. Save anyway?")) return;
                 }
             }
@@ -1883,23 +2333,6 @@
                 materials.push({ itemName: itemName, hasInputs: hasInputs, inputs: stateInputs });
             });
 
-            const preChecklist = [];
-            document.querySelectorAll('#precheck-tbody tr').forEach(function(tr) {
-                const checkItem = tr.cells[0]?.innerText.trim() || '';
-                const timeVal = tr.querySelector('.sec4-time')?.value || '';
-                const resultVal = tr.querySelector('.sec4-result')?.value || '';
-                const initials = tr.querySelector('.sec4-initials')?.value || '';
-                preChecklist.push({ checkItem: checkItem, time: timeVal, result: resultVal, initials: initials });
-            });
-
-            const procHeader = {
-                sampleId: sampleID,
-                collTime: document.querySelector('input[name="procHeaderCollTime"]')?.value || '',
-                startTime: document.querySelector('input[name="procHeaderStartTime"]')?.value || '',
-                endTime: document.querySelector('input[name="procHeaderEndTime"]')?.value || '',
-                operator: document.querySelector('input[name="procHeaderOperator"]')?.value || ''
-            };
-
             const stepRecords = {};
             document.querySelectorAll('#entry-tab [data-step]').forEach(function(tr) {
                 const stepNum = tr.getAttribute('data-step');
@@ -1914,21 +2347,9 @@
 
             const metrics = {
                 bloodVol: document.getElementById('step-4-blood-vol')?.value || '',
-                pbsAdded: document.getElementById('step-5-pbs-added')?.value || '',
-                dilVol: document.getElementById('step-10-dil-vol')?.value || '',
-                ficollCalc: document.getElementById('step-11-ficoll-calc')?.value || '',
-                ficollAdded: document.getElementById('step-12-ficoll-added')?.value || '',
-                box1v: document.getElementById('box1-v')?.value || '',
-                box1nv: document.getElementById('box1-nv')?.value || '',
-                box2v: document.getElementById('box2-v')?.value || '',
-                box2nv: document.getElementById('box2-nv')?.value || '',
-                box3v: document.getElementById('box3-v')?.value || '',
-                box3nv: document.getElementById('box3-nv')?.value || '',
-                dilutionFactor: document.getElementById('dilution-factor')?.value || '2',
                 viabilityPct: document.getElementById('res-viability-pct')?.innerText || '0',
-                concentration: document.getElementById('res-conc')?.innerText || '0',
                 totalYield: document.getElementById('res-total-yield')?.innerText || '0',
-                macsVol: document.getElementById('res-macs-vol')?.innerText || '0'
+                concentration: document.getElementById('res-conc')?.innerText || '0'
             };
 
             const cryovials = [];
@@ -1957,21 +2378,6 @@
                 status: document.querySelector('input[name="proc_status"]:checked')?.value || 'Released'
             };
 
-            const signOff = {
-                opName: document.getElementById('sign-op-name')?.value || '',
-                opSig: document.getElementById('sign-op-sig')?.value || '',
-                opDate: document.getElementById('sign-op-date')?.value || '',
-                revName: document.getElementById('sign-rev-name')?.value || '',
-                revSig: document.getElementById('sign-rev-sig')?.value || '',
-                revDate: document.getElementById('sign-rev-date')?.value || '',
-                qaName: document.getElementById('sign-qa-name')?.value || '',
-                qaSig: document.getElementById('sign-qa-sig')?.value || '',
-                qaDate: document.getElementById('sign-qa-date')?.value || ''
-            };
-
-            const createdAtTimestamp = (activeEditId && allRecords.find(function(r) { return r.id === activeEditId; })?.createdAt) 
-                || new Date().toLocaleString();
-
             const recordData = {
                 sampleID: sampleID,
                 siteCode: custody.siteCode || 'XX',
@@ -1980,7 +2386,7 @@
                 sampleType: custody.sampleType || 'Whole Blood',
                 operator: custody.operator || 'N/A',
                 processingDate: custody.procDate || new Date().toISOString().split('T')[0],
-                createdAt: createdAtTimestamp,
+                createdAt: (activeEditId && allRecords.find(r => r.id === activeEditId)?.createdAt) || new Date().toLocaleString(),
                 viabilityPct: parseFloat(metrics.viabilityPct) || 0,
                 totalCells: metrics.totalYield || '0',
                 cryovialCount: parseInt(finalRelease.fullVials) || 0,
@@ -1989,13 +2395,10 @@
                 criticalRules: criticalRules,
                 custody: custody,
                 materials: materials,
-                preChecklist: preChecklist,
-                procHeader: procHeader,
                 stepRecords: stepRecords,
                 metrics: metrics,
                 cryovials: cryovials,
-                finalRelease: finalRelease,
-                signOff: signOff
+                finalRelease: finalRelease
             };
 
             if (db) {
@@ -2011,23 +2414,14 @@
 
                 dbRef.set(recordData, function(error) {
                     if (error) {
-                        showToast("Failed to save to database: " + error.message, "rose");
+                        showToast("Failed to save: " + error.message, "rose");
                     } else {
-                        if (isUpdate) {
-                            showToast("Record " + sampleID + " updated successfully!", "emerald");
-                        } else {
-                            showToast("New Record " + sampleID + " saved successfully!", "emerald");
-                        }
-                        
+                        showToast(isUpdate ? "Record updated successfully!" : "New record saved successfully!", "emerald");
                         currentEditingRecordId = null;
-                        document.getElementById('active-edit-id').value = '';
-                        document.getElementById('permanent-edit-key').value = '';
+                        const activeEditInput = document.getElementById('active-edit-id');
+                        if (activeEditInput) activeEditInput.value = '';
                         const banner = document.getElementById('edit-mode-banner');
-                        if (banner) {
-                            banner.removeAttribute('data-editing-id');
-                            banner.classList.add('hidden');
-                        }
-
+                        if (banner) banner.classList.add('hidden');
                         switchTab('historical');
                     }
                 });
@@ -2036,26 +2430,93 @@
             }
         }
 
-        function fetchRecordsFromFirebase() {
-            if (!db) return;
-            try {
-                db.ref('records').on('value', function(snapshot) {
-                    allRecords = [];
-                    snapshot.forEach(function(childSnapshot) {
-                        const record = childSnapshot.val();
-                        record.id = childSnapshot.key;
-                        allRecords.push(record);
-                    });
-                    renderLogsTable(allRecords);
-                    updateKPICards(allRecords);
+        function editRecord(id) {
+            const rec = allRecords.find(r => r.id === id);
+            if (!rec) return;
+
+            currentEditingRecordId = id;
+            const activeEditInput = document.getElementById('active-edit-id');
+            if (activeEditInput) activeEditInput.value = id;
+
+            if (rec.custody) {
+                document.getElementById('custody-site-code').value = rec.custody.siteCode || '';
+                document.getElementById('custody-condition').value = rec.custody.condition || '';
+                document.getElementById('custody-patient-id').value = rec.custody.patientID || '';
+                document.getElementById('custody-sample-type').value = rec.custody.sampleType || 'Whole Blood';
+                document.getElementById('custody-collection-date').value = rec.custody.collectionDate || '';
+                document.getElementById('custody-collection-time').value = rec.custody.collectionTime || '';
+                document.getElementById('custody-proc-date').value = rec.custody.procDate || '';
+                document.getElementById('custody-proc-time').value = rec.custody.procTime || '';
+                document.getElementById('custody-operator').value = rec.custody.operator || '';
+                document.getElementById('custody-checker').value = rec.custody.checker || '';
+            }
+
+            if (rec.criticalRules) {
+                for (let i = 1; i <= 8; i++) {
+                    const el = document.getElementById('rule-' + i);
+                    if (el) el.checked = !!rec.criticalRules['rule' + i];
+                }
+            }
+
+            if (rec.metrics) {
+                const bloodVolInput = document.getElementById('step-4-blood-vol');
+                if (bloodVolInput) bloodVolInput.value = rec.metrics.bloodVol || '';
+                calculateFicoll();
+            }
+
+            if (rec.stepRecords) {
+                Object.keys(rec.stepRecords).forEach(stepNum => {
+                    const stepData = rec.stepRecords[stepNum];
+                    const tr = document.querySelector('[data-step="' + stepNum + '"]');
+                    if (tr) {
+                        const chk = tr.querySelector('input[type="checkbox"]');
+                        if (chk) chk.checked = !!stepData.done;
+                        const inputs = tr.querySelectorAll('input:not([type="checkbox"]), select, textarea');
+                        if (stepData.fieldValues) {
+                            stepData.fieldValues.forEach((val, idx) => {
+                                if (inputs[idx]) inputs[idx].value = val;
+                            });
+                        }
+                    }
                 });
-            } catch(e) {
-                console.log("Firebase listener error:", e);
+            }
+
+            if (rec.finalRelease) {
+                document.getElementById('final-start-vol').value = rec.finalRelease.startVol || '';
+                document.getElementById('final-total-cells').value = rec.finalRelease.totalCells || '';
+                document.getElementById('final-conc').value = rec.finalRelease.conc || '';
+                document.getElementById('final-full-vials').value = rec.finalRelease.fullVials || '';
+                document.getElementById('final-partial-vials').value = rec.finalRelease.partialVials || '';
+                document.getElementById('final-storage-loc').value = rec.finalRelease.storageLoc || '';
+                document.getElementById('final-operator').value = rec.finalRelease.operator || '';
+                document.getElementById('final-reviewer').value = rec.finalRelease.reviewer || '';
+            }
+
+            const banner = document.getElementById('edit-mode-banner');
+            if (banner) banner.classList.remove('hidden');
+            const label = document.getElementById('editing-sample-id-label');
+            if (label) label.innerText = rec.sampleID || id;
+
+            switchTab('entry');
+            showToast("Loaded record for editing: " + (rec.sampleID || id), "blue");
+        }
+
+        function deleteRecord(id) {
+            if (currentUser && currentUser.role === 'Viewer') return;
+            if (confirm("Are you sure you want to delete this record?")) {
+                allRecords = allRecords.filter(r => r.id !== id);
+                renderLogsTable(allRecords);
+                updateKPICards(allRecords);
+                showToast("Record deleted successfully.", "rose");
+                if (db) {
+                    db.ref('records/' + id).remove();
+                }
             }
         }
 
         function renderLogsTable(records) {
             const tbody = document.getElementById('logs-tbody');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
             if (!records || records.length === 0) {
@@ -2096,8 +2557,8 @@
         }
 
         function filterLogsTable() {
-            const query = document.getElementById('log-search-input').value.toLowerCase();
-            const status = document.getElementById('log-status-filter').value;
+            const query = document.getElementById('log-search-input')?.value.toLowerCase() || '';
+            const status = document.getElementById('log-status-filter')?.value || 'ALL';
 
             const filtered = allRecords.filter(function(r) {
                 const matchesSearch = (r.sampleID && r.sampleID.toLowerCase().includes(query)) ||
@@ -2108,23 +2569,6 @@
                 return matchesSearch && matchesStatus;
             });
             renderLogsTable(filtered);
-        }
-
-        function deleteRecord(id) {
-            if (currentUser && currentUser.role === 'Viewer') return;
-            const rec = allRecords.find(function(r) { return r.id === id; });
-            const sampleName = rec ? rec.sampleID : id;
-
-            if (confirm("Are you sure you want to delete record " + sampleName + "? This action cannot be undone.")) {
-                allRecords = allRecords.filter(r => r.id !== id);
-                renderLogsTable(allRecords);
-                updateKPICards(allRecords);
-                showToast("Record " + sampleName + " deleted successfully.", "rose");
-
-                if (db) {
-                    try { db.ref('records/' + id).remove(); } catch(e) {}
-                }
-            }
         }
 
         function exportToExcel() {
@@ -2165,13 +2609,20 @@
         }
 
         function updateKPICards(records) {
-            document.getElementById('kpi-total-samples').innerText = records.length;
+            const totalEl = document.getElementById('kpi-total-samples');
+            if (totalEl) totalEl.innerText = records.length;
+            
             const avgViab = records.length ? (records.reduce(function(acc, curr) { return acc + (curr.viabilityPct || 0); }, 0) / records.length).toFixed(1) : 0;
-            document.getElementById('kpi-avg-viability').innerText = avgViab + "%";
+            const viabEl = document.getElementById('kpi-avg-viability');
+            if (viabEl) viabEl.innerText = avgViab + "%";
+            
             const totalVials = records.reduce(function(acc, curr) { return acc + (curr.cryovialCount || 0); }, 0);
-            document.getElementById('kpi-total-vials').innerText = totalVials;
+            const vialsEl = document.getElementById('kpi-total-vials');
+            if (vialsEl) vialsEl.innerText = totalVials;
+            
             const deviations = records.filter(function(r) { return r.status === 'Deviation pending'; }).length;
-            document.getElementById('kpi-total-deviations').innerText = deviations;
+            const devEl = document.getElementById('kpi-total-deviations');
+            if (devEl) devEl.innerText = deviations;
 
             let totalYieldSum = 0;
             let countYield = 0;
@@ -2186,7 +2637,8 @@
                 }
             });
             const avgYield = countYield > 0 ? (totalYieldSum / countYield / 1e6).toFixed(1) + 'M' : '0M';
-            document.getElementById('kpi-avg-yield').innerText = avgYield;
+            const yieldEl = document.getElementById('kpi-avg-yield');
+            if (yieldEl) yieldEl.innerText = avgYield;
         }
 
         function renderDashboardCharts() {
@@ -2198,41 +2650,45 @@
                 diseaseCounts[disease] = (diseaseCounts[disease] || 0) + 1;
             });
 
-            const ctxDisease = document.getElementById('chart-disease').getContext('2d');
-            chartInstances.disease = new Chart(ctxDisease, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(diseaseCounts),
-                    datasets: [{
-                        label: 'Samples per Disease',
-                        data: Object.values(diseaseCounts),
-                        backgroundColor: '#3b82f6',
-                        borderRadius: 6
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+            const canvasDisease = document.getElementById('chart-disease');
+            if (canvasDisease) {
+                chartInstances.disease = new Chart(canvasDisease.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(diseaseCounts),
+                        datasets: [{
+                            label: 'Samples per Disease',
+                            data: Object.values(diseaseCounts),
+                            backgroundColor: '#3b82f6',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
 
             const dates = allRecords.map(function(r) { return r.processingDate || 'Unknown'; });
             const datesCount = {};
             dates.forEach(function(d) { datesCount[d] = (datesCount[d] || 0) + 1; });
 
-            const ctx1 = document.getElementById('chart-trends').getContext('2d');
-            chartInstances.trends = new Chart(ctx1, {
-                type: 'line',
-                data: {
-                    labels: Object.keys(datesCount),
-                    datasets: [{
-                        label: 'Samples Processed',
-                        data: Object.values(datesCount),
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+            const canvasTrends = document.getElementById('chart-trends');
+            if (canvasTrends) {
+                chartInstances.trends = new Chart(canvasTrends.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: Object.keys(datesCount),
+                        datasets: [{
+                            label: 'Samples Processed',
+                            data: Object.values(datesCount),
+                            borderColor: '#2563eb',
+                            backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
 
             const opViab = {};
             allRecords.forEach(function(r) {
@@ -2245,20 +2701,22 @@
                 opAvg[op] = (opViab[op].reduce(function(a,b) { return a+b; }, 0) / opViab[op].length).toFixed(1);
             });
 
-            const ctx2 = document.getElementById('chart-operator').getContext('2d');
-            chartInstances.operator = new Chart(ctx2, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(opAvg),
-                    datasets: [{
-                        label: 'Average Viability (%)',
-                        data: Object.values(opAvg),
-                        backgroundColor: '#10b981',
-                        borderRadius: 6
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 100 } } }
-            });
+            const canvasOp = document.getElementById('chart-operator');
+            if (canvasOp) {
+                chartInstances.operator = new Chart(canvasOp.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(opAvg),
+                        datasets: [{
+                            label: 'Average Viability (%)',
+                            data: Object.values(opAvg),
+                            backgroundColor: '#10b981',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 100 } } }
+                });
+            }
 
             const diseaseViab = {};
             allRecords.forEach(function(r) {
@@ -2271,38 +2729,42 @@
                 diseaseViabAvg[d] = (diseaseViab[d].reduce(function(a, b) { return a + b; }, 0) / diseaseViab[d].length).toFixed(1);
             });
 
-            const ctxDiseaseViab = document.getElementById('chart-disease-viability').getContext('2d');
-            chartInstances.diseaseViability = new Chart(ctxDiseaseViab, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(diseaseViabAvg),
-                    datasets: [{
-                        label: 'Avg Viability (%)',
-                        data: Object.values(diseaseViabAvg),
-                        backgroundColor: '#8b5cf6',
-                        borderRadius: 6
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 100 } } }
-            });
+            const canvasDisViab = document.getElementById('chart-disease-viability');
+            if (canvasDisViab) {
+                chartInstances.diseaseViability = new Chart(canvasDisViab.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(diseaseViabAvg),
+                        datasets: [{
+                            label: 'Avg Viability (%)',
+                            data: Object.values(diseaseViabAvg),
+                            backgroundColor: '#8b5cf6',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { max: 100 } } }
+                });
+            }
 
             const statusCounts = { 'Released': 0, 'Hold': 0, 'Deviation pending': 0 };
             allRecords.forEach(function(r) {
                 if (statusCounts[r.status] !== undefined) statusCounts[r.status]++;
             });
 
-            const ctx3 = document.getElementById('chart-status').getContext('2d');
-            chartInstances.status = new Chart(ctx3, {
-                type: 'doughnut',
-                data: {
-                    labels: Object.keys(statusCounts),
-                    datasets: [{
-                        data: Object.values(statusCounts),
-                        backgroundColor: ['#10b981', '#f59e0b', '#f43f5e']
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+            const canvasStatus = document.getElementById('chart-status');
+            if (canvasStatus) {
+                chartInstances.status = new Chart(canvasStatus.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(statusCounts),
+                        datasets: [{
+                            data: Object.values(statusCounts),
+                            backgroundColor: ['#10b981', '#f59e0b', '#f43f5e']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
 
             const sampleTypeCounts = {};
             allRecords.forEach(function(r) {
@@ -2310,25 +2772,28 @@
                 sampleTypeCounts[st] = (sampleTypeCounts[st] || 0) + 1;
             });
 
-            const ctxTypes = document.getElementById('chart-sample-types').getContext('2d');
-            chartInstances.sampleTypes = new Chart(ctxTypes, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(sampleTypeCounts),
-                    datasets: [{
-                        data: Object.values(sampleTypeCounts),
-                        backgroundColor: ['#06b6d4', '#f97316', '#84cc16', '#e11d48', '#a855f7']
-                    }]
-                },
-                options: { responsive: true, maintainAspectRatio: false }
-            });
+            const canvasTypes = document.getElementById('chart-sample-types');
+            if (canvasTypes) {
+                chartInstances.sampleTypes = new Chart(canvasTypes.getContext('2d'), {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(sampleTypeCounts),
+                        datasets: [{
+                            data: Object.values(sampleTypeCounts),
+                            backgroundColor: ['#06b6d4', '#f97316', '#84cc16', '#e11d48', '#a855f7']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
         }
 
         function showToast(message, color) {
             color = color || 'emerald';
             const toast = document.getElementById('toast');
+            if (!toast) return;
             const toastMsg = document.getElementById('toast-message');
-            toastMsg.innerText = message;
+            if (toastMsg) toastMsg.innerText = message;
             toast.className = 'fixed bottom-5 right-5 z-50 bg-' + color + '-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 transition-all duration-300';
             toast.classList.remove('hidden');
             setTimeout(function() { toast.classList.add('hidden'); }, 3500);

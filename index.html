@@ -2284,13 +2284,14 @@
             const materials = [];
             document.querySelectorAll('#materials-tbody tr').forEach(tr => {
                 const nameInput = tr.cells[0]?.querySelector('input');
-                const name = nameInput ? nameInput.value : (tr.cells[0]?.innerText.trim() || '');
+                const name = nameInput ? nameInput.value.trim() : (tr.cells[0]?.innerText ? tr.cells[0].innerText.trim() : '');
                 const inputs = tr.cells[1]?.querySelectorAll('input[type="text"]');
                 const checkboxes = tr.cells[1]?.querySelectorAll('input[type="checkbox"]');
                 
                 materials.push({
                     name: name,
                     hasInputs: inputs && inputs.length > 0,
+                    isCustom: !!nameInput,
                     lotOrId: inputs && inputs[0] ? inputs[0].value : '',
                     expOrStatus: inputs && inputs[1] ? inputs[1].value : '',
                     available: checkboxes && checkboxes[0] ? checkboxes[0].checked : false,
@@ -2515,8 +2516,18 @@
                 matTbody.innerHTML = '';
                 rec.materials.forEach(mat => {
                     const tr = document.createElement('tr');
-                    if (mat.hasInputs) {
-                        tr.innerHTML = '<td class="p-2 font-medium">' + mat.name + '</td>' +
+                    const itemName = mat.name || '';
+                    if (mat.isCustom) {
+                        tr.innerHTML = '<td class="p-2 font-medium"><input type="text" class="table-input" placeholder="New Item Name" value="' + itemName + '"></td>' +
+                            '<td class="p-2">' +
+                                '<label class="inline-flex items-center mr-4"><input type="checkbox" class="mr-1" ' + (mat.available ? 'checked' : '') + '> Available</label>' +
+                                '<label class="inline-flex items-center"><input type="checkbox" class="mr-1" ' + (mat.acceptable ? 'checked' : '') + '> Acceptable</label>' +
+                            '</td>' +
+                            '<td class="p-2 text-center no-print">' +
+                                '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
+                            '</td>';
+                    } else if (mat.hasInputs) {
+                        tr.innerHTML = '<td class="p-2 font-medium">' + itemName + '</td>' +
                             '<td class="p-2 flex gap-4">' +
                                 '<input type="text" class="table-input" placeholder="Lot / ID:" value="' + (mat.lotOrId || '') + '">' +
                                 '<input type="text" class="table-input" placeholder="Exp / Status:" value="' + (mat.expOrStatus || '') + '">' +
@@ -2525,7 +2536,7 @@
                                 '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
                             '</td>';
                     } else {
-                        tr.innerHTML = '<td class="p-2 font-medium">' + mat.name + '</td>' +
+                        tr.innerHTML = '<td class="p-2 font-medium">' + itemName + '</td>' +
                             '<td class="p-2">' +
                                 '<label class="inline-flex items-center mr-4"><input type="checkbox" class="mr-1" ' + (mat.available ? 'checked' : '') + '> Available</label>' +
                                 '<label class="inline-flex items-center"><input type="checkbox" class="mr-1" ' + (mat.acceptable ? 'checked' : '') + '> Acceptable</label>' +

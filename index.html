@@ -2195,7 +2195,7 @@
 
                 if (dilVolInput) dilVolInput.value = dilutedVol + " mL";
                 if (ficollCalcInput) ficollCalcInput.value = "Calculation: " + dilutedVol + " ÷ 2 = " + ficollVol + " mL";
-                if (ficollAddedInput && !ficollAddedInput.value) ficollAddedInput.value = ficollVol;
+                if (ficollAddedInput) ficollAddedInput.value = ficollVol;
             } else {
                 if (dilVolInput) dilVolInput.value = "";
                 if (ficollCalcInput) ficollCalcInput.value = "";

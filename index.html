@@ -1753,28 +1753,6 @@
             clearForm();
         }
 
-        const seedDemoRecords = [
-            {
-                id: "rec_001",
-                sampleID: "JO-RA-001-PBMC",
-                siteCode: "JO",
-                diseaseCode: "RA",
-                patientID: "001",
-                sampleType: "Whole Blood",
-                operator: "Dr. Sarah Miller",
-                processingDate: "2026-03-28",
-                createdAt: "3/28/2026, 09:15:22 AM",
-                viabilityPct: 94.5,
-                totalCells: "45,000,000",
-                cryovialCount: 4,
-                status: "Released",
-                timestamp: Date.now() - 86400000 * 3,
-                custody: { siteCode: "JO", condition: "RA", patientID: "001", sampleType: "Whole Blood", operator: "Dr. Sarah Miller" },
-                metrics: { totalYield: "45,000,000", viabilityPct: "94.5" },
-                finalRelease: { fullVials: "4", status: "Released" }
-            }
-        ];
-
         function handleLogin(event) {
             event.preventDefault();
             const uInput = document.getElementById('login-username').value.trim();
@@ -1782,12 +1760,8 @@
             const errDiv = document.getElementById('login-error');
 
             if (!db) {
-                const matchedUser = systemUsers.find(function(u) { return u.username === uInput && u.password === pInput; });
-                if (matchedUser) {
-                    processSuccessfulLogin(matchedUser);
-                } else {
-                    errDiv.classList.remove('hidden');
-                }
+                errDiv.classList.remove('hidden');
+                document.getElementById('login-error-text').innerText = "Database connection unavailable.";
                 return;
             }
 
@@ -1808,10 +1782,12 @@
                     processSuccessfulLogin(authenticatedUser);
                 } else {
                     errDiv.classList.remove('hidden');
+                    document.getElementById('login-error-text').innerText = "Invalid credentials.";
                 }
             }).catch(function(err) {
                 console.error("Firebase auth error:", err);
                 errDiv.classList.remove('hidden');
+                document.getElementById('login-error-text').innerText = "Authentication error.";
             });
         }
 
@@ -2063,13 +2039,11 @@
             initCryovialRows();
             setupCustodyAutoPopulate();
 
-            allRecords = [...seedDemoRecords];
-            renderLogsTable(allRecords);
-            updateKPICards(allRecords);
-
             if (db) {
                 initFirebaseUsers();
                 fetchRecordsFromFirebase();
+            } else {
+                showToast("Firebase database connection failed.", "rose");
             }
         };
 
@@ -2111,7 +2085,7 @@
                     updateKPICards(allRecords);
                 });
             } catch(e) {
-                console.log("Firebase listener offline", e);
+                console.error("Firebase listener error:", e);
             }
         }
 
@@ -2267,115 +2241,53 @@
 
             const macsVol = totalYield > 0 ? (totalYield / 10000000).toFixed(2) : "0.00";
             const macsVolEl = document.getElementById('res-macs-vol');
-            if (macsVolEl) macsVolEl.innerText = macsVol;
-
-            const step49 = document.getElementById('step-49-vol-used');
-            if (step49) step49.value = macsVol;
-
-            const fullVialsCount = Math.floor(totalYield / 10000000);
-            const fullVialsEl = document.getElementById('step-50-full-vials');
-            if (fullVialsEl) fullVialsEl.value = fullVialsCount;
-
-            const finalFull = document.getElementById('final-full-vials');
-            if (finalFull) finalFull.value = fullVialsCount;
-        }
-
-        function syncFinalVials() {
-            const full = document.getElementById('step-50-full-vials')?.value || '';
-            const part = document.getElementById('step-50-partial-vials')?.value || '';
-            const finalFull = document.getElementById('final-full-vials');
-            const finalPart = document.getElementById('final-partial-vials');
-            if (finalFull) finalFull.value = full;
-            if (finalPart) finalPart.value = part;
-        }
-
-        function saveRecordToFirebase() {
-            if (currentUser && currentUser.role === 'Viewer') return;
-            
-            const sampleID = document.getElementById('final-sample-id')?.value || document.getElementById('procHeaderSampleId')?.value || '';
-            const activeEditId = currentEditingRecordId || document.getElementById('active-edit-id')?.value || null;
-
-            if (!activeEditId) {
-                if (!sampleID || sampleID.includes('XX') || sampleID === '') {
-                    if (!confirm("Sample ID appears to be using placeholder values. Save anyway?")) return;
-                }
-            }
-
-            const criticalRules = {};
-            for (let i = 1; i <= 8; i++) {
-                const el = document.getElementById('rule-' + i);
-                if (el) criticalRules['rule' + i] = el.checked;
-            }
-
-            const custody = {
-                siteCode: document.getElementById('custody-site-code')?.value || '',
-                condition: document.getElementById('custody-condition')?.value || '',
-                patientID: document.getElementById('custody-patient-id')?.value || '',
-                sampleType: document.getElementById('custody-sample-type')?.value || '',
-                collectionDate: document.getElementById('custody-collection-date')?.value || '',
-                collectionTime: document.getElementById('custody-collection-time')?.value || '',
-                procDate: document.getElementById('custody-proc-date')?.value || '',
-                procTime: document.getElementById('custody-proc-time')?.value || '',
-                operator: document.getElementById('custody-operator')?.value || '',
-                checker: document.getElementById('custody-checker')?.value || ''
+            const readiness = {
+                reagentRtTime: document.getElementById('ready-reagent-rt-time')?.value || '',
+                reagentRtInit: document.getElementById('ready-reagent-rt-init')?.value || '',
+                bloodRtTime: document.getElementById('ready-blood-rt-time')?.value || '',
+                bloodRtInit: document.getElementById('ready-blood-rt-init')?.value || '',
+                bscTime: document.getElementById('ready-bsc-time')?.value || '',
+                bscInit: document.getElementById('ready-bsc-init')?.value || '',
+                cent37Res: document.getElementById('ready-cent-37-res')?.value || '',
+                cent37Init: document.getElementById('ready-cent-37-init')?.value || '',
+                cent4Res: document.getElementById('ready-cent-4-res')?.value || '',
+                cent4Init: document.getElementById('ready-cent-4-init')?.value || '',
+                cryovialsRes: document.getElementById('ready-cryovials-res')?.value || '',
+                cryovialsInit: document.getElementById('ready-cryovials-init')?.value || '',
+                freezerRes: document.getElementById('ready-freezer-res')?.value || '',
+                freezerInit: document.getElementById('ready-freezer-init')?.value || ''
             };
 
-            const materials = [];
-            document.querySelectorAll('#materials-tbody tr').forEach(function(tr) {
-                const nameInput = tr.cells[0]?.querySelector('input');
-                const itemName = nameInput ? nameInput.value : (tr.cells[0]?.innerText.trim() || '');
-                const hasInputs = tr.querySelectorAll('input[type="text"]').length >= 2;
-                const stateInputs = Array.from(tr.querySelectorAll('input')).filter(function(inp) {
-                    return inp !== nameInput;
-                }).map(function(inp) {
-                    return inp.type === 'checkbox' ? inp.checked : inp.value;
-                });
-                materials.push({ itemName: itemName, hasInputs: hasInputs, inputs: stateInputs });
-            });
-
-            const stepRecords = {};
-            document.querySelectorAll('#entry-tab [data-step]').forEach(function(tr) {
-                const stepNum = tr.getAttribute('data-step');
-                const done = tr.querySelector('input[type="checkbox"]')?.checked || false;
-                const fieldValues = Array.from(tr.querySelectorAll('input, select, textarea')).map(function(el) {
-                    if (el.type === 'checkbox') return el.checked;
-                    if (el.type === 'radio') return el.checked ? el.value : null;
-                    return el.value;
-                }).filter(function(v) { return v !== null && v !== false && v !== ""; });
-                stepRecords[stepNum] = { done: done, fieldValues: fieldValues };
-            });
-
-            const metrics = {
-                bloodVol: document.getElementById('step-4-blood-vol')?.value || '',
-                viabilityPct: document.getElementById('res-viability-pct')?.innerText || '0',
-                totalYield: document.getElementById('res-total-yield')?.innerText || '0',
-                concentration: document.getElementById('res-conc')?.innerText || '0'
-            };
-
-            const cryovials = [];
-            document.querySelectorAll('#cryovial-tbody tr').forEach(function(tr) {
-                cryovials.push({
-                    vialNum: tr.cells[0]?.innerText.trim() || '',
-                    cryoID: tr.querySelector('.cryo-id')?.value || '',
-                    vol: tr.querySelector('.cryo-vol')?.value || '1.0',
-                    targetCells: tr.querySelector('.cryo-target')?.value || '10,000,000',
-                    time80: tr.querySelector('.cryo-80time')?.value || '',
-                    timeLN2: tr.querySelector('.cryo-ln2time')?.value || '',
-                    loc: tr.querySelector('.cryo-loc')?.value || '',
-                    init: tr.querySelector('.cryo-init')?.value || ''
+            const qcPoints = [];
+            document.querySelectorAll('#qc-tbody tr').forEach(function(tr) {
+                qcPoints.push({
+                    point: tr.cells[0]?.innerText.trim() || '',
+                    obs: tr.cells[1]?.querySelector('input')?.value || '',
+                    status: tr.cells[2]?.querySelector('select')?.value || 'Pass',
+                    init: tr.cells[3]?.querySelector('input')?.value || ''
                 });
             });
 
-            const finalRelease = {
-                startVol: document.getElementById('final-start-vol')?.value || '',
-                totalCells: document.getElementById('final-total-cells')?.value || '',
-                conc: document.getElementById('final-conc')?.value || '',
-                fullVials: document.getElementById('final-full-vials')?.value || '',
-                partialVials: document.getElementById('final-partial-vials')?.value || '',
-                storageLoc: document.getElementById('final-storage-loc')?.value || '',
-                operator: document.getElementById('final-operator')?.value || '',
-                reviewer: document.getElementById('final-reviewer')?.value || '',
-                status: document.querySelector('input[name="proc_status"]:checked')?.value || 'Released'
+            const deviations = [];
+            document.querySelectorAll('#deviation-tbody tr').forEach(function(tr) {
+                deviations.push({
+                    devID: tr.cells[0]?.querySelector('input')?.value || '',
+                    dateTime: tr.cells[1]?.querySelector('input')?.value || '',
+                    desc: tr.cells[2]?.querySelector('textarea')?.value || '',
+                    sign: tr.cells[3]?.querySelector('input')?.value || ''
+                });
+            });
+
+            const signatures = {
+                opName: document.getElementById('sign-op-name')?.value || '',
+                opSig: document.getElementById('sign-op-sig')?.value || '',
+                opDate: document.getElementById('sign-op-date')?.value || '',
+                revName: document.getElementById('sign-rev-name')?.value || '',
+                revSig: document.getElementById('sign-rev-sig')?.value || '',
+                revDate: document.getElementById('sign-rev-date')?.value || '',
+                qaName: document.getElementById('sign-qa-name')?.value || '',
+                qaSig: document.getElementById('sign-qa-sig')?.value || '',
+                qaDate: document.getElementById('sign-qa-date')?.value || ''
             };
 
             const recordData = {
@@ -2394,11 +2306,15 @@
                 timestamp: Date.now(),
                 criticalRules: criticalRules,
                 custody: custody,
+                readiness: readiness,
                 materials: materials,
                 stepRecords: stepRecords,
                 metrics: metrics,
                 cryovials: cryovials,
-                finalRelease: finalRelease
+                qcPoints: qcPoints,
+                deviations: deviations,
+                finalRelease: finalRelease,
+                signatures: signatures
             };
 
             if (db) {
@@ -2414,9 +2330,9 @@
 
                 dbRef.set(recordData, function(error) {
                     if (error) {
-                        showToast("Failed to save: " + error.message, "rose");
+                        showToast("Failed to save to Firebase: " + error.message, "rose");
                     } else {
-                        showToast(isUpdate ? "Record updated successfully!" : "New record saved successfully!", "emerald");
+                        showToast(isUpdate ? "Record updated in Firebase!" : "New record saved to Firebase!", "emerald");
                         currentEditingRecordId = null;
                         const activeEditInput = document.getElementById('active-edit-id');
                         if (activeEditInput) activeEditInput.value = '';
@@ -2426,7 +2342,7 @@
                     }
                 });
             } else {
-                showToast("Firebase DB unavailable.", "amber");
+                showToast("Firebase DB unavailable.", "rose");
             }
         }
 
@@ -2451,11 +2367,69 @@
                 document.getElementById('custody-checker').value = rec.custody.checker || '';
             }
 
+            if (rec.readiness) {
+                document.getElementById('ready-reagent-rt-time').value = rec.readiness.reagentRtTime || '';
+                document.getElementById('ready-reagent-rt-init').value = rec.readiness.reagentRtInit || '';
+                document.getElementById('ready-blood-rt-time').value = rec.readiness.bloodRtTime || '';
+                document.getElementById('ready-blood-rt-init').value = rec.readiness.bloodRtInit || '';
+                document.getElementById('ready-bsc-time').value = rec.readiness.bscTime || '';
+                document.getElementById('ready-bsc-init').value = rec.readiness.bscInit || '';
+                document.getElementById('ready-cent-37-res').value = rec.readiness.cent37Res || '';
+                document.getElementById('ready-cent-37-init').value = rec.readiness.cent37Init || '';
+                document.getElementById('ready-cent-4-res').value = rec.readiness.cent4Res || '';
+                document.getElementById('ready-cent-4-init').value = rec.readiness.cent4Init || '';
+                document.getElementById('ready-cryovials-res').value = rec.readiness.cryovialsRes || '';
+                document.getElementById('ready-cryovials-init').value = rec.readiness.cryovialsInit || '';
+                document.getElementById('ready-freezer-res').value = rec.readiness.freezerRes || '';
+                document.getElementById('ready-freezer-init').value = rec.readiness.freezerInit || '';
+            }
+
             if (rec.criticalRules) {
                 for (let i = 1; i <= 8; i++) {
                     const el = document.getElementById('rule-' + i);
                     if (el) el.checked = !!rec.criticalRules['rule' + i];
                 }
+            }
+
+            if (rec.qcPoints) {
+                const qcRows = document.querySelectorAll('#qc-tbody tr');
+                rec.qcPoints.forEach((qc, idx) => {
+                    if (qcRows[idx]) {
+                        if (qcRows[idx].cells[1]?.querySelector('input')) qcRows[idx].cells[1].querySelector('input').value = qc.obs || '';
+                        if (qcRows[idx].cells[2]?.querySelector('select')) qcRows[idx].cells[2].querySelector('select').value = qc.status || 'Pass';
+                        if (qcRows[idx].cells[3]?.querySelector('input')) qcRows[idx].cells[3].querySelector('input').value = qc.init || '';
+                    }
+                });
+            }
+
+            if (rec.deviations) {
+                const devTbody = document.getElementById('deviation-tbody');
+                if (devTbody) {
+                    devTbody.innerHTML = '';
+                    rec.deviations.forEach(dev => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = '<td class="p-2"><input type="text" class="table-input" value="' + (dev.devID || '') + '"></td>' +
+                            '<td class="p-2"><input type="datetime-local" class="table-input" value="' + (dev.dateTime || '') + '"></td>' +
+                            '<td class="p-2"><textarea class="table-input" rows="1">' + (dev.desc || '') + '</textarea></td>' +
+                            '<td class="p-2"><input type="text" class="table-input" value="' + (dev.sign || '') + '"></td>' +
+                            '<td class="p-2 text-center no-print">' +
+                                '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
+                            '</td>';
+                        devTbody.appendChild(tr);
+                    });
+                }
+            }
+
+            if (rec.signatures) {
+                document.getElementById('sign-op-name').value = rec.signatures.opName || '';
+                document.getElementById('sign-op-sig').value = rec.signatures.opSig || '';
+                document.getElementById('sign-op-date').value = rec.signatures.opDate || '';
+                document.getElementById('sign-rev-name').value = rec.signatures.revName || '';
+                document.getElementById('sign-rev-sig').value = rec.signatures.revSig || '';
+                document.getElementById('sign-rev-date').value = rec.signatures.revDate || '';
+                document.getElementById('sign-qa-name').value = rec.signatures.qaName || '';
+                document.getElementById('sign-qa-sig').value = rec.signatures.qaSig || '';
+                document.getElementById('sign-qa-date').value = rec.signatures.qaDate || '';
             }
 
             if (rec.metrics) {

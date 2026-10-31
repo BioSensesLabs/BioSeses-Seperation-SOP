@@ -2241,6 +2241,64 @@
 
             const macsVol = totalYield > 0 ? (totalYield / 10000000).toFixed(2) : "0.00";
             const macsVolEl = document.getElementById('res-macs-vol');
+            if (macsVolEl) macsVolEl.innerText = macsVol;
+        }
+
+        function syncFinalVials() {
+            const fullV = document.getElementById('step-50-full-vials')?.value || '';
+            const partV = document.getElementById('step-50-partial-vials')?.value || '';
+            const finalFull = document.getElementById('final-full-vials');
+            const finalPart = document.getElementById('final-partial-vials');
+            if (finalFull) finalFull.value = fullV;
+            if (finalPart) finalPart.value = partV;
+        }
+
+        function saveRecordToFirebase() {
+            if (currentUser && currentUser.role === 'Viewer') return;
+
+            const activeEditId = currentEditingRecordId || document.getElementById('active-edit-id')?.value;
+            const sampleID = document.getElementById('final-sample-id')?.value || 'XX-RA-001-PBMC';
+
+            // 1. Critical Rules
+            const criticalRules = {};
+            for (let i = 1; i <= 8; i++) {
+                const el = document.getElementById('rule-' + i);
+                criticalRules['rule' + i] = el ? el.checked : false;
+            }
+
+            // 2. Chain of Custody
+            const custody = {
+                siteCode: document.getElementById('custody-site-code')?.value || '',
+                condition: document.getElementById('custody-condition')?.value || '',
+                patientID: document.getElementById('custody-patient-id')?.value || '',
+                sampleType: document.getElementById('custody-sample-type')?.value || 'Whole Blood',
+                collectionDate: document.getElementById('custody-collection-date')?.value || '',
+                collectionTime: document.getElementById('custody-collection-time')?.value || '',
+                procDate: document.getElementById('custody-proc-date')?.value || '',
+                procTime: document.getElementById('custody-proc-time')?.value || '',
+                operator: document.getElementById('custody-operator')?.value || '',
+                checker: document.getElementById('custody-checker')?.value || ''
+            };
+
+            // 3. Section 3: Required Materials & Equipment
+            const materials = [];
+            document.querySelectorAll('#materials-tbody tr').forEach(tr => {
+                const nameInput = tr.cells[0]?.querySelector('input');
+                const name = nameInput ? nameInput.value : (tr.cells[0]?.innerText.trim() || '');
+                const inputs = tr.cells[1]?.querySelectorAll('input[type="text"]');
+                const checkboxes = tr.cells[1]?.querySelectorAll('input[type="checkbox"]');
+                
+                materials.push({
+                    name: name,
+                    hasInputs: inputs && inputs.length > 0,
+                    lotOrId: inputs && inputs[0] ? inputs[0].value : '',
+                    expOrStatus: inputs && inputs[1] ? inputs[1].value : '',
+                    available: checkboxes && checkboxes[0] ? checkboxes[0].checked : false,
+                    acceptable: checkboxes && checkboxes[1] ? checkboxes[1].checked : false
+                });
+            });
+
+            // 4. Section 4: Pre-Processing Readiness
             const readiness = {
                 reagentRtTime: document.getElementById('ready-reagent-rt-time')?.value || '',
                 reagentRtInit: document.getElementById('ready-reagent-rt-init')?.value || '',
@@ -2258,8 +2316,66 @@
                 freezerInit: document.getElementById('ready-freezer-init')?.value || ''
             };
 
+            // 5. Section 5 Steps Records (Steps 1 - 53)
+            const stepRecords = {};
+            document.querySelectorAll('[data-step]').forEach(tr => {
+                const stepNum = tr.getAttribute('data-step');
+                const doneChk = tr.querySelector('input[type="checkbox"]');
+                const inputs = tr.querySelectorAll('input:not([type="checkbox"]), select, textarea');
+                const fieldValues = [];
+                inputs.forEach(inp => {
+                    if (inp.type === 'radio') {
+                        if (inp.checked) fieldValues.push(inp.value);
+                    } else {
+                        fieldValues.push(inp.value);
+                    }
+                });
+
+                const radios = tr.querySelectorAll('input[type="radio"]:checked');
+                const radioValues = [];
+                radios.forEach(r => radioValues.push({ name: r.name, value: r.value }));
+
+                stepRecords[stepNum] = {
+                    done: doneChk ? doneChk.checked : false,
+                    fieldValues: fieldValues,
+                    radioValues: radioValues
+                };
+            });
+
+            // Hemocytometer Metrics
+            const metrics = {
+                bloodVol: document.getElementById('step-4-blood-vol')?.value || '',
+                dilutionFactor: document.getElementById('dilution-factor')?.value || '2',
+                box1v: document.getElementById('box1-v')?.value || '',
+                box1nv: document.getElementById('box1-nv')?.value || '',
+                box2v: document.getElementById('box2-v')?.value || '',
+                box2nv: document.getElementById('box2-nv')?.value || '',
+                box3v: document.getElementById('box3-v')?.value || '',
+                box3nv: document.getElementById('box3-nv')?.value || '',
+                viabilityPct: document.getElementById('res-viability-pct')?.innerText || '0',
+                conc: document.getElementById('res-conc')?.innerText || '0',
+                totalYield: document.getElementById('res-total-yield')?.innerText || '0',
+                macsVol: document.getElementById('res-macs-vol')?.innerText || '0.00'
+            };
+
+            // Section 6: Cryovials
+            const cryovials = [];
+            document.querySelectorAll('#cryovial-tbody tr').forEach(tr => {
+                cryovials.push({
+                    vialNum: tr.cells[0]?.innerText.trim() || '',
+                    id: tr.querySelector('.cryo-id')?.value || '',
+                    vol: tr.querySelector('.cryo-vol')?.value || '1.0',
+                    target: tr.querySelector('.cryo-target')?.value || '10,000,000',
+                    time80: tr.querySelector('.cryo-80time')?.value || '',
+                    timeLn2: tr.querySelector('.cryo-ln2time')?.value || '',
+                    loc: tr.querySelector('.cryo-loc')?.value || '',
+                    init: tr.querySelector('.cryo-init')?.value || ''
+                });
+            });
+
+            // Section 7: Quality Control Points
             const qcPoints = [];
-            document.querySelectorAll('#qc-tbody tr').forEach(function(tr) {
+            document.querySelectorAll('#qc-tbody tr').forEach(tr => {
                 qcPoints.push({
                     point: tr.cells[0]?.innerText.trim() || '',
                     obs: tr.cells[1]?.querySelector('input')?.value || '',
@@ -2268,8 +2384,9 @@
                 });
             });
 
+            // Section 8: Deviations
             const deviations = [];
-            document.querySelectorAll('#deviation-tbody tr').forEach(function(tr) {
+            document.querySelectorAll('#deviation-tbody tr').forEach(tr => {
                 deviations.push({
                     devID: tr.cells[0]?.querySelector('input')?.value || '',
                     dateTime: tr.cells[1]?.querySelector('input')?.value || '',
@@ -2278,6 +2395,22 @@
                 });
             });
 
+            // Section 9: Final Release
+            const procStatusEl = document.querySelector('input[name="proc_status"]:checked');
+            const finalRelease = {
+                sampleID: document.getElementById('final-sample-id')?.value || '',
+                startVol: document.getElementById('final-start-vol')?.value || '',
+                totalCells: document.getElementById('final-total-cells')?.value || '',
+                conc: document.getElementById('final-conc')?.value || '',
+                fullVials: document.getElementById('final-full-vials')?.value || '0',
+                partialVials: document.getElementById('final-partial-vials')?.value || '0',
+                storageLoc: document.getElementById('final-storage-loc')?.value || '',
+                operator: document.getElementById('final-operator')?.value || '',
+                reviewer: document.getElementById('final-reviewer')?.value || '',
+                status: procStatusEl ? procStatusEl.value : 'Released'
+            };
+
+            // Section 10: Signatures
             const signatures = {
                 opName: document.getElementById('sign-op-name')?.value || '',
                 opSig: document.getElementById('sign-op-sig')?.value || '',
@@ -2354,6 +2487,15 @@
             const activeEditInput = document.getElementById('active-edit-id');
             if (activeEditInput) activeEditInput.value = id;
 
+            // Section 1: Critical Rules
+            if (rec.criticalRules) {
+                for (let i = 1; i <= 8; i++) {
+                    const el = document.getElementById('rule-' + i);
+                    if (el) el.checked = !!rec.criticalRules['rule' + i];
+                }
+            }
+
+            // Section 2: Chain of Custody
             if (rec.custody) {
                 document.getElementById('custody-site-code').value = rec.custody.siteCode || '';
                 document.getElementById('custody-condition').value = rec.custody.condition || '';
@@ -2367,6 +2509,36 @@
                 document.getElementById('custody-checker').value = rec.custody.checker || '';
             }
 
+            // Section 3: Reagents & Materials Checklist Restoration
+            const matTbody = document.getElementById('materials-tbody');
+            if (matTbody && rec.materials) {
+                matTbody.innerHTML = '';
+                rec.materials.forEach(mat => {
+                    const tr = document.createElement('tr');
+                    if (mat.hasInputs) {
+                        tr.innerHTML = '<td class="p-2 font-medium">' + mat.name + '</td>' +
+                            '<td class="p-2 flex gap-4">' +
+                                '<input type="text" class="table-input" placeholder="Lot / ID:" value="' + (mat.lotOrId || '') + '">' +
+                                '<input type="text" class="table-input" placeholder="Exp / Status:" value="' + (mat.expOrStatus || '') + '">' +
+                            '</td>' +
+                            '<td class="p-2 text-center no-print">' +
+                                '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
+                            '</td>';
+                    } else {
+                        tr.innerHTML = '<td class="p-2 font-medium">' + mat.name + '</td>' +
+                            '<td class="p-2">' +
+                                '<label class="inline-flex items-center mr-4"><input type="checkbox" class="mr-1" ' + (mat.available ? 'checked' : '') + '> Available</label>' +
+                                '<label class="inline-flex items-center"><input type="checkbox" class="mr-1" ' + (mat.acceptable ? 'checked' : '') + '> Acceptable</label>' +
+                            '</td>' +
+                            '<td class="p-2 text-center no-print">' +
+                                '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
+                            '</td>';
+                    }
+                    matTbody.appendChild(tr);
+                });
+            }
+
+            // Section 4: Readiness Checklist
             if (rec.readiness) {
                 document.getElementById('ready-reagent-rt-time').value = rec.readiness.reagentRtTime || '';
                 document.getElementById('ready-reagent-rt-init').value = rec.readiness.reagentRtInit || '';
@@ -2384,13 +2556,67 @@
                 document.getElementById('ready-freezer-init').value = rec.readiness.freezerInit || '';
             }
 
-            if (rec.criticalRules) {
-                for (let i = 1; i <= 8; i++) {
-                    const el = document.getElementById('rule-' + i);
-                    if (el) el.checked = !!rec.criticalRules['rule' + i];
-                }
+            // Section 5 Steps Records (Steps 1 to 53)
+            if (rec.stepRecords) {
+                Object.keys(rec.stepRecords).forEach(stepNum => {
+                    const stepData = rec.stepRecords[stepNum];
+                    const tr = document.querySelector('[data-step="' + stepNum + '"]');
+                    if (tr) {
+                        const chk = tr.querySelector('input[type="checkbox"]');
+                        if (chk) chk.checked = !!stepData.done;
+                        const inputs = tr.querySelectorAll('input:not([type="checkbox"]), select, textarea');
+                        if (stepData.fieldValues) {
+                            stepData.fieldValues.forEach((val, idx) => {
+                                if (inputs[idx]) {
+                                    if (inputs[idx].type === 'radio') {
+                                        inputs[idx].checked = (inputs[idx].value === val);
+                                    } else {
+                                        inputs[idx].value = val;
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
             }
 
+            // Metrics
+            if (rec.metrics) {
+                document.getElementById('step-4-blood-vol').value = rec.metrics.bloodVol || '';
+                document.getElementById('dilution-factor').value = rec.metrics.dilutionFactor || '2';
+                document.getElementById('box1-v').value = rec.metrics.box1v || '';
+                document.getElementById('box1-nv').value = rec.metrics.box1nv || '';
+                document.getElementById('box2-v').value = rec.metrics.box2v || '';
+                document.getElementById('box2-nv').value = rec.metrics.box2nv || '';
+                document.getElementById('box3-v').value = rec.metrics.box3v || '';
+                document.getElementById('box3-nv').value = rec.metrics.box3nv || '';
+                calculateFicoll();
+                calculateCellMetrics();
+            }
+
+            // Section 6: Cryovials Restoration
+            const cryoTbody = document.getElementById('cryovial-tbody');
+            if (cryoTbody && rec.cryovials) {
+                cryoTbody.innerHTML = '';
+                rec.cryovials.forEach(c => {
+                    const tr = document.createElement('tr');
+                    tr.className = "cryo-row";
+                    tr.innerHTML = '<td class="p-2 text-center font-bold text-slate-600">' + c.vialNum + '</td>' +
+                        '<td class="p-2"><input type="text" class="table-input cryo-id" value="' + (c.id || '') + '"></td>' +
+                        '<td class="p-2"><input type="text" class="table-input cryo-vol" value="' + (c.vol || '1.0') + '"></td>' +
+                        '<td class="p-2"><input type="text" class="table-input cryo-target" value="' + (c.target || '10,000,000') + '"></td>' +
+                        '<td class="p-2"><input type="time" class="table-input cryo-80time" value="' + (c.time80 || '') + '"></td>' +
+                        '<td class="p-2"><input type="time" class="table-input cryo-ln2time" value="' + (c.timeLn2 || '') + '"></td>' +
+                        '<td class="p-2"><input type="text" class="table-input cryo-loc" value="' + (c.loc || '') + '"></td>' +
+                        '<td class="p-2"><input type="text" class="table-input cryo-init" value="' + (c.init || '') + '"></td>' +
+                        '<td class="p-2 text-center no-print">' +
+                            '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
+                        '</td>';
+                    cryoTbody.appendChild(tr);
+                });
+            }
+
+            // Section 7: Quality Control Points
             if (rec.qcPoints) {
                 const qcRows = document.querySelectorAll('#qc-tbody tr');
                 rec.qcPoints.forEach((qc, idx) => {
@@ -2402,24 +2628,40 @@
                 });
             }
 
-            if (rec.deviations) {
-                const devTbody = document.getElementById('deviation-tbody');
-                if (devTbody) {
-                    devTbody.innerHTML = '';
-                    rec.deviations.forEach(dev => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = '<td class="p-2"><input type="text" class="table-input" value="' + (dev.devID || '') + '"></td>' +
-                            '<td class="p-2"><input type="datetime-local" class="table-input" value="' + (dev.dateTime || '') + '"></td>' +
-                            '<td class="p-2"><textarea class="table-input" rows="1">' + (dev.desc || '') + '</textarea></td>' +
-                            '<td class="p-2"><input type="text" class="table-input" value="' + (dev.sign || '') + '"></td>' +
-                            '<td class="p-2 text-center no-print">' +
-                                '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
-                            '</td>';
-                        devTbody.appendChild(tr);
-                    });
-                }
+            // Section 8: Deviations Restoration
+            const devTbody = document.getElementById('deviation-tbody');
+            if (devTbody && rec.deviations) {
+                devTbody.innerHTML = '';
+                rec.deviations.forEach(dev => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = '<td class="p-2"><input type="text" class="table-input" value="' + (dev.devID || '') + '"></td>' +
+                        '<td class="p-2"><input type="datetime-local" class="table-input" value="' + (dev.dateTime || '') + '"></td>' +
+                        '<td class="p-2"><textarea class="table-input" rows="1">' + (dev.desc || '') + '</textarea></td>' +
+                        '<td class="p-2"><input type="text" class="table-input" value="' + (dev.sign || '') + '"></td>' +
+                        '<td class="p-2 text-center no-print">' +
+                            '<button onclick="this.closest(\'tr\').remove()" class="text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>' +
+                        '</td>';
+                    devTbody.appendChild(tr);
+                });
             }
 
+            // Section 9: Final Release
+            if (rec.finalRelease) {
+                document.getElementById('final-sample-id').value = rec.finalRelease.sampleID || rec.sampleID || '';
+                document.getElementById('final-start-vol').value = rec.finalRelease.startVol || '';
+                document.getElementById('final-total-cells').value = rec.finalRelease.totalCells || '';
+                document.getElementById('final-conc').value = rec.finalRelease.conc || '';
+                document.getElementById('final-full-vials').value = rec.finalRelease.fullVials || '';
+                document.getElementById('final-partial-vials').value = rec.finalRelease.partialVials || '';
+                document.getElementById('final-storage-loc').value = rec.finalRelease.storageLoc || '';
+                document.getElementById('final-operator').value = rec.finalRelease.operator || '';
+                document.getElementById('final-reviewer').value = rec.finalRelease.reviewer || '';
+
+                const rad = document.querySelector('input[name="proc_status"][value="' + rec.finalRelease.status + '"]');
+                if (rad) rad.checked = true;
+            }
+
+            // Section 10: Signatures
             if (rec.signatures) {
                 document.getElementById('sign-op-name').value = rec.signatures.opName || '';
                 document.getElementById('sign-op-sig').value = rec.signatures.opSig || '';
@@ -2432,39 +2674,7 @@
                 document.getElementById('sign-qa-date').value = rec.signatures.qaDate || '';
             }
 
-            if (rec.metrics) {
-                const bloodVolInput = document.getElementById('step-4-blood-vol');
-                if (bloodVolInput) bloodVolInput.value = rec.metrics.bloodVol || '';
-                calculateFicoll();
-            }
-
-            if (rec.stepRecords) {
-                Object.keys(rec.stepRecords).forEach(stepNum => {
-                    const stepData = rec.stepRecords[stepNum];
-                    const tr = document.querySelector('[data-step="' + stepNum + '"]');
-                    if (tr) {
-                        const chk = tr.querySelector('input[type="checkbox"]');
-                        if (chk) chk.checked = !!stepData.done;
-                        const inputs = tr.querySelectorAll('input:not([type="checkbox"]), select, textarea');
-                        if (stepData.fieldValues) {
-                            stepData.fieldValues.forEach((val, idx) => {
-                                if (inputs[idx]) inputs[idx].value = val;
-                            });
-                        }
-                    }
-                });
-            }
-
-            if (rec.finalRelease) {
-                document.getElementById('final-start-vol').value = rec.finalRelease.startVol || '';
-                document.getElementById('final-total-cells').value = rec.finalRelease.totalCells || '';
-                document.getElementById('final-conc').value = rec.finalRelease.conc || '';
-                document.getElementById('final-full-vials').value = rec.finalRelease.fullVials || '';
-                document.getElementById('final-partial-vials').value = rec.finalRelease.partialVials || '';
-                document.getElementById('final-storage-loc').value = rec.finalRelease.storageLoc || '';
-                document.getElementById('final-operator').value = rec.finalRelease.operator || '';
-                document.getElementById('final-reviewer').value = rec.finalRelease.reviewer || '';
-            }
+            setupCustodyAutoPopulate();
 
             const banner = document.getElementById('edit-mode-banner');
             if (banner) banner.classList.remove('hidden');
@@ -2472,6 +2682,7 @@
             if (label) label.innerText = rec.sampleID || id;
 
             switchTab('entry');
+            if (currentUser && currentUser.role === 'Viewer') applyRolePermissions();
             showToast("Loaded record for editing: " + (rec.sampleID || id), "blue");
         }
 

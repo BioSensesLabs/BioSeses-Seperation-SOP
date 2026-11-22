@@ -585,8 +585,9 @@
                                     <td class="p-2 text-center font-bold">5</td>
                                     <td class="p-2">Add an equal volume of sterile PBS or sterile NaCl 0.9% (1:1).</td>
                                     <td class="p-2 space-y-1">
-                                        <input type="text" class="table-input" placeholder="PBS/saline added: mL">
+                                        <input type="number" id="step-5-Sterile-vol" oninput="calculateFicoll()" class="table-input" PBS/saline added: mL">
                                         <input type="time" class="table-input">
+                                       
                                     </td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
@@ -2180,11 +2181,14 @@
 
         function calculateFicoll() {
             const bloodVolInput = document.getElementById('step-4-blood-vol');
+             const StrileVolInput = document.getElementById('step-5-Sterile-vol');
             const bloodVol = parseFloat(bloodVolInput?.value) || 0;
+             const sterileVol = parseFloat(StrileVolInput?.value) || 0;
+              const FVOL = sterileVol bloodVol+ 
 
             const finalStartVol = document.getElementById('final-start-vol');
             if (finalStartVol) {
-                finalStartVol.value = bloodVol > 0 ? bloodVol + " mL" : "";
+                finalStartVol.value = FVOL > 0 ? FVOL + " mL" : "";
             }
 
             const dilVolInput = document.getElementById('step-10-dil-vol');

@@ -2184,7 +2184,7 @@
              const StrileVolInput = document.getElementById('step-5-Sterile-vol');
             const bloodVol = parseFloat(bloodVolInput?.value) || 0;
              const sterileVol = parseFloat(StrileVolInput?.value) || 0;
-              const FVOL = sterileVol bloodVol+ 
+              const FVOL = sterileVol+ bloodVol;
 
             const finalStartVol = document.getElementById('final-start-vol');
             if (finalStartVol) {

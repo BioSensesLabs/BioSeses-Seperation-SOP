@@ -318,7 +318,7 @@
                     </label>
                     <label class="flex items-start space-x-3 p-2.5 bg-amber-50/50 rounded-lg border border-amber-100 cursor-pointer">
                         <input type="checkbox" id="rule-2" class="mt-1 h-4 w-4 rounded text-blue-600 focus:ring-blue-500">
-                        <span>After blood collection, process blood within 1 hour.</span>
+                        <span>After blood collection, allow the blood to rest on the bench for 30 minutes before processing, ensuring the total resting time does not exceed 1 hour.</span>
                     </label>
                     <label class="flex items-start space-x-3 p-2.5 bg-amber-50/50 rounded-lg border border-amber-100 cursor-pointer">
                         <input type="checkbox" id="rule-3" class="mt-1 h-4 w-4 rounded text-blue-600 focus:ring-blue-500">
@@ -326,7 +326,7 @@
                     </label>
                     <label class="flex items-start space-x-3 p-2.5 bg-amber-50/50 rounded-lg border border-amber-100 cursor-pointer">
                         <input type="checkbox" id="rule-4" class="mt-1 h-4 w-4 rounded text-blue-600 focus:ring-blue-500">
-                        <span>All subsequent procedures must use sterile technique and sterile materials. Except for cell counting and centrifugation, perform the steps inside the Biosafety Cabinet.</span>
+                        <span style="color: red; font-weight: bold;">All subsequent procedures must use sterile technique and sterile materials. Except for cell counting and centrifugation, perform the steps inside the Biosafety Cabinet.</span>
                     </label>
                     <label class="flex items-start space-x-3 p-2.5 bg-amber-50/50 rounded-lg border border-amber-100 cursor-pointer">
                         <input type="checkbox" id="rule-5" class="mt-1 h-4 w-4 rounded text-blue-600 focus:ring-blue-500">
@@ -334,7 +334,7 @@
                     </label>
                     <label class="flex items-start space-x-3 p-2.5 bg-amber-50/50 rounded-lg border border-amber-100 cursor-pointer">
                         <input type="checkbox" id="rule-6" class="mt-1 h-4 w-4 rounded text-blue-600 focus:ring-blue-500">
-                        <span>Follow the programmed centrifuge protocol validated for the instrument.</span>
+                        <span>Prepare the waste container with 10% bleach.</span>
                     </label>
                     <label class="flex items-start space-x-3 p-2.5 bg-amber-50/50 rounded-lg border border-amber-100 cursor-pointer">
                         <input type="checkbox" id="rule-7" class="mt-1 h-4 w-4 rounded text-blue-600 focus:ring-blue-500">
@@ -533,6 +533,10 @@
                         <input type="text" name="procHeaderOperator" class="table-input bg-white" placeholder="Operator initials">
                     </div>
                 </div>
+                   <div>
+                        <label class="block font-semibold text-slate-600 mb-1">observation through collection or processing </label>
+                        <input type="text" name="procHeaderObservations" class="table-input bg-white" placeholder="observation through collection or processing ">
+                    </div>
 
                 <!-- 5.1 Plasma Collection and Blood Dilution -->
                 <div class="space-y-3">
@@ -1080,7 +1084,7 @@
                                 </tr>
                                 <tr data-step="38">
                                     <td class="p-2 text-center font-bold">38</td>
-                                    <td class="p-2">Into the labeled Eppendorf tube, add 20 µL of 0.4% Trypan blue solution (one to one ratio) and gently mix the cells.</td>
+                                    <td class="p-2">Into the labeled Eppendorf tube, add 20 µL of 0.04% "Dilute 0.4% stock 1:10" Trypan blue solution (one to one ratio) and gently mix the cells.</td>
                                     <td class="p-2"><input type="time" class="table-input"></td>
                                     <td class="p-2 text-center"><input type="checkbox" class="w-4 h-4"></td>
                                 </tr>
@@ -1127,7 +1131,7 @@
                                 </tr>
                                 <tr data-step="43">
                                     <td class="p-2 text-center font-bold">43</td>
-                                    <td class="p-2">Calculate lymphocyte concentration (cells/mL) & total cell count.</td>
+                                    <td class="p-2">Calculate PBMC concentration (cells/mL) & total cell count.</td>
                                     <td class="p-2 space-y-1">
                                         <div class="text-xs font-semibold">Cells/mL: <span id="res-conc" class="text-blue-800">--</span></div>
                                         <div class="text-xs font-semibold">Total cell count: <span id="res-total-yield" class="text-indigo-800">--</span></div>
@@ -1991,7 +1995,7 @@
             { name: "Cryovials", hasInputs: true },
             { name: "Isopropanol freezing container" },
             { name: "Centrifuge with temperature control", hasInputs: true },
-            { name: "Freezer -86°C", hasInputs: true },
+            { name: "Freezer -80°C", hasInputs: true },
             { name: "Liquid nitrogen container", hasInputs: true },
             { name: "Biosafety cabinet", hasInputs: true },
             { name: "Counting and Viability (Trypan blue)", hasInputs: true }

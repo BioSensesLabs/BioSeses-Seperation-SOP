@@ -1982,24 +1982,41 @@
             }
         }
 
-        const defaultMaterials = [
+          const defaultMaterials = [
+
             { name: "15 mL sterile tubes" },
+
             { name: "50 mL sterile tubes" },
+
             { name: "K2 EDTA tube 10 mL" },
+
             { name: "Plain tube 10 mL" },
+
             { name: "10 mL serological pipettes" },
+
             { name: "25 mL serological pipettes" },
+
             { name: "Ficoll / Lymphoprep", hasInputs: true },
+
             { name: "PBS 1X or NaCl 0.9%", hasInputs: true },
+
             { name: "MACS Freezing Solution", hasInputs: true },
+
             { name: "Cryovials", hasInputs: true },
+
             { name: "Isopropanol freezing container" },
-            { name: "Centrifuge with temperature control", hasInputs: true, lot: "3-16R", expiry: "N/A" },
-            { name: "Freezer -80°C", hasInputs: true, lot: "BDF-8bv 160", expiry: "N/A" },
+
+            { name: "Centrifuge with temperature control", hasInputs: true },
+
+            { name: "Freezer -80°C", hasInputs: true },
+
             { name: "Liquid nitrogen container", hasInputs: true },
-           { name: "Biosafety cabinet", hasInputs: true, lot: "A2", expiry: "N/A" },
+
+            { name: "Biosafety cabinet", hasInputs: true },
+
             { name: "Counting and Viability (Trypan blue)", hasInputs: true }
-        ];
+
+        ]; 
 
         function initMaterialsTable() {
             const tbody = document.getElementById('materials-tbody');
